@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "654923717834",
+    "project_id": "captura-game",
+    "storage_bucket": "captura-game.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654923717834:android:50cb2fa9612d5c88a46833",
+        "android_client_info": {
+          "package_name": "com.captura.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPeL8wP-nj64f_TjzfDZgHjEvr5RiqPmk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
