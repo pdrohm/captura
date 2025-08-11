@@ -1,3 +1,4 @@
+import { MAP_CONSTANTS } from '@/src/config/mapConstants';
 import { MapFilters, MapLocation, MapViewport, Territory } from '@/src/types/domain';
 import { MapRepository } from '@/src/types/repositories';
 
@@ -73,12 +74,7 @@ export class MapUseCasesImpl implements MapUseCases {
       console.error('Failed to get viewport:', error);
       // Return reasonable fallback viewport if repository fails
       // This will be overridden by user location when available
-      return {
-        latitude: -28.4698, // Tubarão, SC, Brazil region
-        longitude: -49.0069,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      };
+      return MAP_CONSTANTS.DEFAULT_VIEWPORT;
     }
   }
 
@@ -95,12 +91,7 @@ export class MapUseCasesImpl implements MapUseCases {
     try {
       // Since the repository doesn't have a clear method, we'll save a special "cleared" state
       // This will be detected by the hook and treated as a cleared viewport
-      const clearedViewport: MapViewport = {
-        latitude: 0,
-        longitude: 0,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      };
+      const clearedViewport: MapViewport = MAP_CONSTANTS.CLEARED_VIEWPORT;
       await this.mapRepository.saveMapViewport(clearedViewport);
       console.log('Viewport cleared by setting to origin coordinates');
     } catch (error) {

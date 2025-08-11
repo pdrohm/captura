@@ -1,3 +1,4 @@
+import { MAP_CONSTANTS } from '@/src/config/mapConstants';
 import { MapUseCases } from '@/src/services/useCases/mapUseCases';
 import { MapFilters, MapLocation, MapViewport, Territory } from '@/src/types/domain';
 import { LocationService } from '@/src/types/repositories';
@@ -35,12 +36,7 @@ export function useMapState(
 ): UseMapStateReturn {
   const [locations, setLocations] = useState<MapLocation[]>([]);
   const [territories, setTerritories] = useState<Territory[]>([]);
-  const [viewport, setViewportState] = useState<MapViewport>({
-    latitude: -28.4698, // Tubarão, SC, Brazil region - reasonable default
-    longitude: -49.0069,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
+  const [viewport, setViewportState] = useState<MapViewport>(MAP_CONSTANTS.DEFAULT_VIEWPORT);
   const [filters, setFiltersState] = useState<MapFilters>({
     showTerritories: true,
     showPointsOfInterest: true,
@@ -63,8 +59,8 @@ export function useMapState(
       const newViewport: MapViewport = {
         latitude: location.latitude,
         longitude: location.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        latitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.latitudeDelta,
+        longitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.longitudeDelta,
       };
       
       console.log('Setting new viewport to user location:', newViewport);
@@ -131,8 +127,8 @@ export function useMapState(
           const userViewport: MapViewport = {
             latitude: location.latitude,
             longitude: location.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.latitudeDelta,
+            longitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.longitudeDelta,
           };
           
           console.log('Setting viewport to user location:', userViewport);
@@ -154,14 +150,7 @@ export function useMapState(
         setViewportState(savedViewport);
       } catch (err) {
         console.warn('No saved viewport, using default Brazil coordinates');
-        // Use Brazil coordinates as fallback
-        const defaultViewport: MapViewport = {
-          latitude: -28.4698, // Tubarão, SC, Brazil region
-          longitude: -49.0069,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        };
-        setViewportState(defaultViewport);
+   
       }
     } catch (err) {
       console.error('Failed to load initial viewport:', err);
@@ -305,8 +294,8 @@ export function useMapState(
       const newViewport: MapViewport = {
         latitude: location.latitude,
         longitude: location.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        latitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.latitudeDelta,
+        longitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.longitudeDelta,
       };
       setViewportState(newViewport);
       await mapUseCases.saveViewport(newViewport);

@@ -1,3 +1,4 @@
+import { MAP_CONSTANTS } from '@/src/config/mapConstants';
 import { MapFilters, MapLocation, MapViewport, Territory } from '@/src/types/domain';
 import { MapRepository } from '@/src/types/repositories';
 
@@ -98,12 +99,7 @@ export class MockMapRepository implements MapRepository {
     },
   ];
 
-  private currentViewport: MapViewport = {
-    latitude: -28.4698, // Tubarão, SC, Brazil region
-    longitude: -49.0069,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  };
+  private currentViewport: MapViewport = MAP_CONSTANTS.DEFAULT_VIEWPORT;
 
   async getMapLocations(filters: MapFilters): Promise<MapLocation[]> {
     // Simulate network delay
