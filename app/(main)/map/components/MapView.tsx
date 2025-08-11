@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
-import { StyleSheet, View, TouchableOpacity, Alert } from 'react-native';
-import MapView, { Marker, Polygon, Region } from 'react-native-maps';
-import { Ionicons } from '@expo/vector-icons';
-import { useMapView } from '../hooks/useMapView';
+import { useMapView } from '@/src/hooks/useMapView';
 import { MapUseCases } from '@/src/services/useCases/mapUseCases';
 import { MapLocation, Territory } from '@/src/types/domain';
 import { LocationService } from '@/src/types/repositories';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useMemo } from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import MapView, { Marker, Polygon } from 'react-native-maps';
 
 interface MapViewProps {
   mapUseCases: MapUseCases;
@@ -41,6 +41,7 @@ export default function MapViewComponent({
     handleCenterOnUserLocation,
     refreshData,
     clearError,
+    forceRefreshFromUserLocation,
   } = useMapView({
     mapUseCases,
     locationService,
@@ -64,24 +65,96 @@ export default function MapViewComponent({
     });
   }, [territories, filters]);
 
-  if (error) {
-    Alert.alert('Error', error, [
-      { text: 'Dismiss', onPress: clearError },
-      { text: 'Retry', onPress: refreshData },
-    ]);
-  }
+  const handleDebugLocation = async () => {
+    try {
+      const status = await locationService.getLocationProviderStatus();
+      const message = `Location Status:
+• Services Enabled: ${status.locationServicesEnabled ? '✅' : '❌'}
+• Permission: ${status.permissionStatus}
+• Accuracy: ${status.accuracy}
+
+Current User Location: ${userLocation ? 
+  `\n• Lat: ${userLocation.latitude.toFixed(6)}
+• Lng: ${userLocation.longitude.toFixed(6)}` : 
+  '❌ Not available'}
+
+Permission Granted: ${locationPermissionGranted ? '✅' : '❌'}`;
+
+      Alert.alert('Location Debug Info', message, [
+        { text: 'OK' },
+        { 
+          text: 'Test Location', 
+          onPress: async () => {
+            try {
+              const location = await locationService.getCurrentLocation();
+              Alert.alert('Location Test', 
+                `Success! Your device coordinates:\nLat: ${location.latitude.toFixed(6)}\nLng: ${location.longitude.toFixed(6)}`);
+            } catch (err) {
+              Alert.alert('Location Test Failed', 
+                `Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+            }
+          }
+        },
+        {
+          text: 'Reset Location',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await mapUseCases.clearViewport();
+              Alert.alert('Reset Complete', 'Saved location has been cleared. The app will now request fresh GPS coordinates.');
+              setTimeout(() => {
+                forceRefreshFromUserLocation();
+              }, 1000);
+            } catch (err) {
+              Alert.alert('Reset Failed', `Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+            }
+          }
+        }
+      ]);
+    } catch (err) {
+      Alert.alert('Debug Error', `Failed to get debug info: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    }
+  };
+
+  React.useEffect(() => {
+    if (userLocation && locationPermissionGranted) {
+      console.log('📍 [MapView] Auto-centering map on user location:', userLocation);
+    }
+  }, [userLocation, locationPermissionGranted]);
 
   return (
     <View style={styles.container} testID={testID}>
+      {/* Error Message Display */}
+      {error && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+          <View style={styles.errorButtons}>
+            <TouchableOpacity style={styles.retryButton} onPress={refreshData}>
+              <Text style={styles.retryButtonText}>Retry</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.clearErrorButton} onPress={clearError}>
+              <Text style={styles.clearErrorButtonText}>Dismiss</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
       {/* Map View */}
       <View style={styles.mapContainer}>
         <MapView
+          key={userLocation ? `map-${userLocation.latitude}-${userLocation.longitude}` : 'map-default'}
           style={styles.map}
           initialRegion={initialRegion}
+          region={userLocation ? {
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          } : undefined}
           onPress={handleMapPress}
           onRegionChangeComplete={handleRegionChangeComplete}
           showsUserLocation={locationPermissionGranted}
-          showsMyLocationButton={false} // We'll use our custom button
+          showsMyLocationButton={false}
           showsCompass={true}
           showsScale={true}
           testID="map-view"
@@ -142,6 +215,15 @@ export default function MapViewComponent({
             color={locationPermissionGranted ? "#007AFF" : "#8E8E93"}
           />
         </TouchableOpacity>
+
+        {/* Debug Button */}
+        <TouchableOpacity
+          style={styles.debugButton}
+          onPress={handleDebugLocation}
+          testID="debug-button"
+        >
+          <Ionicons name="bug" size={20} color="#FF9500" />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -194,6 +276,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
   },
+  errorButtons: {
+    flexDirection: 'row',
+    gap: 10,
+  },
   mapContainer: {
     flex: 1,
     overflow: 'hidden',
@@ -205,6 +291,22 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
+    backgroundColor: '#fff',
+    borderRadius: 25,
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  debugButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
     backgroundColor: '#fff',
     borderRadius: 25,
     width: 50,

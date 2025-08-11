@@ -35,12 +35,18 @@ export const useMapView = ({
     clearError,
     centerOnUserLocation,
     requestLocationPermission,
+    setError,
   } = useMapState(mapUseCases, locationService);
 
   const [selectedLocation, setSelectedLocation] = useState<MapLocation | null>(null);
   const [selectedTerritory, setSelectedTerritory] = useState<Territory | null>(null);
 
-  const initialRegion: Region = {
+  const initialRegion: Region = userLocation ? {
+    latitude: userLocation.latitude,
+    longitude: userLocation.longitude,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  } : {
     latitude: viewport.latitude,
     longitude: viewport.longitude,
     latitudeDelta: viewport.latitudeDelta,
@@ -165,5 +171,7 @@ export const useMapView = ({
     handleCenterOnUserLocation,
     refreshData,
     clearError,
+    setError,
+    forceRefreshFromUserLocation: centerOnUserLocation,
   };
 };

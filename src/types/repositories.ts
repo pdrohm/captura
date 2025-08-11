@@ -1,15 +1,15 @@
 // Repository interfaces for the data access layer
 
 import {
-  Territory as DomainTerritory,
-  MapFilters,
-  MapLocation,
-  MapViewport,
-  PaginationOptions,
-  SearchFilters,
-  SearchResult,
-  TerritoryActivity,
-  User
+    Territory as DomainTerritory,
+    MapFilters,
+    MapLocation,
+    MapViewport,
+    PaginationOptions,
+    SearchFilters,
+    SearchResult,
+    TerritoryActivity,
+    User
 } from './domain';
 
 // Base repository interface
@@ -109,4 +109,11 @@ export interface LocationService {
   requestLocationPermission(): Promise<boolean>;
   hasLocationPermission(): Promise<boolean>;
   watchLocation(callback: (location: { latitude: number; longitude: number }) => void): () => void;
+  cleanup(): void;
+  checkLocationServicesEnabled(): Promise<boolean>;
+  getLocationProviderStatus(): Promise<{
+    locationServicesEnabled: boolean;
+    permissionStatus: string;
+    accuracy: string;
+  }>;
 }

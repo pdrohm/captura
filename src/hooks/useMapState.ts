@@ -5,7 +5,6 @@ import { LocationService } from '@/src/types/repositories';
 import { useCallback, useEffect, useState } from 'react';
 
 interface UseMapStateReturn {
-  // State
   locations: MapLocation[];
   territories: Territory[];
   viewport: MapViewport;
@@ -15,7 +14,6 @@ interface UseMapStateReturn {
   userLocation: { latitude: number; longitude: number } | null;
   locationPermissionGranted: boolean;
   
-  // Actions
   setViewport: (viewport: MapViewport) => void;
   setFilters: (filters: MapFilters) => void;
   addLocation: (location: Omit<MapLocation, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
@@ -23,6 +21,7 @@ interface UseMapStateReturn {
   deleteLocation: (id: string) => Promise<void>;
   refreshData: () => Promise<void>;
   clearError: () => void;
+  setError: (error: string | null) => void;
   centerOnUserLocation: () => Promise<void>;
   requestLocationPermission: () => Promise<void>;
   forceRefreshFromUserLocation: () => Promise<void>;
@@ -43,19 +42,26 @@ export function useMapState(
     showBoundaries: true,
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setErrorState] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [locationPermissionGranted, setLocationPermissionGranted] = useState(false);
 
   const centerOnUserLocation = useCallback(async () => {
     try {
-      setError(null);
-      console.log('Centering on user location...');
+      setErrorState(null);
+      console.log('🗺️ [MapState] Centering on user location...');
+      
+      const locationServicesEnabled = await locationService.checkLocationServicesEnabled();
+      if (!locationServicesEnabled) {
+        throw new Error('Location services are disabled on your device. Please enable GPS in device settings.');
+      }
+      
       const location = await locationService.getCurrentLocation();
-      console.log('Current user location:', location);
+      console.log('📍 [MapState] Current user location obtained:', location);
       setUserLocation(location);
       
-      // Update viewport to center on user location
+      setErrorState(null);
+      
       const newViewport: MapViewport = {
         latitude: location.latitude,
         longitude: location.longitude,
@@ -63,22 +69,22 @@ export function useMapState(
         longitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.longitudeDelta,
       };
       
-      console.log('Setting new viewport to user location:', newViewport);
+      console.log('🗺️ [MapState] Setting new viewport to user location:', newViewport);
       setViewportState(newViewport);
       
-      // Always save the new viewport to override any old saved coordinates
       await mapUseCases.saveViewport(newViewport);
-      console.log('Viewport saved successfully');
+      console.log('💾 [MapState] Viewport saved successfully');
       
-      // Debug the current state
       console.log('=== AFTER CENTERING ON USER LOCATION ===');
       console.log('Viewport state:', newViewport);
       console.log('User location:', location);
       console.log('=====================================');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to get user location';
-      console.error('Error centering on user location:', err);
-      setError(errorMessage);
+      console.error('❌ [MapState] Error centering on user location:', err);
+      setErrorState(errorMessage);
+      
+      console.log('⚠️ [MapState] Not falling back to default coordinates - user needs to fix location');
     }
   }, [locationService, mapUseCases]);
 
@@ -94,7 +100,6 @@ export function useMapState(
         await centerOnUserLocation();
       } else {
         console.log('No permission, requesting it...');
-        // Automatically request permission if not granted
         const granted = await locationService.requestLocationPermission();
         console.log('Permission request result:', granted);
         setLocationPermissionGranted(granted);
@@ -104,25 +109,24 @@ export function useMapState(
           await centerOnUserLocation();
         } else {
           console.log('Permission denied by user');
-          setError('Location permission denied. Please enable location access in settings.');
+          setErrorState('Location permission denied. Please enable location access in settings.');
         }
       }
     } catch (err) {
       console.error('Failed to check/request location permission:', err);
-      setError('Failed to access location. Please check your device settings.');
+      setErrorState('Failed to access location. Please check your device settings.');
     }
   }, [locationService, centerOnUserLocation]);
 
   const loadInitialViewport = useCallback(async () => {
     try {
-      console.log('Loading initial viewport...');
+      console.log('🗺️ [MapState] Loading initial viewport...');
       
-      // If we have location permission, always try to get user location first
       if (locationPermissionGranted) {
         try {
-          console.log('Getting user location for initial viewport...');
+          console.log('📍 [MapState] Getting user location for initial viewport...');
           const location = await locationService.getCurrentLocation();
-          console.log('User location obtained:', location);
+          console.log('📍 [MapState] User location obtained:', location);
           
           const userViewport: MapViewport = {
             latitude: location.latitude,
@@ -131,67 +135,94 @@ export function useMapState(
             longitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.longitudeDelta,
           };
           
-          console.log('Setting viewport to user location:', userViewport);
+          console.log('🗺️ [MapState] Setting viewport to user location:', userViewport);
           setViewportState(userViewport);
           await mapUseCases.saveViewport(userViewport);
-          console.log('User location viewport saved successfully');
+          console.log('💾 [MapState] User location viewport saved successfully');
+          
+          setErrorState(null);
           return;
         } catch (err) {
-          console.error('Failed to get user location for initial viewport:', err);
-          setError('Failed to get your location. Please check location settings.');
+          console.error('❌ [MapState] Failed to get user location for initial viewport:', err);
+          setErrorState('Failed to get your location. Please check location settings and try again.');
+          
+          console.log('⚠️ [MapState] Not falling back to default coordinates - user needs to fix location');
+          return;
         }
       }
 
-      // If no permission or failed to get location, use saved viewport or default
       try {
-        console.log('Falling back to saved viewport or default...');
+        console.log('💾 [MapState] No location permission, trying saved viewport...');
         const savedViewport = await mapUseCases.getCurrentViewport();
-        console.log('Using saved viewport:', savedViewport);
-        setViewportState(savedViewport);
+        
+        if (savedViewport.latitude !== MAP_CONSTANTS.DEFAULT_VIEWPORT.latitude || 
+            savedViewport.longitude !== MAP_CONSTANTS.DEFAULT_VIEWPORT.longitude) {
+          console.log('💾 [MapState] Using saved viewport:', savedViewport);
+          setViewportState(savedViewport);
+          setErrorState(null);
+        } else {
+          console.log('⚠️ [MapState] Saved viewport is default coordinates, not using it');
+          if (!locationPermissionGranted) {
+            setErrorState('Please grant location permission to center the map on your position.');
+          }
+        }
       } catch (err) {
-        console.warn('No saved viewport, using default Brazil coordinates');
-   
+        console.warn('⚠️ [MapState] No saved viewport available');
+        if (!locationPermissionGranted) {
+          setErrorState('Please grant location permission to center the map on your position.');
+        }
       }
     } catch (err) {
-      console.error('Failed to load initial viewport:', err);
-      setError('Failed to load map viewport');
+      console.error('❌ [MapState] Failed to load initial viewport:', err);
+      setErrorState('Failed to load map viewport. Please check location settings.');
     }
   }, [mapUseCases, locationService, locationPermissionGranted]);
 
   const loadInitialData = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null);
+      setErrorState(null);
       const data = await mapUseCases.loadMapData(filters);
       setLocations(data.locations);
       setTerritories(data.territories);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load map data';
-      setError(errorMessage);
+      setErrorState(errorMessage);
     } finally {
       setLoading(false);
     }
   }, [mapUseCases, filters]);
 
-  // Load initial data and check location permission
   useEffect(() => {
+    console.log('🔄 [MapState] Initial effect triggered');
     loadInitialData();
     checkLocationPermission();
-  }, [loadInitialData, checkLocationPermission]);
+  }, []);
 
-  // Load initial viewport after checking location permission
   useEffect(() => {
     if (locationPermissionGranted !== undefined) {
       console.log('Loading initial viewport, permission granted:', locationPermissionGranted);
-      loadInitialViewport();
+      const timer = setTimeout(() => {
+        loadInitialViewport();
+      }, 100);
+      
+      return () => clearTimeout(timer);
     }
   }, [locationPermissionGranted, loadInitialViewport]);
 
-  // Watch for location updates
+  useEffect(() => {
+    if (userLocation) {
+      console.log('📍 [MapState] User location set, clearing any location errors');
+      setErrorState(null);
+    }
+  }, [userLocation]);
+
   useEffect(() => {
     if (locationPermissionGranted) {
+      console.log('👀 [MapState] Setting up location watching');
       const cleanup = locationService.watchLocation((location) => {
         setUserLocation(location);
+        setErrorState(null);
       });
 
       return cleanup;
@@ -200,18 +231,18 @@ export function useMapState(
 
   const requestLocationPermission = useCallback(async () => {
     try {
-      setError(null);
+      setErrorState(null);
       const granted = await locationService.requestLocationPermission();
       setLocationPermissionGranted(granted);
       
       if (granted) {
         await centerOnUserLocation();
       } else {
-        setError('Location permission denied');
+        setErrorState('Location permission denied');
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to request location permission';
-      setError(errorMessage);
+      setErrorState(errorMessage);
     }
   }, [locationService, centerOnUserLocation]);
 
@@ -228,13 +259,13 @@ export function useMapState(
     setFiltersState(newFilters);
     try {
       setLoading(true);
-      setError(null);
+      setErrorState(null);
       const data = await mapUseCases.loadMapData(newFilters);
       setLocations(data.locations);
       setTerritories(data.territories);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to apply filters';
-      setError(errorMessage);
+      setErrorState(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -242,38 +273,38 @@ export function useMapState(
 
   const addLocation = useCallback(async (location: Omit<MapLocation, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
-      setError(null);
+      setErrorState(null);
       const newLocation = await mapUseCases.saveLocation(location);
       setLocations(prev => [...prev, newLocation]);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to add location';
-      setError(errorMessage);
+      setErrorState(errorMessage);
       throw err;
     }
   }, [mapUseCases]);
 
   const updateLocation = useCallback(async (id: string, updates: Partial<MapLocation>) => {
     try {
-      setError(null);
+      setErrorState(null);
       const updatedLocation = await mapUseCases.updateLocation(id, updates);
       setLocations(prev => 
         prev.map(loc => loc.id === id ? updatedLocation : loc)
       );
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update location';
-      setError(errorMessage);
+      setErrorState(errorMessage);
       throw err;
     }
   }, [mapUseCases]);
 
   const deleteLocation = useCallback(async (id: string) => {
     try {
-      setError(null);
+      setErrorState(null);
       await mapUseCases.deleteLocation(id);
       setLocations(prev => prev.filter(loc => loc.id !== id));
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete location';
-      setError(errorMessage);
+      setErrorState(errorMessage);
       throw err;
     }
   }, [mapUseCases]);
@@ -283,12 +314,13 @@ export function useMapState(
   }, [loadInitialData]);
 
   const clearError = useCallback(() => {
-    setError(null);
+    console.log('🟢 [MapState] Clearing error');
+    setErrorState(null);
   }, []);
 
   const forceRefreshFromUserLocation = useCallback(async () => {
     try {
-      setError(null);
+      setErrorState(null);
       const location = await locationService.getCurrentLocation();
       setUserLocation(location);
       const newViewport: MapViewport = {
@@ -303,7 +335,7 @@ export function useMapState(
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to force refresh viewport from user location';
       console.error('Error force-refreshing viewport:', err);
-      setError(errorMessage);
+      setErrorState(errorMessage);
     }
   }, [locationService, mapUseCases]);
 
@@ -340,6 +372,7 @@ export function useMapState(
     deleteLocation,
     refreshData,
     clearError,
+    setError: setErrorState,
     centerOnUserLocation,
     requestLocationPermission,
     forceRefreshFromUserLocation,
