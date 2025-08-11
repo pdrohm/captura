@@ -33,13 +33,18 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   };
 
   useEffect(() => {
-    console.log('FirebaseProvider: Services initialized', {
-      auth: !!auth,
-      firestore: !!firestore,
-      storage: !!storage,
-      analytics: !!analytics,
-    });
-  }, [auth, firestore, storage, analytics]);
+    const initializeServices = async () => {
+      try {
+        await firebaseServices.initialize();
+        setServices(firebaseServices);
+        setInitialized(true);
+      } catch (error) {
+        setError(error instanceof Error ? error.message : 'Failed to initialize Firebase services');
+      }
+    };
+
+    initializeServices();
+  }, []);
 
   return (
     <FirebaseContext.Provider value={value}>

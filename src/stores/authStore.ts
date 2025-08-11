@@ -35,15 +35,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   error: null,
 
   setUser: (user) => {
-    console.log('AuthStore: setUser called', { user: !!user, uid: user?.uid || 'no-uid' });
     set({ user, error: null });
   },
   setLoading: (loading) => {
-    console.log('AuthStore: setLoading called', { loading });
     set({ loading });
   },
   setError: (error) => {
-    console.log('AuthStore: setError called', { error });
     set({ error, loading: false });
   },
 

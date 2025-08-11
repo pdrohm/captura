@@ -34,9 +34,8 @@ export default function LoginForm({
 
     try {
       await signIn(auth, email.trim(), password);
-    } catch (error: any) {
+    } catch (error) {
       // Error is already handled in the store
-      console.log('Login error:', error);
     }
   };
 

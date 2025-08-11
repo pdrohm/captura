@@ -118,7 +118,7 @@ Permission Granted: ${locationPermissionGranted ? '✅' : '❌'}`;
 
   React.useEffect(() => {
     if (userLocation && locationPermissionGranted) {
-      console.log('📍 [MapView] Auto-centering map on user location:', userLocation);
+      // Auto-center map on user location when it becomes available
     }
   }, [userLocation, locationPermissionGranted]);
 

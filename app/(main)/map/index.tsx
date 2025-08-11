@@ -2,9 +2,9 @@ import MapViewComponent from '@/app/(main)/map/components/MapView';
 import { ThemedText } from '@/src/components/ThemedText';
 import { ThemedView } from '@/src/components/ThemedView';
 import { useFirebase } from '@/src/contexts/FirebaseContext';
+import { LocationService } from '@/src/services/locationService';
 import { MockMapRepository } from '@/src/services/mockMapRepository';
 import { MapUseCasesImpl } from '@/src/services/useCases/mapUseCases';
-import { ExpoLocationService } from '@/src/services/locationService';
 import { useAuthStore } from '@/src/stores/authStore';
 import { MapLocation, Territory } from '@/src/types/domain';
 import React from 'react';
@@ -17,16 +17,14 @@ export default function MapScreen() {
   // Initialize map services (in a real app, this would come from dependency injection)
   const mapRepository = new MockMapRepository();
   const mapUseCases = new MapUseCasesImpl(mapRepository);
-  const locationService = new ExpoLocationService();
+  const locationService = new LocationService();
 
   const handleLocationPress = (location: MapLocation) => {
-    console.log('Location pressed:', location);
-    // In a real app, this would navigate to location details
+    // Handle location press
   };
 
   const handleTerritoryPress = (territory: Territory) => {
-    console.log('Territory pressed:', territory);
-    // In a real app, this would navigate to territory details
+    // Handle territory press
   };
 
   return (

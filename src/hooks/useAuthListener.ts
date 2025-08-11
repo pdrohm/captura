@@ -1,51 +1,26 @@
 import { useFirebase } from '@/src/contexts/FirebaseContext';
 import { useAuthStore } from '@/src/stores/authStore';
-import { useEffect } from 'react';
+import { User } from 'firebase/auth';
+import { useEffect, useState } from 'react';
 
-export const useAuthListener = () => {
+export function useAuthListener() {
   const { auth } = useFirebase();
-  const { setUser, setLoading, setError } = useAuthStore();
+  const { setUser, setLoading } = useAuthStore();
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    console.log('useAuthListener: Setting up auth listener', { auth: !!auth });
-    
-    try {
-      // Ensure Firebase auth is ready
-      if (!auth) {
-        console.warn('Firebase auth not available yet');
-        return;
-      }
-
-      console.log('useAuthListener: Firebase auth is ready, setting up listener');
-      
-      const unsubscribe = auth.onAuthStateChanged((firebaseUser: any) => {
-        console.log('useAuthListener: Auth state changed', { user: !!firebaseUser });
-        try {
-          if (firebaseUser) {
-            // Transform Firebase user to our User interface
-            const user = {
-              uid: firebaseUser.uid,
-              email: firebaseUser.email,
-              displayName: firebaseUser.displayName,
-              photoURL: firebaseUser.photoURL,
-            };
-            setUser(user);
-          } else {
-            setUser(null);
-          }
-          setLoading(false);
-        } catch (error) {
-          console.error('Error processing auth state change:', error);
-          setError('Authentication error occurred');
-          setLoading(false);
-        }
-      });
-
-      return unsubscribe;
-    } catch (error) {
-      console.error('Error setting up auth listener:', error);
-      setError('Failed to initialize authentication');
-      setLoading(false);
+    if (!auth) {
+      return;
     }
-  }, [auth, setUser, setLoading, setError]);
-};
+
+    const unsubscribe = auth.onAuthStateChanged((firebaseUser: User | null) => {
+      setUser(firebaseUser);
+      setLoading(false);
+      setIsInitialized(true);
+    });
+
+    return () => unsubscribe();
+  }, [auth, setUser, setLoading]);
+
+  return { isInitialized };
+}

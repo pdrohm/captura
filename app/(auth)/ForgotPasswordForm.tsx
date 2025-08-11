@@ -4,12 +4,12 @@ import { useFirebase } from '@/src/contexts/FirebaseContext';
 import { useAuthStore } from '@/src/stores/authStore';
 import React, { useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Alert,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 interface ForgotPasswordFormProps {
@@ -34,9 +34,8 @@ export default function ForgotPasswordForm({
     try {
       await resetPassword(auth, email.trim());
       setSent(true);
-    } catch (error: any) {
+    } catch (error) {
       // Error is already handled in the store
-      console.log('Reset password error:', error);
     }
   };
 

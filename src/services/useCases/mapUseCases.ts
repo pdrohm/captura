@@ -91,11 +91,10 @@ export class MapUseCasesImpl implements MapUseCases {
     try {
       // Since the repository doesn't have a clear method, we'll save a special "cleared" state
       // This will be detected by the hook and treated as a cleared viewport
-      const clearedViewport: MapViewport = MAP_CONSTANTS.CLEARED_VIEWPORT;
+      const clearedViewport: MapViewport = MAP_CONSTANTS.DEFAULT_VIEWPORT;
       await this.mapRepository.saveMapViewport(clearedViewport);
-      console.log('Viewport cleared by setting to origin coordinates');
     } catch (error) {
-      console.error('Failed to clear viewport:', error);
+      console.warn('Failed to clear viewport:', error);
       // Don't throw error for viewport clear failures
     }
   }

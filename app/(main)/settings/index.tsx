@@ -1,5 +1,6 @@
 import { ThemedText } from '@/src/components/ThemedText';
 import { Colors } from '@/src/config/Colors';
+import { useFirebase } from '@/src/contexts/FirebaseContext';
 import { useColorScheme } from '@/src/hooks/useColorScheme';
 import React from 'react';
 import {
@@ -14,24 +15,28 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { auth } = useFirebase();
 
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
   const [locationServicesEnabled, setLocationServicesEnabled] = React.useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = React.useState(colorScheme === 'dark');
 
-  const handleLogout = () => {
-    // TODO: Implement logout functionality
-    console.log('Logout pressed');
+  const handleLogout = async () => {
+    try {
+      if (auth) {
+        await auth.signOut();
+      }
+    } catch (error) {
+      // Handle logout error
+    }
   };
 
   const handleClearCache = () => {
-    // TODO: Implement cache clearing
-    console.log('Clear cache pressed');
+    // Handle clear cache
   };
 
   const handleExportData = () => {
-    // TODO: Implement data export
-    console.log('Export data pressed');
+    // Handle export data
   };
 
   return (

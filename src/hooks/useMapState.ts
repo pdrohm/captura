@@ -47,136 +47,96 @@ export function useMapState(
   const [locationPermissionGranted, setLocationPermissionGranted] = useState(false);
 
   const centerOnUserLocation = useCallback(async () => {
-    try {
-      setErrorState(null);
-      console.log('🗺️ [MapState] Centering on user location...');
-      
-      const locationServicesEnabled = await locationService.checkLocationServicesEnabled();
-      if (!locationServicesEnabled) {
-        throw new Error('Location services are disabled on your device. Please enable GPS in device settings.');
-      }
-      
-      const location = await locationService.getCurrentLocation();
-      console.log('📍 [MapState] Current user location obtained:', location);
-      setUserLocation(location);
-      
-      setErrorState(null);
-      
-      const newViewport: MapViewport = {
-        latitude: location.latitude,
-        longitude: location.longitude,
-        latitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.latitudeDelta,
-        longitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.longitudeDelta,
-      };
-      
-      console.log('🗺️ [MapState] Setting new viewport to user location:', newViewport);
-      setViewportState(newViewport);
-      
-      await mapUseCases.saveViewport(newViewport);
-      console.log('💾 [MapState] Viewport saved successfully');
-      
-      console.log('=== AFTER CENTERING ON USER LOCATION ===');
-      console.log('Viewport state:', newViewport);
-      console.log('User location:', location);
-      console.log('=====================================');
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to get user location';
-      console.error('❌ [MapState] Error centering on user location:', err);
-      setErrorState(errorMessage);
-      
-      console.log('⚠️ [MapState] Not falling back to default coordinates - user needs to fix location');
+    if (!userLocation) {
+      return;
     }
-  }, [locationService, mapUseCases]);
+
+    const newViewport: MapViewport = {
+      latitude: userLocation.latitude,
+      longitude: userLocation.longitude,
+      latitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.latitudeDelta,
+      longitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.longitudeDelta,
+    };
+
+    setViewportState(newViewport);
+    await mapUseCases.saveViewport(newViewport);
+  }, [userLocation, mapUseCases]);
+
+  const centerOnUserLocationWithFallback = useCallback(async () => {
+    if (!userLocation) {
+      return;
+    }
+
+    const newViewport: MapViewport = {
+      latitude: userLocation.latitude,
+      longitude: userLocation.longitude,
+      latitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.latitudeDelta,
+      longitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.longitudeDelta,
+    };
+
+    setViewportState(newViewport);
+    await mapUseCases.saveViewport(newViewport);
+  }, [userLocation, mapUseCases]);
+
+  const requestLocationPermission = useCallback(async () => {
+    const hasPermission = await locationService.hasLocationPermission();
+    
+    if (hasPermission) {
+      setLocationPermissionGranted(true);
+      return;
+    }
+
+    const granted = await locationService.requestLocationPermission();
+    setLocationPermissionGranted(granted);
+    
+    if (granted) {
+      await centerOnUserLocation();
+    }
+  }, [locationService, centerOnUserLocation]);
 
   const checkLocationPermission = useCallback(async () => {
     try {
-      console.log('Checking location permission...');
       const hasPermission = await locationService.hasLocationPermission();
-      console.log('Current permission status:', hasPermission);
       setLocationPermissionGranted(hasPermission);
       
       if (hasPermission) {
-        console.log('Permission already granted, getting user location...');
         await centerOnUserLocation();
-      } else {
-        console.log('No permission, requesting it...');
-        const granted = await locationService.requestLocationPermission();
-        console.log('Permission request result:', granted);
-        setLocationPermissionGranted(granted);
-        
-        if (granted) {
-          console.log('Permission granted, getting user location...');
-          await centerOnUserLocation();
-        } else {
-          console.log('Permission denied by user');
-          setErrorState('Location permission denied. Please enable location access in settings.');
-        }
       }
     } catch (err) {
-      console.error('Failed to check/request location permission:', err);
+      console.error('Failed to check location permission:', err);
       setErrorState('Failed to access location. Please check your device settings.');
     }
   }, [locationService, centerOnUserLocation]);
 
   const loadInitialViewport = useCallback(async () => {
-    try {
-      console.log('🗺️ [MapState] Loading initial viewport...');
+    const hasPermission = await locationService.hasLocationPermission();
+    
+    if (hasPermission) {
+      const location = await locationService.getCurrentLocation();
       
-      if (locationPermissionGranted) {
-        try {
-          console.log('📍 [MapState] Getting user location for initial viewport...');
-          const location = await locationService.getCurrentLocation();
-          console.log('📍 [MapState] User location obtained:', location);
-          
-          const userViewport: MapViewport = {
-            latitude: location.latitude,
-            longitude: location.longitude,
-            latitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.latitudeDelta,
-            longitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.longitudeDelta,
-          };
-          
-          console.log('🗺️ [MapState] Setting viewport to user location:', userViewport);
-          setViewportState(userViewport);
-          await mapUseCases.saveViewport(userViewport);
-          console.log('💾 [MapState] User location viewport saved successfully');
-          
-          setErrorState(null);
-          return;
-        } catch (err) {
-          console.error('❌ [MapState] Failed to get user location for initial viewport:', err);
-          setErrorState('Failed to get your location. Please check location settings and try again.');
-          
-          console.log('⚠️ [MapState] Not falling back to default coordinates - user needs to fix location');
-          return;
-        }
-      }
+      if (location) {
+        const userViewport: MapViewport = {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.latitudeDelta,
+          longitudeDelta: MAP_CONSTANTS.ZOOM_LEVELS.CITY.longitudeDelta,
+        };
 
-      try {
-        console.log('💾 [MapState] No location permission, trying saved viewport...');
-        const savedViewport = await mapUseCases.getCurrentViewport();
-        
-        if (savedViewport.latitude !== MAP_CONSTANTS.DEFAULT_VIEWPORT.latitude || 
-            savedViewport.longitude !== MAP_CONSTANTS.DEFAULT_VIEWPORT.longitude) {
-          console.log('💾 [MapState] Using saved viewport:', savedViewport);
-          setViewportState(savedViewport);
-          setErrorState(null);
-        } else {
-          console.log('⚠️ [MapState] Saved viewport is default coordinates, not using it');
-          if (!locationPermissionGranted) {
-            setErrorState('Please grant location permission to center the map on your position.');
-          }
-        }
-      } catch (err) {
-        console.warn('⚠️ [MapState] No saved viewport available');
-        if (!locationPermissionGranted) {
-          setErrorState('Please grant location permission to center the map on your position.');
-        }
+        setViewportState(userViewport);
+        await mapUseCases.saveViewport(userViewport);
+        return;
       }
-    } catch (err) {
-      console.error('❌ [MapState] Failed to load initial viewport:', err);
-      setErrorState('Failed to load map viewport. Please check location settings.');
     }
-  }, [mapUseCases, locationService, locationPermissionGranted]);
+
+    const savedViewport = await mapUseCases.getCurrentViewport();
+    
+    if (savedViewport.latitude !== MAP_CONSTANTS.DEFAULT_VIEWPORT.latitude || 
+            savedViewport.longitude !== MAP_CONSTANTS.DEFAULT_VIEWPORT.longitude) {
+      setViewportState(savedViewport);
+    } else {
+      setViewportState(MAP_CONSTANTS.DEFAULT_VIEWPORT);
+    }
+  }, [mapUseCases, locationService]);
 
   const loadInitialData = useCallback(async () => {
     try {
@@ -194,14 +154,12 @@ export function useMapState(
   }, [mapUseCases, filters]);
 
   useEffect(() => {
-    console.log('🔄 [MapState] Initial effect triggered');
     loadInitialData();
     checkLocationPermission();
   }, []);
 
   useEffect(() => {
     if (locationPermissionGranted !== undefined) {
-      console.log('Loading initial viewport, permission granted:', locationPermissionGranted);
       const timer = setTimeout(() => {
         loadInitialViewport();
       }, 100);
@@ -212,14 +170,12 @@ export function useMapState(
 
   useEffect(() => {
     if (userLocation) {
-      console.log('📍 [MapState] User location set, clearing any location errors');
       setErrorState(null);
     }
   }, [userLocation]);
 
   useEffect(() => {
     if (locationPermissionGranted) {
-      console.log('👀 [MapState] Setting up location watching');
       const cleanup = locationService.watchLocation((location) => {
         setUserLocation(location);
         setErrorState(null);
@@ -228,23 +184,6 @@ export function useMapState(
       return cleanup;
     }
   }, [locationPermissionGranted, locationService]);
-
-  const requestLocationPermission = useCallback(async () => {
-    try {
-      setErrorState(null);
-      const granted = await locationService.requestLocationPermission();
-      setLocationPermissionGranted(granted);
-      
-      if (granted) {
-        await centerOnUserLocation();
-      } else {
-        setErrorState('Location permission denied');
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to request location permission';
-      setErrorState(errorMessage);
-    }
-  }, [locationService, centerOnUserLocation]);
 
   const setViewport = useCallback(async (newViewport: MapViewport) => {
     setViewportState(newViewport);
@@ -314,7 +253,6 @@ export function useMapState(
   }, [loadInitialData]);
 
   const clearError = useCallback(() => {
-    console.log('🟢 [MapState] Clearing error');
     setErrorState(null);
   }, []);
 
@@ -331,7 +269,6 @@ export function useMapState(
       };
       setViewportState(newViewport);
       await mapUseCases.saveViewport(newViewport);
-      console.log('Viewport force-refreshed from user location:', newViewport);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to force refresh viewport from user location';
       console.error('Error force-refreshing viewport:', err);
@@ -342,19 +279,14 @@ export function useMapState(
   const clearSavedViewport = useCallback(async () => {
     try {
       await mapUseCases.clearViewport();
-      console.log('Saved viewport cleared successfully');
     } catch (err) {
       console.warn('Failed to clear saved viewport:', err);
     }
   }, [mapUseCases]);
 
   const debugViewportState = useCallback(() => {
-    console.log('=== VIEWPORT DEBUG INFO ===');
-    console.log('Current viewport state:', viewport);
-    console.log('User location:', userLocation);
-    console.log('Location permission granted:', locationPermissionGranted);
-    console.log('==========================');
-  }, [viewport, userLocation, locationPermissionGranted]);
+    // Debug function removed - no console.log statements
+  }, []);
 
   return {
     locations,

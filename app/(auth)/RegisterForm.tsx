@@ -47,9 +47,8 @@ export default function RegisterForm({
       await signUp(auth, email.trim(), password);
       // After successful signup, update profile with display name
       // This will be handled by the auth listener
-    } catch (error: any) {
+    } catch (error) {
       // Error is already handled in the store
-      console.log('Registration error:', error);
     }
   };
 
