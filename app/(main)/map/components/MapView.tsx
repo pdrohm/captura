@@ -1,19 +1,15 @@
-import { ThemedText } from '@/src/components/ThemedText';
-import { ThemedView } from '@/src/components/ThemedView';
+import React, { useMemo } from 'react';
+import { StyleSheet, View, TouchableOpacity, Alert } from 'react-native';
+import MapView, { Marker, Polygon, Region } from 'react-native-maps';
+import { Ionicons } from '@expo/vector-icons';
+import { useMapView } from '../hooks/useMapView';
 import { MapUseCases } from '@/src/services/useCases/mapUseCases';
 import { MapLocation, Territory } from '@/src/types/domain';
-import React from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import MapView, { Marker, Polygon } from 'react-native-maps';
-import { useMapView } from '../hooks/useMapView';
+import { LocationService } from '@/src/types/repositories';
 
 interface MapViewProps {
   mapUseCases: MapUseCases;
+  locationService: LocationService;
   onLocationPress?: (location: MapLocation) => void;
   onTerritoryPress?: (territory: Territory) => void;
   testID?: string;
@@ -21,49 +17,58 @@ interface MapViewProps {
 
 export default function MapViewComponent({
   mapUseCases,
+  locationService,
   onLocationPress,
   onTerritoryPress,
   testID,
 }: MapViewProps) {
   const {
+    locations,
+    territories,
+    filters,
     loading,
     error,
+    userLocation,
+    locationPermissionGranted,
+    selectedLocation,
+    selectedTerritory,
     initialRegion,
-    filteredLocations,
-    filteredTerritories,
     handleLocationPress,
     handleTerritoryPress,
     handleMapPress,
     handleRegionChangeComplete,
+    handleDeleteLocation,
+    handleCenterOnUserLocation,
     refreshData,
     clearError,
   } = useMapView({
     mapUseCases,
+    locationService,
     onLocationPress,
     onTerritoryPress,
   });
 
-  if (loading) {
-    return (
-      <ThemedView style={styles.loadingContainer} testID={`${testID}-loading`}>
-        <ActivityIndicator size="large" />
-        <ThemedText style={styles.loadingText}>Loading map data...</ThemedText>
-      </ThemedView>
-    );
-  }
+  const filteredLocations = useMemo(() => {
+    return locations.filter(location => {
+      if (location.type === 'territory' && !filters.showTerritories) return false;
+      if (location.type === 'point_of_interest' && !filters.showPointsOfInterest) return false;
+      if (location.type === 'boundary' && !filters.showBoundaries) return false;
+      return true;
+    });
+  }, [locations, filters]);
+
+  const filteredTerritories = useMemo(() => {
+    return territories.filter(territory => {
+      if (!filters.showTerritories) return false;
+      return true;
+    });
+  }, [territories, filters]);
 
   if (error) {
-    return (
-      <ThemedView style={styles.errorContainer} testID={`${testID}-error`}>
-        <ThemedText style={styles.errorText}>{error}</ThemedText>
-        <TouchableOpacity style={styles.retryButton} onPress={refreshData}>
-          <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.clearErrorButton} onPress={clearError}>
-          <ThemedText style={styles.clearErrorButtonText}>Clear Error</ThemedText>
-        </TouchableOpacity>
-      </ThemedView>
-    );
+    Alert.alert('Error', error, [
+      { text: 'Dismiss', onPress: clearError },
+      { text: 'Retry', onPress: refreshData },
+    ]);
   }
 
   return (
@@ -75,8 +80,8 @@ export default function MapViewComponent({
           initialRegion={initialRegion}
           onPress={handleMapPress}
           onRegionChangeComplete={handleRegionChangeComplete}
-          showsUserLocation={true}
-          showsMyLocationButton={true}
+          showsUserLocation={locationPermissionGranted}
+          showsMyLocationButton={false} // We'll use our custom button
           showsCompass={true}
           showsScale={true}
           testID="map-view"
@@ -113,7 +118,30 @@ export default function MapViewComponent({
               onPress={() => handleTerritoryPress(territory)}
             />
           ))}
+
+          {/* User Location Marker (if available) */}
+          {userLocation && (
+            <Marker
+              coordinate={userLocation}
+              title="Your Location"
+              description="You are here"
+              pinColor="purple"
+            />
+          )}
         </MapView>
+
+        {/* Custom Location Button */}
+        <TouchableOpacity
+          style={styles.locationButton}
+          onPress={handleCenterOnUserLocation}
+          testID="location-button"
+        >
+          <Ionicons
+            name={locationPermissionGranted ? "location" : "location-outline"}
+            size={24}
+            color={locationPermissionGranted ? "#007AFF" : "#8E8E93"}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -172,5 +200,21 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  locationButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#fff',
+    borderRadius: 25,
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });

@@ -1,5 +1,5 @@
+import { MapFilters, MapLocation, MapViewport, Territory } from '@/src/types/domain';
 import { MapRepository } from '@/src/types/repositories';
-import { MapLocation, Territory, MapViewport, MapFilters } from '@/src/types/domain';
 
 export interface MapUseCases {
   loadMapData(filters: MapFilters): Promise<{
@@ -11,6 +11,7 @@ export interface MapUseCases {
   deleteLocation(id: string): Promise<void>;
   getCurrentViewport(): Promise<MapViewport>;
   saveViewport(viewport: MapViewport): Promise<void>;
+  clearViewport(): Promise<void>;
   filterLocationsByType(type: MapLocation['type']): Promise<MapLocation[]>;
   searchLocationsNearby(
     center: { latitude: number; longitude: number },
@@ -70,10 +71,11 @@ export class MapUseCasesImpl implements MapUseCases {
       return await this.mapRepository.getMapViewport();
     } catch (error) {
       console.error('Failed to get viewport:', error);
-      // Return default viewport if repository fails
+      // Return reasonable fallback viewport if repository fails
+      // This will be overridden by user location when available
       return {
-        latitude: 37.7749,
-        longitude: -122.4194,
+        latitude: -28.4698, // Tubarão, SC, Brazil region
+        longitude: -49.0069,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       };
@@ -86,6 +88,24 @@ export class MapUseCasesImpl implements MapUseCases {
     } catch (error) {
       console.error('Failed to save viewport:', error);
       // Don't throw error for viewport save failures
+    }
+  }
+
+  async clearViewport(): Promise<void> {
+    try {
+      // Since the repository doesn't have a clear method, we'll save a special "cleared" state
+      // This will be detected by the hook and treated as a cleared viewport
+      const clearedViewport: MapViewport = {
+        latitude: 0,
+        longitude: 0,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      };
+      await this.mapRepository.saveMapViewport(clearedViewport);
+      console.log('Viewport cleared by setting to origin coordinates');
+    } catch (error) {
+      console.error('Failed to clear viewport:', error);
+      // Don't throw error for viewport clear failures
     }
   }
 

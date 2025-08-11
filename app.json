@@ -4,7 +4,7 @@
     "slug": "captura",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./src/assets/images/icon.png",
     "scheme": "captura",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -12,33 +12,43 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.captura.app",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "config": {
-        "googleMapsApiKey": "process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY"
+      "appleTeamId": "CA5W78X6N9",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to show nearby territories and center the map on your position.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs access to your location to show nearby territories and center the map on your position.",
+        "NSLocationAlwaysUsageDescription": "This app needs access to your location to show nearby territories and center the map on your position."
       }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.captura.app",
       "googleServicesFile": "./google-services.json",
-      "config": {
-        "googleMaps": {
-          "apiKey": "process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY"
-        }
-      }
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./src/assets/images/favicon.png"
     },
     "plugins": [
       "expo-router",
       "@react-native-firebase/app",
-      "react-native-maps",
+      "expo-location",
+      [
+        "react-native-maps",
+        {
+          "iosGoogleMapsApiKey": "process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY",
+          "androidGoogleMapsApiKey": "process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY"
+        }
+      ],
       [
         "expo-build-properties",
         {
@@ -50,7 +60,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./src/assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

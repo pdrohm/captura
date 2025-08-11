@@ -1,18 +1,21 @@
 import { useMapState } from '@/src/hooks/useMapState';
 import { MapUseCases } from '@/src/services/useCases/mapUseCases';
 import { MapLocation, MapViewport, Territory } from '@/src/types/domain';
-import { useCallback, useMemo, useState } from 'react';
+import { LocationService } from '@/src/types/repositories';
+import { useCallback, useState } from 'react';
 import { Alert } from 'react-native';
 import { Region } from 'react-native-maps';
 
 interface UseMapViewProps {
   mapUseCases: MapUseCases;
+  locationService: LocationService;
   onLocationPress?: (location: MapLocation) => void;
   onTerritoryPress?: (territory: Territory) => void;
 }
 
 export const useMapView = ({
   mapUseCases,
+  locationService,
   onLocationPress,
   onTerritoryPress,
 }: UseMapViewProps) => {
@@ -23,12 +26,16 @@ export const useMapView = ({
     filters,
     loading,
     error,
+    userLocation,
+    locationPermissionGranted,
     setViewport,
     addLocation,
     deleteLocation,
     refreshData,
     clearError,
-  } = useMapState(mapUseCases);
+    centerOnUserLocation,
+    requestLocationPermission,
+  } = useMapState(mapUseCases, locationService);
 
   const [selectedLocation, setSelectedLocation] = useState<MapLocation | null>(null);
   const [selectedTerritory, setSelectedTerritory] = useState<Territory | null>(null);
@@ -40,6 +47,7 @@ export const useMapView = ({
     longitudeDelta: viewport.longitudeDelta,
   };
 
+  
   const handleLocationPress = useCallback((location: MapLocation) => {
     setSelectedLocation(location);
     setSelectedTerritory(null);
@@ -116,36 +124,37 @@ export const useMapView = ({
     );
   }, [deleteLocation]);
 
-  const filteredLocations = useMemo(() => {
-    return locations.filter(location => {
-      if (location.type === 'territory' && !filters.showTerritories) return false;
-      if (location.type === 'point_of_interest' && !filters.showPointsOfInterest) return false;
-      if (location.type === 'boundary' && !filters.showBoundaries) return false;
-      return true;
-    });
-  }, [locations, filters]);
-
-  const filteredTerritories = useMemo(() => {
-    return territories.filter(territory => {
-      if (!filters.showTerritories) return false;
-      if (filters.territoryStatus && !filters.territoryStatus.includes(territory.status)) {
-        return false;
-      }
-      return true;
-    });
-  }, [territories, filters]);
+  const handleCenterOnUserLocation = useCallback(async () => {
+    if (!locationPermissionGranted) {
+      Alert.alert(
+        'Location Permission Required',
+        'This app needs location permission to center on your location. Would you like to grant permission?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Grant Permission',
+            onPress: requestLocationPermission,
+          },
+        ]
+      );
+    } else {
+      await centerOnUserLocation();
+    }
+  }, [locationPermissionGranted, centerOnUserLocation, requestLocationPermission]);
 
   return {
     // State
+    locations,
+    territories,
+    viewport,
+    filters,
     loading,
     error,
+    userLocation,
+    locationPermissionGranted,
     selectedLocation,
     selectedTerritory,
     initialRegion,
-    
-    // Data
-    filteredLocations,
-    filteredTerritories,
     
     // Actions
     handleLocationPress,
@@ -153,6 +162,7 @@ export const useMapView = ({
     handleMapPress,
     handleRegionChangeComplete,
     handleDeleteLocation,
+    handleCenterOnUserLocation,
     refreshData,
     clearError,
   };

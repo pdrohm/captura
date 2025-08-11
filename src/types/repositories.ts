@@ -103,3 +103,10 @@ export interface MapRepository {
   getMapViewport(): Promise<MapViewport>;
   saveMapViewport(viewport: MapViewport): Promise<void>;
 }
+
+export interface LocationService {
+  getCurrentLocation(): Promise<{ latitude: number; longitude: number }>;
+  requestLocationPermission(): Promise<boolean>;
+  hasLocationPermission(): Promise<boolean>;
+  watchLocation(callback: (location: { latitude: number; longitude: number }) => void): () => void;
+}

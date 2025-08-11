@@ -1,5 +1,5 @@
+import { MapFilters, MapLocation, MapViewport, Territory } from '@/src/types/domain';
 import { MapRepository } from '@/src/types/repositories';
-import { MapLocation, Territory, MapViewport, MapFilters } from '@/src/types/domain';
 
 export class MockMapRepository implements MapRepository {
   private mockLocations: MapLocation[] = [
@@ -99,8 +99,8 @@ export class MockMapRepository implements MapRepository {
   ];
 
   private currentViewport: MapViewport = {
-    latitude: 37.7749,
-    longitude: -122.4194,
+    latitude: -28.4698, // Tubarão, SC, Brazil region
+    longitude: -49.0069,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };

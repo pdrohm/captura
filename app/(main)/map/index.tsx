@@ -4,6 +4,7 @@ import { ThemedView } from '@/src/components/ThemedView';
 import { useFirebase } from '@/src/contexts/FirebaseContext';
 import { MockMapRepository } from '@/src/services/mockMapRepository';
 import { MapUseCasesImpl } from '@/src/services/useCases/mapUseCases';
+import { ExpoLocationService } from '@/src/services/locationService';
 import { useAuthStore } from '@/src/stores/authStore';
 import { MapLocation, Territory } from '@/src/types/domain';
 import React from 'react';
@@ -16,6 +17,7 @@ export default function MapScreen() {
   // Initialize map services (in a real app, this would come from dependency injection)
   const mapRepository = new MockMapRepository();
   const mapUseCases = new MapUseCasesImpl(mapRepository);
+  const locationService = new ExpoLocationService();
 
   const handleLocationPress = (location: MapLocation) => {
     console.log('Location pressed:', location);
@@ -42,6 +44,7 @@ export default function MapScreen() {
       {/* Map View */}
       <MapViewComponent
         mapUseCases={mapUseCases}
+        locationService={locationService}
         onLocationPress={handleLocationPress}
         onTerritoryPress={handleTerritoryPress}
         testID="map-view"
