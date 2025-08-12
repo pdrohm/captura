@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface ConquestStatusProps {
   status: string;
-  trackedPoints: Array<{ id: string; latitude: number; longitude: number; accuracy?: number }>;
+  trackedPoints: { id: string; latitude: number; longitude: number; accuracy?: number }[];
   totalDistance: number;
   totalArea: number;
   onPause: () => void;
@@ -59,7 +59,7 @@ export const ConquestStatus: React.FC<ConquestStatusProps> = ({
             </TouchableOpacity>
           )}
           <TouchableOpacity 
-            style={[styles.conquestActionButton, styles.conquestActionButtonDanger]} 
+            style={[styles.conquestActionButton, styles.conquestActionButtonComplete]} 
             onPress={onStop}
           >
             <Text style={styles.conquestActionButtonText}>Complete</Text>
@@ -123,6 +123,9 @@ const styles = StyleSheet.create({
   },
   conquestActionButtonDanger: {
     backgroundColor: '#FF3B30',
+  },
+  conquestActionButtonComplete: {
+    backgroundColor: '#34C759',
   },
 });
 
