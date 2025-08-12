@@ -2,13 +2,13 @@ import MapViewComponent from '@/app/(main)/map/components/MapView';
 import { ThemedText } from '@/src/components/ThemedText';
 import { ThemedView } from '@/src/components/ThemedView';
 import { useFirebase } from '@/src/contexts/FirebaseContext';
+import { FirestoreMapRepository } from '@/src/services/firestoreMapRepository';
 import { LocationService } from '@/src/services/locationService';
-import { MockMapRepository } from '@/src/services/mockMapRepository';
 import { MapUseCasesImpl } from '@/src/services/useCases/mapUseCases';
 import { useAuthStore } from '@/src/stores/authStore';
 import { MapLocation, Territory } from '@/src/types/domain';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 
 export default function MapScreen() {
   const { user, signOut } = useAuthStore();
@@ -16,8 +16,8 @@ export default function MapScreen() {
 
   console.log('user', user);
 
-  // Initialize map services (in a real app, this would come from dependency injection)
-  const mapRepository = new MockMapRepository();
+  // Initialize map services with real data only
+  const mapRepository = new FirestoreMapRepository();
   const mapUseCases = new MapUseCasesImpl(mapRepository);
   const locationService = new LocationService();
 
@@ -26,7 +26,15 @@ export default function MapScreen() {
   };
 
   const handleTerritoryPress = (territory: Territory) => {
-    // Handle territory press
+    console.log('Territory pressed:', territory);
+    Alert.alert(
+      territory.name,
+      `${territory.description}\n\nArea: ${(territory.area / 10000).toFixed(2)} hectares\nBoundary Points: ${territory.boundaries.length}\nCreated: ${territory.createdAt.toLocaleDateString()}`,
+      [
+        { text: 'OK', style: 'default' },
+        { text: 'View Details', style: 'default' }
+      ]
+    );
   };
 
   return (

@@ -1,106 +1,115 @@
-import { Platform, StyleSheet } from 'react-native';
-
-import { Collapsible } from '@/src/components/Collapsible';
-import { ExternalLink } from '@/src/components/ExternalLink';
-import { IconSymbol } from '@/src/components/IconSymbol';
-import ParallaxScrollView from '@/src/components/ParallaxScrollView';
-import { ThemedText } from '@/src/components/ThemedText';
+import { LoadingSpinner } from '@/app/(main)/map/components/LoadingSpinner';
 import { ThemedView } from '@/src/components/ThemedView';
+import { FirestoreMapRepository } from '@/src/services/firestoreMapRepository';
+import { useAuthStore } from '@/src/stores/authStore';
+import { Territory } from '@/src/types/domain';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
+import { TerritoryList } from './components/TerritoryList';
 
 export default function TerritoriesScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Territories</ThemedText>
+  const { user } = useAuthStore();
+  const [territories, setTerritories] = useState<Territory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const mapRepository = new FirestoreMapRepository();
+
+  const loadTerritories = useCallback(async () => {
+    try {
+      setLoading(true);
+      const loadedTerritories = await mapRepository.getTerritories({
+        showTerritories: true,
+        showPointsOfInterest: true,
+        showBoundaries: true,
+      });
+      setTerritories(loadedTerritories);
+    } catch (error) {
+      console.error('Failed to load territories:', error);
+      Alert.alert('Error', 'Failed to load territories. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadTerritories();
+    setRefreshing(false);
+  }, [loadTerritories]);
+
+  const handleTerritoryPress = useCallback((territory: Territory) => {
+    console.log('Territory pressed:', territory);
+    Alert.alert(
+      territory.name,
+      `${territory.description}\n\nArea: ${(territory.area / 10000).toFixed(2)} hectares\nBoundary Points: ${territory.boundaries.length}\nCreated: ${territory.createdAt.toLocaleDateString()}`,
+      [
+        { text: 'OK', style: 'default' },
+        { text: 'View on Map', style: 'default' }
+      ]
+    );
+  }, []);
+
+  const handleTerritoryEdit = useCallback((territory: Territory) => {
+    console.log('Edit territory:', territory);
+    Alert.alert(
+      'Edit Territory',
+      'Territory editing feature coming soon!',
+      [{ text: 'OK', style: 'default' }]
+    );
+  }, []);
+
+  const handleTerritoryDelete = useCallback(async (territory: Territory) => {
+    try {
+      // TODO: Implement territory deletion in FirestoreMapRepository
+      console.log('Delete territory:', territory);
+      Alert.alert(
+        'Delete Territory',
+        'Territory deletion feature coming soon!',
+        [{ text: 'OK', style: 'default' }]
+      );
+      
+      // For now, just remove from local state
+      setTerritories(prev => prev.filter(t => t.id !== territory.id));
+    } catch (error) {
+      console.error('Failed to delete territory:', error);
+      Alert.alert('Error', 'Failed to delete territory. Please try again.');
+    }
+  }, []);
+
+  useEffect(() => {
+    loadTerritories();
+  }, [loadTerritories]);
+
+  if (loading && !refreshing) {
+    return (
+      <ThemedView style={styles.container}>
+        <LoadingSpinner message="Loading territories..." testID="territories-loading" />
       </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two main screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(main)/map/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(main)/territories/index.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(main)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      {/* Territory List with integrated header */}
+      <TerritoryList
+        territories={territories}
+        loading={refreshing}
+        onRefresh={handleRefresh}
+        onTerritoryPress={handleTerritoryPress}
+        onTerritoryEdit={handleTerritoryEdit}
+        onTerritoryDelete={handleTerritoryDelete}
+        testID="territories-list"
+        headerTitle="My Territories"
+        headerSubtitle={`${territories.length} territories conquered`}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
   },
 });
