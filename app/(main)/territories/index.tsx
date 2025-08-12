@@ -6,12 +6,15 @@ import { Territory } from '@/src/types/domain';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { TerritoryList } from './components/TerritoryList';
+import { TerritoryModalScreen } from './components/TerritoryModalScreen';
 
 export default function TerritoriesScreen() {
   const { user } = useAuthStore();
   const [territories, setTerritories] = useState<Territory[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedTerritory, setSelectedTerritory] = useState<Territory | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const mapRepository = new FirestoreMapRepository();
 
@@ -40,23 +43,16 @@ export default function TerritoriesScreen() {
 
   const handleTerritoryPress = useCallback((territory: Territory) => {
     console.log('Territory pressed:', territory);
-    Alert.alert(
-      territory.name,
-      `${territory.description}\n\nArea: ${(territory.area / 10000).toFixed(2)} hectares\nBoundary Points: ${territory.boundaries.length}\nCreated: ${territory.createdAt.toLocaleDateString()}`,
-      [
-        { text: 'OK', style: 'default' },
-        { text: 'View on Map', style: 'default' }
-      ]
-    );
+    console.log('Setting selected territory and showing modal...');
+    setSelectedTerritory(territory);
+    setShowDetailsModal(true);
+    console.log('Modal state should now be visible');
   }, []);
 
   const handleTerritoryEdit = useCallback((territory: Territory) => {
     console.log('Edit territory:', territory);
-    Alert.alert(
-      'Edit Territory',
-      'Territory editing feature coming soon!',
-      [{ text: 'OK', style: 'default' }]
-    );
+    setSelectedTerritory(territory);
+    setShowDetailsModal(true);
   }, []);
 
   const handleTerritoryDelete = useCallback(async (territory: Territory) => {
@@ -77,6 +73,19 @@ export default function TerritoriesScreen() {
     }
   }, []);
 
+  const handleCloseDetails = useCallback(() => {
+    setShowDetailsModal(false);
+    setSelectedTerritory(null);
+  }, []);
+
+  const handleEditTerritory = useCallback(() => {
+    Alert.alert(
+      'Edit Territory',
+      'Territory editing feature coming soon!',
+      [{ text: 'OK', style: 'default' }]
+    );
+  }, []);
+
   useEffect(() => {
     loadTerritories();
   }, [loadTerritories]);
@@ -88,6 +97,8 @@ export default function TerritoriesScreen() {
       </ThemedView>
     );
   }
+
+  console.log('Render state:', { showDetailsModal, selectedTerritory: !!selectedTerritory });
 
   return (
     <View style={styles.container}>
@@ -102,6 +113,14 @@ export default function TerritoriesScreen() {
         testID="territories-list"
         headerTitle="My Territories"
         headerSubtitle={`${territories.length} territories conquered`}
+      />
+
+      {/* Territory Details Modal */}
+      <TerritoryModalScreen
+        visible={showDetailsModal}
+        territory={selectedTerritory}
+        onClose={handleCloseDetails}
+        onEdit={handleEditTerritory}
       />
     </View>
   );

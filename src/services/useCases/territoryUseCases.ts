@@ -17,13 +17,24 @@ export class TerritoryUseCases implements ITerritoryUseCases {
         throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
       }
 
-      // Create territory with timestamps
-      const territoryData = {
+      // If territory is assigned to a user, fetch owner information
+      let territoryData = {
         ...data,
         createdAt: new Date(),
         updatedAt: new Date(),
         lastActivityAt: new Date()
       };
+
+      // If territory has an assignedTo field, try to fetch owner information
+      if (data.assignedTo) {
+        try {
+          // This would need access to a user repository or service
+          // For now, we'll create the territory without owner info and fetch it later
+          console.log('Territory assigned to user:', data.assignedTo);
+        } catch (error) {
+          console.warn('Failed to fetch owner information during creation:', error);
+        }
+      }
 
       const territory = await this.territoryRepository.create(territoryData);
       return territory;
@@ -125,6 +136,22 @@ export class TerritoryUseCases implements ITerritoryUseCases {
 
       // Get territory by ID
       const territory = await this.territoryRepository.findById(id);
+      return territory;
+    } catch (error) {
+      this.errorHandler.handle(error);
+      throw error;
+    }
+  }
+
+  async getTerritoryWithOwner(id: string): Promise<Territory | null> {
+    try {
+      // Validate territory ID
+      if (!id || id.trim() === '') {
+        throw new Error('Territory ID is required');
+      }
+
+      // Get territory with owner information
+      const territory = await this.territoryRepository.getTerritoryWithOwner(id);
       return territory;
     } catch (error) {
       this.errorHandler.handle(error);

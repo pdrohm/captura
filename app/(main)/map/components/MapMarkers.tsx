@@ -77,18 +77,7 @@ export const MapMarkers: React.FC<MapMarkersProps> = ({
               strokeWidth={3}
               onPress={() => onTerritoryPress(territory)}
             />
-            {/* Territory Center Marker */}
-            <Marker
-              coordinate={{
-                latitude: territory.center.latitude,
-                longitude: territory.center.longitude,
-              }}
-              title={territory.name}
-              description={`${territory.description}\nArea: ${(territory.area / 10000).toFixed(2)} hectares`}
-              onPress={() => onTerritoryPress(territory)}
-              pinColor="#007AFF"
-              opacity={0.8}
-            />
+            {/* Territory Center Marker - Removed to avoid popup balloons */}
           </React.Fragment>
         );
       })}

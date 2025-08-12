@@ -102,6 +102,39 @@ export const TerritoryCard: React.FC<TerritoryCardProps> = ({
         </View>
       </View>
 
+      {/* Owner Information */}
+      {territory.owner && (
+        <View style={styles.ownerContainer}>
+          <View style={styles.ownerInfo}>
+            <View style={styles.ownerAvatar}>
+              <Text style={styles.avatarText}>
+                {territory.owner.displayName?.charAt(0) || territory.owner.email.charAt(0)}
+              </Text>
+            </View>
+            <View style={styles.ownerDetails}>
+              <Text style={styles.ownerName}>
+                {territory.owner.displayName || 'Anonymous User'}
+              </Text>
+              <Text style={styles.ownerLabel}>Owner</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {!territory.owner && territory.assignedTo && (
+        <View style={styles.ownerContainer}>
+          <View style={styles.ownerInfo}>
+            <View style={styles.ownerAvatar}>
+              <Ionicons name="person" size={16} color="#666" />
+            </View>
+            <View style={styles.ownerDetails}>
+              <Text style={styles.ownerName}>Loading owner...</Text>
+              <Text style={styles.ownerLabel}>Owner</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
       {/* Territory Preview (Mini Map Placeholder) */}
       <View style={styles.previewContainer}>
         <View style={styles.preview}>
@@ -218,5 +251,42 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: '#333',
+  },
+  ownerContainer: {
+    marginBottom: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+  },
+  ownerInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ownerAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#007AFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  avatarText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  ownerDetails: {
+    flex: 1,
+  },
+  ownerName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 2,
+  },
+  ownerLabel: {
+    fontSize: 12,
+    color: '#666',
   },
 });

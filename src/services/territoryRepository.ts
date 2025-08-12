@@ -4,6 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 export interface ITerritoryRepository {
   createTerritory(territory: Omit<Territory, 'id' | 'createdAt' | 'updatedAt'>): Promise<Territory>;
   getUserTerritories(userId: string): Promise<Territory[]>;
+  getTerritoryWithOwner(territoryId: string): Promise<Territory | null>;
   subscribeToTerritories(callback: (territories: Territory[]) => void): () => void;
   subscribeToUserTerritories(userId: string, callback: (territories: Territory[]) => void): () => void;
 }
@@ -40,6 +41,36 @@ export class FirestoreTerritoryRepository implements ITerritoryRepository {
       .get();
 
     return snapshot.docs.map(doc => doc.data() as Territory);
+  }
+
+  async getTerritoryWithOwner(territoryId: string): Promise<Territory | null> {
+    const docRef = this.firestore().collection('territories').doc(territoryId);
+    const docSnap = await docRef.get();
+
+    if (docSnap.exists()) {
+      const territory = docSnap.data() as Territory;
+      
+      // If territory has an assignedTo field, fetch the owner information
+      if (territory.assignedTo) {
+        try {
+          const userDoc = await this.firestore().collection('users').doc(territory.assignedTo).get();
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            territory.owner = {
+              uid: territory.assignedTo,
+              displayName: userData?.displayName || null,
+              photoURL: userData?.photoURL || null,
+              email: userData?.email || '',
+            };
+          }
+        } catch (error) {
+          console.warn('Failed to fetch owner information:', error);
+        }
+      }
+      
+      return { ...territory, id: docSnap.id };
+    }
+    return null;
   }
 
   subscribeToTerritories(callback: (territories: Territory[]) => void): () => void {

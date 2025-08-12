@@ -1,15 +1,14 @@
 // Use case interfaces for the business logic layer
 
 import {
-  User,
+  GeoCoordinates,
+  PaginationOptions,
+  SearchFilters,
+  SearchResult,
   Territory,
   TerritoryActivity,
-  SearchFilters,
-  PaginationOptions,
-  SearchResult,
-  UserPreferences,
-  GeoCoordinates,
-  GeoBoundary
+  User,
+  UserPreferences
 } from './domain';
 
 // User use cases interface
@@ -34,6 +33,7 @@ export interface ITerritoryUseCases {
   claimTerritory(territoryId: string, userId: string): Promise<Territory>;
   releaseTerritory(territoryId: string, userId: string): Promise<boolean>;
   getTerritoryById(id: string): Promise<Territory | null>;
+  getTerritoryWithOwner(id: string): Promise<Territory | null>;
   getTerritoriesByOwner(ownerId: string): Promise<Territory[]>;
   getTerritoriesByLocation(coordinates: GeoCoordinates, radius: number): Promise<Territory[]>;
   searchTerritories(filters: SearchFilters, pagination: PaginationOptions): Promise<SearchResult<Territory>>;

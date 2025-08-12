@@ -59,6 +59,12 @@ export interface Territory {
   area: number; // in square meters
   status: 'active' | 'inactive' | 'pending';
   assignedTo?: string; // user ID
+  owner?: {
+    uid: string;
+    displayName?: string;
+    photoURL?: string;
+    email: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
