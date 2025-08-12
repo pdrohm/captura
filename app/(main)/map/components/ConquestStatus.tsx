@@ -25,19 +25,19 @@ export const ConquestStatus: React.FC<ConquestStatusProps> = ({
   onCancel,
   testID,
 }) => {
-  if (status !== 'tracking' && status !== 'paused') return null;
+  if (status !== 'tracking' && status !== 'paused' && status !== 'completed') return null;
 
   return (
     <View style={styles.conquestStatusContainer} testID={testID}>
       <View style={styles.conquestStatusContent}>
         <View style={styles.conquestStatusRow}>
           <Ionicons 
-            name={status === 'tracking' ? 'location' : 'pause-circle'} 
+            name={status === 'tracking' ? 'location' : status === 'paused' ? 'pause-circle' : 'checkmark-circle'} 
             size={20} 
-            color={status === 'tracking' ? '#34C759' : '#FF9500'} 
+            color={status === 'tracking' ? '#34C759' : status === 'paused' ? '#FF9500' : '#34C759'} 
           />
           <Text style={styles.conquestStatusText}>
-            {status === 'tracking' ? 'Conquest Active' : 'Conquest Paused'}
+            {status === 'tracking' ? 'Conquest Active' : status === 'paused' ? 'Conquest Paused' : 'Conquest Complete!'}
           </Text>
         </View>
         <View style={styles.conquestStatsRow}>
@@ -47,30 +47,42 @@ export const ConquestStatus: React.FC<ConquestStatusProps> = ({
             Area: {(totalArea / 10000).toFixed(2)} ha
           </Text>
         </View>
-        <View style={styles.conquestActionsRow}>
-          {status === 'tracking' && (
-            <TouchableOpacity style={styles.conquestActionButton} onPress={onPause}>
-              <Text style={styles.conquestActionButtonText}>Pause</Text>
+        {status !== 'completed' && (
+          <View style={styles.conquestActionsRow}>
+            {status === 'tracking' && (
+              <TouchableOpacity style={styles.conquestActionButton} onPress={onPause}>
+                <Text style={styles.conquestActionButtonText}>Pause</Text>
+              </TouchableOpacity>
+            )}
+            {status === 'paused' && (
+              <TouchableOpacity style={styles.conquestActionButton} onPress={onResume}>
+                <Text style={styles.conquestActionButtonText}>Resume</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity 
+              style={[styles.conquestActionButton, styles.conquestActionButtonComplete]} 
+              onPress={onStop}
+            >
+              <Text style={styles.conquestActionButtonText}>Complete</Text>
             </TouchableOpacity>
-          )}
-          {status === 'paused' && (
-            <TouchableOpacity style={styles.conquestActionButton} onPress={onResume}>
-              <Text style={styles.conquestActionButtonText}>Resume</Text>
+            <TouchableOpacity 
+              style={[styles.conquestActionButton, styles.conquestActionButtonDanger]} 
+              onPress={onCancel}
+            >
+              <Text style={styles.conquestActionButtonText}>Cancel</Text>
             </TouchableOpacity>
-          )}
-          <TouchableOpacity 
-            style={[styles.conquestActionButton, styles.conquestActionButtonComplete]} 
-            onPress={onStop}
-          >
-            <Text style={styles.conquestActionButtonText}>Complete</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.conquestActionButton, styles.conquestActionButtonDanger]} 
-            onPress={onCancel}
-          >
-            <Text style={styles.conquestActionButtonText}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
+          </View>
+        )}
+        {status === 'completed' && (
+          <View style={styles.conquestActionsRow}>
+            <TouchableOpacity 
+              style={[styles.conquestActionButton, styles.conquestActionButtonComplete]} 
+              onPress={onCancel}
+            >
+              <Text style={styles.conquestActionButtonText}>Start New Conquest</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </View>
   );

@@ -53,6 +53,7 @@ export default function MapViewComponent({
     resumeConquest,
     stopConquest,
     cancelConquest,
+    addManualPoint, // Add this for debugging
   } = useMapView({
     mapUseCases,
     locationService,
@@ -61,7 +62,7 @@ export default function MapViewComponent({
   });
 
   const handleConquestButtonPress = () => {
-    if (conquestStatus === 'idle') {
+    if (conquestStatus === 'idle' || conquestStatus === 'completed') {
       startConquest();
     } else if (conquestStatus === 'tracking') {
       pauseConquest();
@@ -113,6 +114,16 @@ export default function MapViewComponent({
           showsCompass={true}
           showsScale={true}
           testID="map-view"
+          onPress={(event) => {
+            // Debug: Add point by tapping on map
+            if (conquestStatus === 'tracking') {
+              const { coordinate } = event.nativeEvent;
+              console.log('Map tapped at:', coordinate);
+              
+              // Add point manually for debugging
+              addManualPoint(coordinate.latitude, coordinate.longitude);
+            }
+          }}
         >
           <MapMarkers
             filteredLocations={filteredLocations}

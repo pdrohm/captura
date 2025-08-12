@@ -1,4 +1,5 @@
 import { MapUseCases } from '@/src/services/useCases/mapUseCases';
+import { useAuthStore } from '@/src/stores/authStore';
 import { useMapStore } from '@/src/stores/mapStore';
 import { ConquestPoint, MapLocation, MapViewport } from '@/src/types/domain';
 import { LocationService } from '@/src/types/repositories';
@@ -11,6 +12,8 @@ interface UseMapStoreSyncProps {
 }
 
 export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyncProps) => {
+  const { user } = useAuthStore();
+  
   const {
     viewport,
     currentRegion,
@@ -205,15 +208,139 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     setConquestStatus('tracking');
   }, [setConquestStatus]);
 
-  const stopConquest = useCallback(() => {
+  const stopConquest = useCallback(async () => {
+    if (trackedPoints.length < 3) {
+      Alert.alert(
+        'Insufficient Points', 
+        'You need at least 3 points to create a territory. Your conquest has been cancelled.',
+        [
+          { text: 'OK', onPress: () => cancelConquest() }
+        ]
+      );
+      return;
+    }
+
     setConquestStatus('completed');
-    // Here you would typically save the conquest data
-  }, [setConquestStatus]);
+    
+    try {
+      // Calculate center point
+      const centerLat = trackedPoints.reduce((sum, point) => sum + (point.latitude || 0), 0) / trackedPoints.length;
+      const centerLng = trackedPoints.reduce((sum, point) => sum + (point.longitude || 0), 0) / trackedPoints.length;
+
+      // Calculate total distance
+      let totalDistance = 0;
+      for (let i = 1; i < trackedPoints.length; i++) {
+        const prevPoint = trackedPoints[i - 1];
+        const currentPoint = trackedPoints[i];
+        
+        if (prevPoint.latitude && prevPoint.longitude && currentPoint.latitude && currentPoint.longitude) {
+          totalDistance += locationService.calculateDistance(
+            prevPoint.latitude,
+            prevPoint.longitude,
+            currentPoint.latitude,
+            currentPoint.longitude
+          );
+        }
+      }
+
+      // Calculate area
+      const coordinates = trackedPoints
+        .filter(point => point.latitude && point.longitude)
+        .map(point => ({
+          latitude: point.latitude,
+          longitude: point.longitude,
+        }));
+      const totalArea = coordinates.length >= 3 ? locationService.calculatePolygonArea(coordinates) : 0;
+
+      // Filter valid points
+      const validPoints = trackedPoints.filter(point => point.latitude && point.longitude);
+      
+      if (validPoints.length < 3) {
+        Alert.alert(
+          'Insufficient Valid Points', 
+          'You need at least 3 valid points to create a territory. Your conquest has been cancelled.',
+          [
+            { text: 'OK', onPress: () => cancelConquest() }
+          ]
+        );
+        return;
+      }
+
+      // Create territory data
+      const territoryData = {
+        name: `Territory ${new Date().toLocaleDateString()}`,
+        description: `Conquered territory with ${validPoints.length} points`,
+        boundaries: validPoints.map((point, index) => ({
+          id: `boundary_${index}`,
+          latitude: point.latitude,
+          longitude: point.longitude,
+          title: `Boundary Point ${index + 1}`,
+          description: `Boundary point ${index + 1} of conquered territory`,
+          type: 'boundary' as const,
+          metadata: {
+            pointIndex: index,
+            timestamp: point.timestamp || new Date(),
+            accuracy: point.accuracy || 0,
+          },
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })),
+        center: {
+          latitude: centerLat,
+          longitude: centerLng,
+        },
+        area: totalArea || 0,
+        status: 'active' as const,
+        assignedTo: user?.uid || 'default-user',
+      };
+
+      // Import territory repository
+      const { territoryRepository } = await import('@/src/services/territoryRepository');
+      
+      // Save to Firestore
+      await territoryRepository.createTerritory(territoryData);
+
+      Alert.alert(
+        'Territory Saved!', 
+        `Your conquered territory has been saved!\n\nPoints: ${validPoints.length}\nDistance: ${(totalDistance / 1000).toFixed(2)} km\nArea: ${(totalArea / 10000).toFixed(2)} hectares`,
+        [
+          { text: 'OK', onPress: () => {
+            setConquestStatus('idle');
+            clearTrackedPoints();
+          }}
+        ]
+      );
+    } catch (error) {
+      console.error('Failed to save territory:', error);
+      Alert.alert('Error', 'Failed to save territory. Please try again.');
+      setConquestStatus('idle');
+      clearTrackedPoints();
+    }
+  }, [setConquestStatus, trackedPoints, locationService, clearTrackedPoints]);
 
   const cancelConquest = useCallback(() => {
     setConquestStatus('idle');
     clearTrackedPoints();
   }, [setConquestStatus, clearTrackedPoints]);
+
+  // Debug function to manually add points by tapping
+  const addManualPoint = useCallback((latitude: number, longitude: number) => {
+    if (conquestStatus !== 'tracking') {
+      console.log('Cannot add manual point: conquest not in tracking mode');
+      return;
+    }
+
+    addTrackedPoint({
+      id: `point_${Date.now()}`,
+      sessionId: `session_${Date.now()}`,
+      latitude,
+      longitude,
+      timestamp: new Date(),
+      accuracy: 5,
+      speed: 0,
+      heading: 0,
+    });
+  }, [conquestStatus, addTrackedPoint]);
 
   // Location actions
   const handleAddLocation = useCallback(async (location: Omit<MapLocation, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -331,5 +458,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     resumeConquest,
     stopConquest,
     cancelConquest,
+    addManualPoint, // Add this for debugging
   };
 };

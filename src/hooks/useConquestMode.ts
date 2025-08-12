@@ -303,6 +303,25 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
     }
   }, [trackedPoints, totalDistance, totalArea, userId]);
 
+  // Debug function to manually add points by tapping
+  const addManualPoint = useCallback((latitude: number, longitude: number) => {
+    if (status !== 'tracking') {
+      console.log('Cannot add manual point: conquest not in tracking mode');
+      return;
+    }
+
+    const mockLocation = {
+      latitude,
+      longitude,
+      accuracy: 5,
+      speed: 0,
+      heading: 0,
+      timestamp: new Date(),
+    };
+
+    handleLocationUpdate(mockLocation);
+  }, [status, handleLocationUpdate]);
+
   return {
     status,
     currentSession,
@@ -317,5 +336,6 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
     cancelConquest,
     resetConquest,
     saveTerritory,
+    addManualPoint, // Add this for debugging
   };
 };

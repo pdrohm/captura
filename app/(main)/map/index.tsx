@@ -14,6 +14,8 @@ export default function MapScreen() {
   const { user, signOut } = useAuthStore();
   const { auth } = useFirebase();
 
+  console.log('user', user);
+
   // Initialize map services (in a real app, this would come from dependency injection)
   const mapRepository = new MockMapRepository();
   const mapUseCases = new MapUseCasesImpl(mapRepository);

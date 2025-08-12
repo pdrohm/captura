@@ -51,6 +51,7 @@ export const useMapView = ({
     resumeConquest,
     stopConquest,
     cancelConquest,
+    addManualPoint, // Add this for debugging
   } = useMapStoreSync({ mapUseCases, locationService });
 
   // Compute initial region for map
@@ -97,6 +98,7 @@ export const useMapView = ({
   const getConquestButtonIcon = useCallback((conquestStatus: string) => {
     switch (conquestStatus) {
       case 'idle':
+      case 'completed':
         return 'play-circle';
       case 'tracking':
         return 'pause-circle';
@@ -110,6 +112,7 @@ export const useMapView = ({
   const getConquestButtonColor = useCallback((conquestStatus: string) => {
     switch (conquestStatus) {
       case 'idle':
+      case 'completed':
         return '#007AFF';
       case 'tracking':
         return '#FF9500';
@@ -177,6 +180,7 @@ export const useMapView = ({
     resumeConquest,
     stopConquest,
     cancelConquest,
+    addManualPoint, // Add this for debugging
     
     // Conquest mode helpers
     getConquestButtonIcon,
