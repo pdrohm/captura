@@ -46,6 +46,7 @@ export default function MapScreen() {
         onLocationPress={handleLocationPress}
         onTerritoryPress={handleTerritoryPress}
         testID="map-view"
+        userId={user?.uid || 'default-user'}
       />
     </ThemedView>
   );

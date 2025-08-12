@@ -123,23 +123,150 @@ export class LocationService implements ILocationService {
     accuracy: string;
   }> {
     try {
-      const [servicesEnabled, permission] = await Promise.all([
-        this.checkLocationServicesEnabled(),
-        Location.getForegroundPermissionsAsync(),
-      ]);
-
+      const servicesEnabled = await this.checkLocationServicesEnabled();
+      const permission = await this.hasLocationPermission();
+      
       return {
         locationServicesEnabled: servicesEnabled,
-        permissionStatus: permission.status,
-        accuracy: 'High',
+        permissionStatus: permission ? 'GRANTED' : 'DENIED',
+        accuracy: 'HIGH',
       };
     } catch (error) {
-      console.error('Failed to get provider status:', error);
       return {
         locationServicesEnabled: false,
-        permissionStatus: 'unknown',
-        accuracy: 'unknown',
+        permissionStatus: 'UNKNOWN',
+        accuracy: 'UNKNOWN',
       };
     }
+  }
+
+  // Conquest Mode Tracking Methods
+  private trackingSubscription: Location.LocationSubscription | null = null;
+  private isTracking = false;
+  private trackingCallback?: (location: { 
+    latitude: number; 
+    longitude: number; 
+    accuracy?: number;
+    speed?: number;
+    heading?: number;
+    timestamp: Date;
+  }) => void;
+
+  startTracking(
+    callback: (location: { 
+      latitude: number; 
+      longitude: number; 
+      accuracy?: number;
+      speed?: number;
+      heading?: number;
+      timestamp: Date;
+    }) => void,
+    options: {
+      accuracy?: Location.Accuracy;
+      timeInterval?: number;
+      distanceInterval?: number;
+    } = {}
+  ): Promise<boolean> {
+    return new Promise(async (resolve) => {
+      try {
+        if (this.isTracking) {
+          this.stopTracking();
+        }
+
+        const hasPermission = await this.hasLocationPermission();
+        if (!hasPermission) {
+          const granted = await this.requestLocationPermission();
+          if (!granted) {
+            resolve(false);
+            return;
+          }
+        }
+
+        this.trackingCallback = callback;
+        this.isTracking = true;
+
+        this.trackingSubscription = await Location.watchPositionAsync(
+          {
+            accuracy: options.accuracy || Location.Accuracy.Balanced,
+            timeInterval: options.timeInterval || 5000, // 5 seconds default
+            distanceInterval: options.distanceInterval || 5, // 5 meters default
+          },
+          (location) => {
+            if (this.isTracking && this.trackingCallback) {
+              const coords = location.coords;
+              this.trackingCallback({
+                latitude: coords.latitude,
+                longitude: coords.longitude,
+                accuracy: coords.accuracy || undefined,
+                speed: coords.speed || undefined,
+                heading: coords.heading || undefined,
+                timestamp: new Date(location.timestamp),
+              });
+            }
+          }
+        );
+
+        resolve(true);
+      } catch (error) {
+        console.error('Failed to start tracking:', error);
+        this.isTracking = false;
+        resolve(false);
+      }
+    });
+  }
+
+  stopTracking(): void {
+    if (this.trackingSubscription) {
+      this.trackingSubscription.remove();
+      this.trackingSubscription = null;
+    }
+    this.isTracking = false;
+    this.trackingCallback = undefined;
+  }
+
+  getTrackingStatus(): boolean {
+    return this.isTracking;
+  }
+
+  // Utility method to calculate distance between two points
+  calculateDistance(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ): number {
+    const R = 6371e3; // Earth's radius in meters
+    const φ1 = (lat1 * Math.PI) / 180;
+    const φ2 = (lat2 * Math.PI) / 180;
+    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+    const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+    const a =
+      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+  }
+
+  // Utility method to calculate area of a polygon (using shoelace formula)
+  calculatePolygonArea(coordinates: { latitude: number; longitude: number }[]): number {
+    if (coordinates.length < 3) return 0;
+
+    let area = 0;
+    for (let i = 0; i < coordinates.length; i++) {
+      const j = (i + 1) % coordinates.length;
+      area += coordinates[i].longitude * coordinates[j].latitude;
+      area -= coordinates[j].longitude * coordinates[i].latitude;
+    }
+    area = Math.abs(area) / 2;
+
+    // Convert to square meters (approximate)
+    const R = 6371e3; // Earth's radius in meters
+    const lat1 = coordinates[0].latitude * (Math.PI / 180);
+    const lat2 = coordinates[Math.floor(coordinates.length / 2)].latitude * (Math.PI / 180);
+    const cosLat = Math.cos((lat1 + lat2) / 2);
+    
+    return area * R * R * cosLat * cosLat;
   }
 }

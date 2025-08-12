@@ -116,4 +116,24 @@ export interface LocationService {
     permissionStatus: string;
     accuracy: string;
   }>;
+  // Conquest Mode Tracking Methods
+  startTracking(
+    callback: (location: { 
+      latitude: number; 
+      longitude: number; 
+      accuracy?: number;
+      speed?: number;
+      heading?: number;
+      timestamp: Date;
+    }) => void,
+    options?: {
+      accuracy?: any;
+      timeInterval?: number;
+      distanceInterval?: number;
+    }
+  ): Promise<boolean>;
+  stopTracking(): void;
+  getTrackingStatus(): boolean;
+  calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number;
+  calculatePolygonArea(coordinates: { latitude: number; longitude: number }[]): number;
 }

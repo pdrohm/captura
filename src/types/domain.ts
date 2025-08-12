@@ -157,3 +157,36 @@ export interface TerritoryEvent {
   timestamp: Date;
   metadata: Record<string, any>;
 }
+
+// Conquest Mode Types
+export interface ConquestSession {
+  id: string;
+  userId: string;
+  status: ConquestStatus;
+  startTime: Date;
+  endTime?: Date;
+  points: ConquestPoint[];
+  totalDistance: number; // in meters
+  totalArea: number; // in square meters
+  metadata: Record<string, any>;
+}
+
+export interface ConquestPoint {
+  id: string;
+  sessionId: string;
+  latitude: number;
+  longitude: number;
+  timestamp: Date;
+  accuracy?: number;
+  speed?: number;
+  heading?: number;
+}
+
+export type ConquestStatus = 'idle' | 'tracking' | 'paused' | 'completed' | 'cancelled';
+
+export interface ConquestSettings {
+  autoSave: boolean;
+  minDistanceThreshold: number; // minimum distance between points in meters
+  minTimeThreshold: number; // minimum time between points in milliseconds
+  accuracyThreshold: number; // minimum accuracy required in meters
+}
