@@ -97,10 +97,18 @@ export function useMapState(
   const checkLocationPermission = useCallback(async () => {
     try {
       const hasPermission = await locationService.hasLocationPermission();
-      setLocationPermissionGranted(hasPermission);
       
       if (hasPermission) {
+        setLocationPermissionGranted(true);
         await centerOnUserLocation();
+      } else {
+        // Automatically request permission when MapView loads
+        const granted = await locationService.requestLocationPermission();
+        setLocationPermissionGranted(granted);
+        
+        if (granted) {
+          await centerOnUserLocation();
+        }
       }
     } catch (err) {
       console.error('Failed to check location permission:', err);
