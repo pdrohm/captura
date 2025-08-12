@@ -1,4 +1,3 @@
-import { useConquestMode } from '@/src/hooks/useConquestMode';
 import { useMapView } from '@/src/hooks/useMapView';
 import { MapUseCases } from '@/src/services/useCases/mapUseCases';
 import { MapLocation, Territory } from '@/src/types/domain';
@@ -37,15 +36,23 @@ export default function MapViewComponent({
     userLocation,
     locationPermissionGranted,
     initialRegion,
+    currentRegion,
+    conquestStatus,
+    trackedPoints,
     handleLocationPress,
     handleTerritoryPress,
     handleRegionChangeComplete,
+    centerOnUserLocation,
     refreshData,
     clearError,
-    handleCenterOnUserLocation,
     getConquestButtonIcon,
     getConquestButtonColor,
     getConquestButtonBackground,
+    startConquest,
+    pauseConquest,
+    resumeConquest,
+    stopConquest,
+    cancelConquest,
   } = useMapView({
     mapUseCases,
     locationService,
@@ -53,23 +60,6 @@ export default function MapViewComponent({
     onTerritoryPress,
   });
 
-  // Conquest mode hook
-  const {
-    status: conquestStatus,
-    trackedPoints,
-    totalDistance,
-    totalArea,
-    startConquest,
-    pauseConquest,
-    resumeConquest,
-    stopConquest,
-    cancelConquest,
-  } = useConquestMode({
-    locationService,
-    userId,
-  });
-
-  // Conquest mode button handler
   const handleConquestButtonPress = () => {
     if (conquestStatus === 'idle') {
       startConquest();
@@ -103,8 +93,8 @@ export default function MapViewComponent({
       <ConquestStatus
         status={conquestStatus}
         trackedPoints={trackedPoints}
-        totalDistance={totalDistance}
-        totalArea={totalArea}
+        totalDistance={0} 
+        totalArea={0} 
         onPause={pauseConquest}
         onResume={resumeConquest}
         onStop={stopConquest}
@@ -115,15 +105,8 @@ export default function MapViewComponent({
       {/* Map View */}
       <View style={styles.mapContainer}>
         <MapView
-          key={userLocation ? `map-${userLocation.latitude}-${userLocation.longitude}` : 'map-default'}
           style={styles.map}
-          initialRegion={initialRegion}
-          region={userLocation ? {
-            latitude: userLocation.latitude,
-            longitude: userLocation.longitude,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          } : undefined}
+          region={currentRegion || initialRegion}
           onRegionChangeComplete={handleRegionChangeComplete}
           showsUserLocation={locationPermissionGranted}
           showsMyLocationButton={false}
@@ -136,6 +119,7 @@ export default function MapViewComponent({
             filteredTerritories={filteredTerritories}
             trackedPoints={trackedPoints}
             userLocation={userLocation}
+            conquestStatus={conquestStatus}
             onLocationPress={handleLocationPress}
             onTerritoryPress={handleTerritoryPress}
           />
@@ -146,7 +130,7 @@ export default function MapViewComponent({
           conquestStatus={conquestStatus}
           locationPermissionGranted={locationPermissionGranted}
           onConquestPress={handleConquestButtonPress}
-          onLocationPress={handleCenterOnUserLocation}
+          onLocationPress={centerOnUserLocation}
           getConquestButtonIcon={getConquestButtonIcon}
           getConquestButtonColor={getConquestButtonColor}
           getConquestButtonBackground={getConquestButtonBackground}

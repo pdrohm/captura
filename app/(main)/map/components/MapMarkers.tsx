@@ -14,6 +14,7 @@ interface MapMarkersProps {
   filteredTerritories: Territory[];
   trackedPoints: ConquestPoint[];
   userLocation: { latitude: number; longitude: number } | null;
+  conquestStatus?: 'idle' | 'tracking' | 'paused' | 'completed';
   onLocationPress: (location: MapLocation) => void;
   onTerritoryPress: (territory: Territory) => void;
 }
@@ -23,9 +24,15 @@ export const MapMarkers: React.FC<MapMarkersProps> = ({
   filteredTerritories,
   trackedPoints,
   userLocation,
+  conquestStatus = 'idle',
   onLocationPress,
   onTerritoryPress,
 }) => {
+  // Get start and end points for conquest tracking
+  const startPoint = trackedPoints[0];
+  const endPoint = trackedPoints[trackedPoints.length - 1];
+  const hasMultiplePoints = trackedPoints.length > 1;
+
   return (
     <>
       {/* Plot Locations as Markers */}
@@ -61,42 +68,52 @@ export const MapMarkers: React.FC<MapMarkersProps> = ({
         />
       ))}
 
-      {/* Conquest Tracking Path */}
-      {trackedPoints.length > 1 && (
+      {/* Conquest Tracking Path - Draw line connecting all points */}
+      {hasMultiplePoints && (
         <Polyline
           coordinates={trackedPoints.map(point => ({
             latitude: point.latitude,
             longitude: point.longitude,
           }))}
           strokeColor="#FF6B35"
-          strokeWidth={4}
-          lineDashPattern={[10, 5]}
+          strokeWidth={6}
+          lineDashPattern={[15, 8]}
+          lineCap="round"
+          lineJoin="round"
         />
       )}
 
-      {/* Conquest Tracking Points */}
-      {trackedPoints.map((point, index) => (
+      {/* Conquest Start Marker */}
+      {startPoint && (
         <Marker
-          key={point.id}
           coordinate={{
-            latitude: point.latitude,
-            longitude: point.longitude,
+            latitude: startPoint.latitude,
+            longitude: startPoint.longitude,
           }}
-          title={`Point ${index + 1}`}
-          description={`Accuracy: ${point.accuracy?.toFixed(1) || 'N/A'}m`}
-          pinColor="#FF6B35"
-        />
-      ))}
-
-      {/* User Location Marker (if available) */}
-      {userLocation && (
-        <Marker
-          coordinate={userLocation}
-          title="Your Location"
-          description="You are here"
-          pinColor="purple"
+          title="Conquest Start"
+          description="Starting point of your conquest"
+          pinColor="#34C759" // Green for start
+          opacity={0.9}
         />
       )}
+
+      {/* Conquest End Marker - Only show if different from start */}
+      {endPoint && hasMultiplePoints && startPoint?.id !== endPoint?.id && (
+        <Marker
+          coordinate={{
+            latitude: endPoint.latitude,
+            longitude: endPoint.longitude,
+          }}
+          title="Conquest End"
+          description="Ending point of your conquest"
+          pinColor="#FF3B30" // Red for end
+          opacity={0.9}
+        />
+      )}
+
+      {/* User Location Marker - Only show when not in conquest mode */}
+      {/* Note: The native blue dot is handled by showsUserLocation prop in MapView */}
+      {/* We only show a custom marker if needed for specific styling */}
     </>
   );
 };

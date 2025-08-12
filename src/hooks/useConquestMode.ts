@@ -1,6 +1,6 @@
-import { ConquestPoint, ConquestSession, ConquestStatus, ConquestSettings } from '@/src/types/domain';
+import { ConquestPoint, ConquestSession, ConquestSettings, ConquestStatus } from '@/src/types/domain';
 import { LocationService } from '@/src/types/repositories';
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 
 interface UseConquestModeProps {
@@ -25,7 +25,6 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
     accuracyThreshold: 20, // 20 meters
   };
 
-  // Cleanup tracking when component unmounts
   useEffect(() => {
     return () => {
       if (status === 'tracking') {
@@ -69,9 +68,9 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
           handleLocationUpdate(location);
         },
         {
-          accuracy: 5, // High accuracy for conquest
-          timeInterval: 3000, // 3 seconds
-          distanceInterval: 5, // 5 meters
+          accuracy: 5,
+          timeInterval: 3000,
+          distanceInterval: 5,
         }
       );
 

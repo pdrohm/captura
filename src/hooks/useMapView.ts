@@ -1,9 +1,8 @@
-import { useMapState } from '@/src/hooks/useMapState';
+import { useMapStoreSync } from '@/src/hooks/useMapStoreSync';
 import { MapUseCases } from '@/src/services/useCases/mapUseCases';
-import { MapLocation, MapViewport, Territory } from '@/src/types/domain';
+import { MapLocation, Territory } from '@/src/types/domain';
 import { LocationService } from '@/src/types/repositories';
-import { useCallback, useMemo, useState } from 'react';
-import { Alert } from 'react-native';
+import { useCallback, useMemo } from 'react';
 import { Region } from 'react-native-maps';
 
 interface UseMapViewProps {
@@ -20,38 +19,62 @@ export const useMapView = ({
   onTerritoryPress,
 }: UseMapViewProps) => {
   const {
+    viewport,
+    currentRegion,
+    hasUserInteracted,
     locations,
     territories,
-    viewport,
     filters,
-    loading,
-    error,
     userLocation,
     locationPermissionGranted,
-    setViewport,
-    addLocation,
-    deleteLocation,
-    refreshData,
-    clearError,
-    centerOnUserLocation,
+    conquestStatus,
+    trackedPoints,
+    loading,
+    error,
+    selectedLocation,
+    selectedTerritory,
+    
+    setFilters,
+    setSelectedLocation,
+    setSelectedTerritory,
+    handleRegionChangeComplete,
+    handleAddLocation,
+    handleUpdateLocation,
+    handleDeleteLocation,
+    centerOnUserLocationPreservingZoom,
     requestLocationPermission,
-    setError,
-  } = useMapState(mapUseCases, locationService);
+    loadInitialData,
+    clearError,
+    
+    startConquest,
+    pauseConquest,
+    resumeConquest,
+    stopConquest,
+    cancelConquest,
+  } = useMapStoreSync({ mapUseCases, locationService });
 
-  const [selectedLocation, setSelectedLocation] = useState<MapLocation | null>(null);
-  const [selectedTerritory, setSelectedTerritory] = useState<Territory | null>(null);
-
-  const initialRegion: Region = userLocation ? {
-    latitude: userLocation.latitude,
-    longitude: userLocation.longitude,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  } : {
-    latitude: viewport.latitude,
-    longitude: viewport.longitude,
-    latitudeDelta: viewport.latitudeDelta,
-    longitudeDelta: viewport.longitudeDelta,
-  };
+  // Compute initial region for map
+  const initialRegion: Region = useMemo(() => {
+    if (currentRegion) {
+      return currentRegion;
+    }
+    
+    if (userLocation) {
+      return {
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      };
+    }
+    
+    return {
+      latitude: viewport.latitude,
+      longitude: viewport.longitude,
+      latitudeDelta: viewport.latitudeDelta,
+      longitudeDelta: viewport.longitudeDelta,
+    };
+  }, [currentRegion, userLocation, viewport]);
 
   // Filtered data computations
   const filteredLocations = useMemo(() => {
@@ -101,186 +124,63 @@ export const useMapView = ({
     return '#fff';
   }, []);
 
-  // Debug functionality
-  const handleDebugLocation = useCallback(async () => {
-    try {
-      const status = await locationService.getLocationProviderStatus();
-      const message = `Location Status:
-• Services Enabled: ${status.locationServicesEnabled ? '✅' : '❌'}
-• Permission: ${status.permissionStatus}
-• Accuracy: ${status.accuracy}
-
-Current User Location: ${userLocation ? 
-  `\n• Lat: ${userLocation.latitude.toFixed(6)}
-• Lng: ${userLocation.longitude.toFixed(6)}` : 
-  '❌ Not available'}
-
-Permission Granted: ${locationPermissionGranted ? '✅' : '❌'}`;
-
-      Alert.alert('Location Debug Info', message, [
-        { text: 'OK' },
-        { 
-          text: 'Test Location', 
-          onPress: async () => {
-            try {
-              const location = await locationService.getCurrentLocation();
-              Alert.alert('Location Test', 
-                `Success! Your device coordinates:\nLat: ${location.latitude.toFixed(6)}\nLng: ${location.longitude.toFixed(6)}`);
-            } catch (err) {
-              Alert.alert('Location Test Failed', 
-                `Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
-            }
-          }
-        },
-        {
-          text: 'Reset Location',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await mapUseCases.clearViewport();
-              Alert.alert('Reset Complete', 'Saved location has been cleared. The app will now request fresh GPS coordinates.');
-              setTimeout(() => {
-                centerOnUserLocation();
-              }, 1000);
-            } catch (err) {
-              Alert.alert('Reset Failed', `Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
-            }
-          }
-        }
-      ]);
-    } catch (err) {
-      Alert.alert('Debug Error', `Failed to get debug info: ${err instanceof Error ? err.message : 'Unknown error'}`);
-    }
-  }, [locationService, userLocation, locationPermissionGranted, mapUseCases, centerOnUserLocation]);
-  
+  // Enhanced location press handler
   const handleLocationPress = useCallback((location: MapLocation) => {
     setSelectedLocation(location);
     setSelectedTerritory(null);
     onLocationPress?.(location);
-  }, [onLocationPress]);
+  }, [setSelectedLocation, setSelectedTerritory, onLocationPress]);
 
+  // Enhanced territory press handler
   const handleTerritoryPress = useCallback((territory: Territory) => {
     setSelectedTerritory(territory);
     setSelectedLocation(null);
     onTerritoryPress?.(territory);
-  }, [onTerritoryPress]);
+  }, [setSelectedTerritory, setSelectedLocation, onTerritoryPress]);
 
-  const handleMapPress = useCallback((event: any) => {
-    const { latitude, longitude } = event.nativeEvent.coordinate;
-    setSelectedLocation(null);
-    setSelectedTerritory(null);
-    
-    Alert.alert(
-      'Add Location',
-      'Would you like to add a new location here?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Add',
-          onPress: async () => {
-            try {
-              const newLocation: Omit<MapLocation, 'id' | 'createdAt' | 'updatedAt'> = {
-                latitude,
-                longitude,
-                title: 'New Location',
-                description: 'Tap to edit',
-                type: 'point_of_interest',
-                metadata: {},
-              };
-              await addLocation(newLocation);
-            } catch (err) {
-              Alert.alert('Error', 'Failed to add location');
-            }
-          },
-        },
-      ]
-    );
-  }, [addLocation]);
-
-  const handleRegionChangeComplete = useCallback((region: Region) => {
-    const newViewport: MapViewport = {
-      latitude: region.latitude,
-      longitude: region.longitude,
-      latitudeDelta: region.latitudeDelta,
-      longitudeDelta: region.longitudeDelta,
-    };
-    setViewport(newViewport);
-  }, [setViewport]);
-
-  const handleDeleteLocation = useCallback(async (id: string) => {
-    Alert.alert(
-      'Delete Location',
-      'Are you sure you want to delete this location?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteLocation(id);
-              setSelectedLocation(null);
-            } catch (err) {
-              Alert.alert('Error', 'Failed to delete location');
-            }
-          },
-        },
-      ]
-    );
-  }, [deleteLocation]);
-
-  const handleCenterOnUserLocation = useCallback(async () => {
-    if (!locationPermissionGranted) {
-      Alert.alert(
-        'Location Permission Required',
-        'This app needs location permission to center on your location. Would you like to grant permission?',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Grant Permission',
-            onPress: requestLocationPermission,
-          },
-        ]
-      );
-    } else {
-      await centerOnUserLocation();
-    }
-  }, [locationPermissionGranted, centerOnUserLocation, requestLocationPermission]);
+  // Enhanced region change handler that preserves zoom levels
+  const handleRegionChangeCompleteEnhanced = useCallback((region: Region) => {
+    handleRegionChangeComplete(region);
+  }, [handleRegionChangeComplete]);
 
   return {
     // State
-    locations,
-    territories,
-    viewport,
-    filters,
+    filteredLocations,
+    filteredTerritories,
     loading,
     error,
     userLocation,
     locationPermissionGranted,
+    initialRegion,
+    currentRegion,
+    hasUserInteracted,
+    conquestStatus,
+    trackedPoints,
     selectedLocation,
     selectedTerritory,
-    initialRegion,
-    filteredLocations,
-    filteredTerritories,
     
     // Actions
     handleLocationPress,
     handleTerritoryPress,
-    handleMapPress,
-    handleRegionChangeComplete,
+    handleRegionChangeComplete: handleRegionChangeCompleteEnhanced,
+    handleAddLocation,
+    handleUpdateLocation,
     handleDeleteLocation,
-    handleCenterOnUserLocation,
-    refreshData,
+    centerOnUserLocation: centerOnUserLocationPreservingZoom,
+    requestLocationPermission,
+    refreshData: loadInitialData,
     clearError,
-    setError,
-    forceRefreshFromUserLocation: centerOnUserLocation,
+    
+    // Conquest actions
+    startConquest,
+    pauseConquest,
+    resumeConquest,
+    stopConquest,
+    cancelConquest,
     
     // Conquest mode helpers
     getConquestButtonIcon,
     getConquestButtonColor,
     getConquestButtonBackground,
-    
-    // Debug
-    handleDebugLocation,
   };
 };

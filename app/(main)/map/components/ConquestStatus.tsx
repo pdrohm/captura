@@ -42,8 +42,8 @@ export const ConquestStatus: React.FC<ConquestStatusProps> = ({
         </View>
         <View style={styles.conquestStatsRow}>
           <Text style={styles.conquestStatsText}>
+            Path Length: {(totalDistance / 1000).toFixed(2)} km | 
             Points: {trackedPoints.length} | 
-            Distance: {(totalDistance / 1000).toFixed(2)} km | 
             Area: {(totalArea / 10000).toFixed(2)} ha
           </Text>
         </View>
