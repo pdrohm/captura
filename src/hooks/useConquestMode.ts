@@ -1,6 +1,6 @@
 import { ConquestPoint, ConquestSession, ConquestSettings, ConquestStatus } from '@/src/types/domain';
 import { LocationService } from '@/src/types/repositories';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 
 interface UseConquestModeProps {
@@ -18,12 +18,12 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
   
   const sessionStartTime = useRef<Date | null>(null);
   const lastPoint = useRef<ConquestPoint | null>(null);
-  const settings: ConquestSettings = {
+  const settings: ConquestSettings = useMemo(() => ({
     autoSave: true,
     minDistanceThreshold: 5, // 5 meters
     minTimeThreshold: 3000, // 3 seconds
     accuracyThreshold: 20, // 20 meters
-  };
+  }), []);
 
   useEffect(() => {
     return () => {
@@ -251,22 +251,57 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
     lastPoint.current = newPoint;
   }, [currentSession, locationService, settings]);
 
-  const saveTerritory = useCallback(() => {
+  const saveTerritory = useCallback(async () => {
     if (trackedPoints.length < 3) {
       Alert.alert('Error', 'Not enough points to create a territory.');
       return;
     }
 
-    // Here you would typically save to your repository
-    // For now, we'll just show a success message
-    Alert.alert(
-      'Territory Saved!', 
-      `Your conquered territory has been saved!\n\nPoints: ${trackedPoints.length}\nDistance: ${(totalDistance / 1000).toFixed(2)} km\nArea: ${(totalArea / 10000).toFixed(2)} hectares`,
-      [
-        { text: 'OK', onPress: () => resetConquest() }
-      ]
-    );
-  }, [trackedPoints.length, totalDistance, totalArea]);
+    try {
+      // Calculate center point
+      const centerLat = trackedPoints.reduce((sum, point) => sum + point.latitude, 0) / trackedPoints.length;
+      const centerLng = trackedPoints.reduce((sum, point) => sum + point.longitude, 0) / trackedPoints.length;
+
+      // Create territory data
+      const territoryData = {
+        name: `Territory ${new Date().toLocaleDateString()}`,
+        description: `Conquered territory with ${trackedPoints.length} points`,
+        boundaries: trackedPoints.map((point, index) => ({
+          id: `boundary_${index}`,
+          latitude: point.latitude,
+          longitude: point.longitude,
+          title: `Boundary Point ${index + 1}`,
+          type: 'boundary' as const,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })),
+        center: {
+          latitude: centerLat,
+          longitude: centerLng,
+        },
+        area: totalArea,
+        status: 'active' as const,
+        assignedTo: userId,
+      };
+
+      // Import territory repository
+      const { territoryRepository } = await import('@/src/services/territoryRepository');
+      
+      // Save to Firestore
+      await territoryRepository.createTerritory(territoryData);
+
+      Alert.alert(
+        'Territory Saved!', 
+        `Your conquered territory has been saved!\n\nPoints: ${trackedPoints.length}\nDistance: ${(totalDistance / 1000).toFixed(2)} km\nArea: ${(totalArea / 10000).toFixed(2)} hectares`,
+        [
+          { text: 'OK', onPress: () => resetConquest() }
+        ]
+      );
+    } catch (error) {
+      console.error('Failed to save territory:', error);
+      Alert.alert('Error', 'Failed to save territory. Please try again.');
+    }
+  }, [trackedPoints, totalDistance, totalArea, userId]);
 
   return {
     status,
