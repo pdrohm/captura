@@ -35,6 +35,7 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     setUserInteracted,
     setLocations,
     setTerritories,
+    addTerritory,
     addLocation,
     updateLocation,
     deleteLocation,
@@ -292,13 +293,24 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
         area: totalArea || 0,
         status: 'active' as const,
         assignedTo: user?.uid || 'default-user',
+        owner: user ? {
+          uid: user.uid,
+          displayName: user.displayName || null,
+          photoURL: user.photoURL || null,
+          email: user.email || '',
+        } : undefined,
       };
 
       // Import territory repository
       const { territoryRepository } = await import('@/src/services/territoryRepository');
       
       // Save to Firestore
-      await territoryRepository.createTerritory(territoryData);
+      const savedTerritory = await territoryRepository.createTerritory(territoryData);
+
+      // Add the new territory to the map store for immediate display
+      if (savedTerritory) {
+        addTerritory(savedTerritory);
+      }
 
       Alert.alert(
         'Territory Saved!', 
@@ -316,7 +328,7 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
       setConquestStatus('idle');
       clearTrackedPoints();
     }
-  }, [setConquestStatus, trackedPoints, locationService, clearTrackedPoints]);
+  }, [setConquestStatus, trackedPoints, locationService, clearTrackedPoints, addTerritory, user]);
 
   const cancelConquest = useCallback(() => {
     setConquestStatus('idle');

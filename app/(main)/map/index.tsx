@@ -16,6 +16,7 @@ export default function MapScreen() {
   const { auth } = useFirebase();
   const [selectedTerritory, setSelectedTerritory] = useState<Territory | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  
 
   console.log('user', user);
 

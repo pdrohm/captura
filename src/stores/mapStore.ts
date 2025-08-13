@@ -41,6 +41,7 @@ interface MapState {
   
   setLocations: (locations: MapLocation[]) => void;
   setTerritories: (territories: Territory[]) => void;
+  addTerritory: (territory: Territory) => void;
   addLocation: (location: MapLocation) => void;
   updateLocation: (id: string, updates: Partial<MapLocation>) => void;
   deleteLocation: (id: string) => void;
@@ -114,6 +115,12 @@ export const useMapStore = create<MapState>((set, get) => ({
 
   setTerritories: (territories) => {
     set({ territories });
+  },
+
+  addTerritory: (territory) => {
+    set((state) => ({
+      territories: [...state.territories, territory],
+    }));
   },
 
   addLocation: (location) => {

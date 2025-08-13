@@ -4,12 +4,17 @@ import { useFirebase } from '@/src/contexts/FirebaseContext';
 import { useAuthStore } from '@/src/stores/authStore';
 import React, { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native';
 
 interface LoginFormProps {
@@ -47,16 +52,26 @@ export default function LoginForm({
   }, [error]);
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.title}>
-        Welcome Back
-      </ThemedText>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <ThemedView style={styles.content}>
+            <ThemedText type="title" style={styles.title}>
+              Welcome Back
+            </ThemedText>
 
-      <ThemedText style={styles.subtitle}>
-        Sign in to your account
-      </ThemedText>
+            <ThemedText style={styles.subtitle}>
+              Sign in to your account
+            </ThemedText>
 
-      <View style={styles.form}>
+            <View style={styles.form}>
         <View style={styles.inputContainer}>
           <ThemedText style={styles.label}>Email</ThemedText>
           <TextInput
@@ -116,12 +131,21 @@ export default function LoginForm({
           </TouchableOpacity>
         </View>
       </View>
-    </ThemedView>
+            </ThemedView>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  content: {
     flex: 1,
     padding: 20,
     justifyContent: 'center',

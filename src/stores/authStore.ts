@@ -59,8 +59,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   signUp: async (authService, email, password) => {
     try {
       set({ loading: true, error: null });
-      await authService.signUpWithEmail(email, password);
-      // User will be set via onAuthStateChanged listener
+      const userCredential = await authService.signUpWithEmail(email, password);
+      // User will be set via onAuthStateChanged listener, but we need to ensure
+      // the user object is properly updated with any profile changes
+      if (userCredential.user) {
+        const updatedUser = {
+          uid: userCredential.user.uid,
+          email: userCredential.user.email,
+          displayName: userCredential.user.displayName,
+          photoURL: userCredential.user.photoURL,
+        };
+        set({ user: updatedUser, loading: false });
+      }
     } catch (error: any) {
       const message = getAuthErrorMessage(error.code);
       set({ error: message, loading: false });

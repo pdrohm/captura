@@ -2,6 +2,7 @@ import { LoadingSpinner } from '@/app/(main)/map/components/LoadingSpinner';
 import { ThemedView } from '@/src/components/ThemedView';
 import { FirestoreMapRepository } from '@/src/services/firestoreMapRepository';
 import { useAuthStore } from '@/src/stores/authStore';
+import { useMapStore } from '@/src/stores/mapStore';
 import { Territory } from '@/src/types/domain';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
@@ -10,7 +11,7 @@ import { TerritoryModalScreen } from './components/TerritoryModalScreen';
 
 export default function TerritoriesScreen() {
   const { user } = useAuthStore();
-  const [territories, setTerritories] = useState<Territory[]>([]);
+  const { territories: mapStoreTerritories, setTerritories: setMapStoreTerritories } = useMapStore();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedTerritory, setSelectedTerritory] = useState<Territory | null>(null);
@@ -26,14 +27,14 @@ export default function TerritoriesScreen() {
         showPointsOfInterest: true,
         showBoundaries: true,
       });
-      setTerritories(loadedTerritories);
+      setMapStoreTerritories(loadedTerritories);
     } catch (error) {
       console.error('Failed to load territories:', error);
       Alert.alert('Error', 'Failed to load territories. Please try again.');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [mapRepository, setMapStoreTerritories]);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -66,12 +67,12 @@ export default function TerritoriesScreen() {
       );
       
       // For now, just remove from local state
-      setTerritories(prev => prev.filter(t => t.id !== territory.id));
+      setMapStoreTerritories(mapStoreTerritories.filter(t => t.id !== territory.id));
     } catch (error) {
       console.error('Failed to delete territory:', error);
       Alert.alert('Error', 'Failed to delete territory. Please try again.');
     }
-  }, []);
+  }, [mapStoreTerritories, setMapStoreTerritories]);
 
   const handleCloseDetails = useCallback(() => {
     setShowDetailsModal(false);
@@ -104,7 +105,7 @@ export default function TerritoriesScreen() {
     <View style={styles.container}>
       {/* Territory List with integrated header */}
       <TerritoryList
-        territories={territories}
+        territories={mapStoreTerritories}
         loading={refreshing}
         onRefresh={handleRefresh}
         onTerritoryPress={handleTerritoryPress}
@@ -112,7 +113,7 @@ export default function TerritoriesScreen() {
         onTerritoryDelete={handleTerritoryDelete}
         testID="territories-list"
         headerTitle="My Territories"
-        headerSubtitle={`${territories.length} territories conquered`}
+        headerSubtitle={`${mapStoreTerritories.length} territories conquered`}
       />
 
       {/* Territory Details Modal */}

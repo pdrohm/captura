@@ -4,12 +4,17 @@ import { useFirebase } from '@/src/contexts/FirebaseContext';
 import { useAuthStore } from '@/src/stores/authStore';
 import React, { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
 
 interface RegisterFormProps {
@@ -45,8 +50,9 @@ export default function RegisterForm({
 
     try {
       await signUp(auth, email.trim(), password);
-      // After successful signup, update profile with display name
-      // This will be handled by the auth listener
+      
+      // Update profile with display name after signup
+      await auth.updateProfile(displayName.trim());
     } catch (error) {
       // Error is already handled in the store
     }
@@ -60,16 +66,26 @@ export default function RegisterForm({
   }, [error]);
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.title}>
-        Create Account
-      </ThemedText>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <ThemedView style={styles.content}>
+            <ThemedText type="title" style={styles.title}>
+              Create Account
+            </ThemedText>
 
-      <ThemedText style={styles.subtitle}>
-        Sign up to get started
-      </ThemedText>
+            <ThemedText style={styles.subtitle}>
+              Sign up to get started
+            </ThemedText>
 
-      <View style={styles.form}>
+            <View style={styles.form}>
         <View style={styles.inputContainer}>
           <ThemedText style={styles.label}>Display Name</ThemedText>
           <TextInput
@@ -145,12 +161,21 @@ export default function RegisterForm({
           </TouchableOpacity>
         </View>
       </View>
-    </ThemedView>
+            </ThemedView>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  content: {
     flex: 1,
     padding: 20,
     justifyContent: 'center',
