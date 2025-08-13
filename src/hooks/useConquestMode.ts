@@ -143,10 +143,11 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
       // Convert null values to undefined for Territory type compatibility
       const owner = currentUser ? {
         uid: currentUser.uid,
-        displayName: currentUser.displayName || undefined,
-        photoURL: currentUser.photoURL || undefined,
-        email: currentUser.email || '',  // Convert null to empty string
-      } : undefined;
+        displayName: currentUser.displayName || null,
+        photoURL: currentUser.photoURL || null,
+        email: currentUser.email || '',
+        color: currentUser.color || null,
+      } : null;
 
       // Create territory data
       const territoryData = {

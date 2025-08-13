@@ -20,6 +20,8 @@ export interface IAuthService {
   
   // User profile
   updateProfile: (displayName: string, photoURL?: string) => Promise<void>;
+  updateUserColor: (color: string) => Promise<void>;
+  getUserData: (uid: string) => Promise<any>;
   updateEmail: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
   deleteAccount: () => Promise<void>;
@@ -97,6 +99,19 @@ export class FirebaseAuthService implements IAuthService {
       throw new Error('No user signed in');
     }
     return user.updateProfile({ displayName, photoURL });
+  }
+
+  async updateUserColor(color: string): Promise<void> {
+    const user = this.auth().currentUser;
+    if (!user) {
+      throw new Error('No user signed in');
+    }
+    return firestore().collection('users').doc(user.uid).set({ color }, { merge: true });
+  }
+
+  async getUserData(uid: string): Promise<any> {
+    const doc = await firestore().collection('users').doc(uid).get();
+    return doc.exists ? doc.data() : null;
   }
 
   async updateEmail(email: string): Promise<void> {

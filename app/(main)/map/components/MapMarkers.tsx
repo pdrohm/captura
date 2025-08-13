@@ -65,6 +65,17 @@ export const MapMarkers: React.FC<MapMarkersProps> = ({
       {filteredTerritories.map(territory => {
         console.log('🎯 Rendering territory:', territory.name, 'with', territory.boundaries.length, 'boundaries');
         
+        const territoryColor = territory.owner?.color || '#007AFF';
+        const hexToRgba = (hex: string, alpha: number) => {
+          const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+          if (!result) return `rgba(0, 122, 255, ${alpha})`;
+          
+          const r = parseInt(result[1], 16);
+          const g = parseInt(result[2], 16);
+          const b = parseInt(result[3], 16);
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
+        
         return (
           <React.Fragment key={territory.id}>
             <Polygon
@@ -72,12 +83,11 @@ export const MapMarkers: React.FC<MapMarkersProps> = ({
                 latitude: boundary.latitude,
                 longitude: boundary.longitude,
               }))}
-              fillColor="rgba(0, 122, 255, 0.15)"
-              strokeColor="rgba(0, 122, 255, 0.9)"
+              fillColor={hexToRgba(territoryColor, 0.15)}
+              strokeColor={hexToRgba(territoryColor, 0.9)}
               strokeWidth={3}
               onPress={() => onTerritoryPress(territory)}
             />
-            {/* Territory Center Marker - Removed to avoid popup balloons */}
           </React.Fragment>
         );
       })}

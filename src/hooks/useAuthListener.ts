@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 export function useAuthListener() {
   const { auth } = useFirebase();
-  const { setUser, setLoading } = useAuthStore();
+  const { setUser, setLoading, loadUserData } = useAuthStore();
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
@@ -13,14 +13,23 @@ export function useAuthListener() {
       return;
     }
 
-    const unsubscribe = auth.onAuthStateChanged((firebaseUser: User | null) => {
+    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser: User | null) => {
       setUser(firebaseUser);
+      
+      if (firebaseUser) {
+        try {
+          await loadUserData(auth, firebaseUser.uid);
+        } catch (error) {
+          console.error('Failed to load user data:', error);
+        }
+      }
+      
       setLoading(false);
       setIsInitialized(true);
     });
 
     return () => unsubscribe();
-  }, [auth, setUser, setLoading]);
+  }, [auth, setUser, setLoading, loadUserData]);
 
   return { isInitialized };
 }

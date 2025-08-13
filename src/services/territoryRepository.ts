@@ -18,8 +18,12 @@ export class FirestoreTerritoryRepository implements ITerritoryRepository {
 
   async createTerritory(territoryData: Omit<Territory, 'id' | 'createdAt' | 'updatedAt'>): Promise<Territory> {
     const now = firestore.Timestamp.now();
+    
+    // Convert any undefined values to null to prevent Firestore errors
+    const sanitizedData = JSON.parse(JSON.stringify(territoryData));
+    
     const territory: Territory = {
-      ...territoryData,
+      ...sanitizedData,
       id: `territory_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       createdAt: now.toDate(),
       updatedAt: now.toDate(),

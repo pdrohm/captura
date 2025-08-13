@@ -51,9 +51,16 @@ export const TerritoryDetails: React.FC<TerritoryDetailsProps> = ({
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
-        <ThemedText type="title" style={styles.title}>
-          {displayTerritory.name}
-        </ThemedText>
+        <View style={styles.titleSection}>
+          <ThemedText type="title" style={styles.title}>
+            {displayTerritory.name}
+          </ThemedText>
+          <View style={styles.statusBadge}>
+            <ThemedText style={styles.statusBadgeText}>
+              {displayTerritory.status.toUpperCase()}
+            </ThemedText>
+          </View>
+        </View>
         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
           <ThemedText style={styles.closeButtonText}>✕</ThemedText>
         </TouchableOpacity>
@@ -71,42 +78,52 @@ export const TerritoryDetails: React.FC<TerritoryDetailsProps> = ({
 
         <View style={styles.section}>
           <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Territory Info
+            Territory Statistics
           </ThemedText>
-          <View style={styles.infoRow}>
-            <ThemedText style={styles.infoLabel}>Area:</ThemedText>
-            <ThemedText style={styles.infoValue}>{formatArea(displayTerritory.area)}</ThemedText>
-          </View>
-          <View style={styles.infoRow}>
-            <ThemedText style={styles.infoLabel}>Status:</ThemedText>
-            <ThemedText style={[styles.infoValue, styles.statusText]}>
-              {displayTerritory.status.charAt(0).toUpperCase() + displayTerritory.status.slice(1)}
-            </ThemedText>
+          <View style={styles.statsGrid}>
+            <View style={styles.statCard}>
+              <ThemedText style={styles.statValue}>{formatArea(displayTerritory.area)}</ThemedText>
+              <ThemedText style={styles.statLabel}>Total Area</ThemedText>
+            </View>
+            <View style={styles.statCard}>
+              <ThemedText style={styles.statValue}>{displayTerritory.boundaries.length}</ThemedText>
+              <ThemedText style={styles.statLabel}>Boundary Points</ThemedText>
+            </View>
           </View>
           <View style={styles.infoRow}>
             <ThemedText style={styles.infoLabel}>Created:</ThemedText>
             <ThemedText style={styles.infoValue}>{formatDate(displayTerritory.createdAt)}</ThemedText>
+          </View>
+          <View style={styles.infoRow}>
+            <ThemedText style={styles.infoLabel}>Last Updated:</ThemedText>
+            <ThemedText style={styles.infoValue}>{formatDate(displayTerritory.updatedAt)}</ThemedText>
           </View>
         </View>
 
         {displayTerritory.owner && (
           <View style={styles.section}>
             <ThemedText type="subtitle" style={styles.sectionTitle}>
-              Owner
+              Territory Owner
             </ThemedText>
-            <View style={styles.ownerInfo}>
-              {displayTerritory.owner.photoURL && (
-                <View style={styles.ownerAvatar}>
-                  <ThemedText style={styles.avatarText}>
-                    {displayTerritory.owner.displayName?.charAt(0) || displayTerritory.owner.email.charAt(0)}
-                  </ThemedText>
-                </View>
-              )}
+            <View style={styles.ownerCard}>
+              <View style={[
+                styles.ownerAvatar, 
+                { backgroundColor: displayTerritory.owner.color || '#007AFF' }
+              ]}>
+                <ThemedText style={styles.avatarText}>
+                  {displayTerritory.owner.displayName?.charAt(0) || displayTerritory.owner.email.charAt(0)}
+                </ThemedText>
+              </View>
               <View style={styles.ownerDetails}>
                 <ThemedText style={styles.ownerName}>
                   {displayTerritory.owner.displayName || 'Anonymous User'}
                 </ThemedText>
                 <ThemedText style={styles.ownerEmail}>{displayTerritory.owner.email}</ThemedText>
+                <View style={styles.ownerMeta}>
+                  <ThemedText style={styles.ownerMetaText}>
+                    Conquered {formatDate(displayTerritory.createdAt)}
+                  </ThemedText>
+                </View>
               </View>
             </View>
           </View>
@@ -170,12 +187,27 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
+    alignItems: 'flex-start',
+    marginBottom: 24,
   },
-  title: {
+  titleSection: {
     flex: 1,
     marginRight: 16,
+  },
+  title: {
+    marginBottom: 8,
+  },
+  statusBadge: {
+    backgroundColor: '#34C759',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+  },
+  statusBadgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: '600',
   },
   closeButton: {
     width: 32,
@@ -217,6 +249,13 @@ const styles = StyleSheet.create({
   statusText: {
     textTransform: 'capitalize',
   },
+  ownerCard: {
+    backgroundColor: 'rgba(0, 122, 255, 0.05)',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 122, 255, 0.1)',
+  },
   ownerInfo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -246,6 +285,40 @@ const styles = StyleSheet.create({
   ownerEmail: {
     fontSize: 14,
     opacity: 0.7,
+    marginBottom: 4,
+  },
+  ownerMeta: {
+    marginTop: 4,
+  },
+  ownerMetaText: {
+    fontSize: 12,
+    opacity: 0.6,
+    fontStyle: 'italic',
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 16,
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: 'rgba(52, 199, 89, 0.1)',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(52, 199, 89, 0.2)',
+  },
+  statValue: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#34C759',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    opacity: 0.8,
+    textAlign: 'center',
   },
   actions: {
     marginTop: 20,

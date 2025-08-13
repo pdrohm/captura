@@ -5,6 +5,7 @@ export interface User {
   email: string;
   displayName?: string;
   photoURL?: string;
+  color?: string; // User's chosen color for territories
   createdAt: Date;
   lastActiveAt: Date;
   preferences: UserPreferences;
@@ -61,10 +62,11 @@ export interface Territory {
   assignedTo?: string; // user ID
   owner?: {
     uid: string;
-    displayName?: string;
-    photoURL?: string;
+    displayName: string | null;
+    photoURL: string | null;
     email: string;
-  };
+    color: string | null; // User's territory color
+  } | null;
   createdAt: Date;
   updatedAt: Date;
 }

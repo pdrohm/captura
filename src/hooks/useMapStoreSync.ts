@@ -298,7 +298,8 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
           displayName: user.displayName || null,
           photoURL: user.photoURL || null,
           email: user.email || '',
-        } : undefined,
+          color: user.color || null,
+        } : null,
       };
 
       // Import territory repository

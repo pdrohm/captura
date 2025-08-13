@@ -6,6 +6,7 @@ interface User {
   email: string | null;
   displayName: string | null;
   photoURL: string | null;
+  color?: string | null;
 }
 
 interface AuthState {
@@ -24,6 +25,8 @@ interface AuthState {
   signOut: (authService: IAuthService) => Promise<void>;
   resetPassword: (authService: IAuthService, email: string) => Promise<void>;
   updateProfile: (authService: IAuthService, displayName: string, photoURL?: string) => Promise<void>;
+  updateUserColor: (authService: IAuthService, color: string) => Promise<void>;
+  loadUserData: (authService: IAuthService, uid: string) => Promise<void>;
   
   // Reset state
   reset: () => void;
@@ -68,6 +71,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           email: userCredential.user.email,
           displayName: userCredential.user.displayName,
           photoURL: userCredential.user.photoURL,
+          color: null,
         };
         set({ user: updatedUser, loading: false });
       }
@@ -116,6 +120,38 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (error: any) {
       set({ error: 'Failed to update profile', loading: false });
       throw error;
+    }
+  },
+
+  updateUserColor: async (authService, color) => {
+    try {
+      set({ loading: true, error: null });
+      await authService.updateUserColor(color);
+      const currentUser = get().user;
+      if (currentUser) {
+        set({ 
+          user: { ...currentUser, color },
+          loading: false 
+        });
+      }
+    } catch (error: any) {
+      set({ error: 'Failed to update user color', loading: false });
+      throw error;
+    }
+  },
+
+  loadUserData: async (authService, uid) => {
+    try {
+      const userData = await authService.getUserData(uid);
+      const currentUser = get().user;
+      if (currentUser && userData) {
+        set({
+          user: { ...currentUser, color: userData.color || null },
+          loading: false
+        });
+      }
+    } catch (error: any) {
+      console.error('Failed to load user data:', error);
     }
   },
 
