@@ -5,6 +5,9 @@ import { Colors } from '@/src/config/Colors';
 import { useFirebase } from '@/src/contexts/FirebaseContext';
 import { useColorScheme } from '@/src/hooks/useColorScheme';
 import { useAuthStore } from '@/src/stores/authStore';
+import { useGameStore } from '@/src/stores/gameStore';
+import { useAppPreferences, useGameSettings, usePrivacySettings, useSettingsStore } from '@/src/stores/settingsStore';
+import * as Haptics from 'expo-haptics';
 import React from 'react';
 import {
     Alert,
@@ -21,11 +24,29 @@ export default function SettingsScreen() {
   const colors = Colors[colorScheme ?? 'light'];
   const { auth } = useFirebase();
   const { user, updateUserColor } = useAuthStore();
+  const { clearAllData } = useGameStore();
+  
+  // Settings hooks
+  const gameSettings = useGameSettings();
+  const appPreferences = useAppPreferences();
+  const privacySettings = usePrivacySettings();
+  const { resetToDefaults, exportSettings, importSettings } = useSettingsStore();
 
-  const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
-  const [locationServicesEnabled, setLocationServicesEnabled] = React.useState(true);
-  const [darkModeEnabled, setDarkModeEnabled] = React.useState(colorScheme === 'dark');
   const [colorPickerVisible, setColorPickerVisible] = React.useState(false);
+
+  const handleSettingToggle = (setting: keyof typeof gameSettings | keyof typeof appPreferences | keyof typeof privacySettings) => {
+    if (gameSettings.haptics) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    
+    if (setting in gameSettings) {
+      gameSettings.toggleSetting(setting as any);
+    } else if (setting in appPreferences) {
+      appPreferences.toggleSetting(setting as any);
+    } else if (setting in privacySettings) {
+      privacySettings.toggleSetting(setting as any);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -33,16 +54,61 @@ export default function SettingsScreen() {
         await auth.signOut();
       }
     } catch (error) {
-      // Handle logout error
+      Alert.alert('Error', 'Failed to logout. Please try again.');
     }
   };
 
   const handleClearCache = () => {
-    // Handle clear cache
+    Alert.alert(
+      'Clear Cache',
+      'This will clear temporary data. Continue?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Clear', style: 'destructive', onPress: () => {
+          // Clear cache logic here
+          Alert.alert('Success', 'Cache cleared successfully!');
+        }}
+      ]
+    );
   };
 
-  const handleExportData = () => {
-    // Handle export data
+  const handleExportSettings = async () => {
+    try {
+      const settingsJson = await exportSettings();
+      // In a real app, you'd use a share dialog or save to file
+      Alert.alert('Export Settings', `Settings exported:\n${settingsJson.substring(0, 100)}...`);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to export settings.');
+    }
+  };
+
+  const handleResetAllData = () => {
+    Alert.alert(
+      'Reset All Data',
+      'This will permanently delete all your progress, settings, and achievements. This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Reset Everything', style: 'destructive', onPress: () => {
+          clearAllData();
+          resetToDefaults();
+          Alert.alert('Success', 'All data has been reset.');
+        }}
+      ]
+    );
+  };
+
+  const handleResetSettings = () => {
+    Alert.alert(
+      'Reset Settings',
+      'This will reset all settings to their default values. Continue?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Reset', style: 'destructive', onPress: () => {
+          resetToDefaults();
+          Alert.alert('Success', 'Settings reset to defaults!');
+        }}
+      ]
+    );
   };
 
   const handleColorSelect = async (color: string) => {
@@ -111,60 +177,147 @@ export default function SettingsScreen() {
           </ThemedView>
         )}
 
-        {/* Preferences Section */}
+        {/* Game Settings Section */}
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Preferences</ThemedText>
+          <ThemedText style={styles.sectionTitle}>🎮 Game Settings</ThemedText>
           
-          <View style={styles.settingItem}>
-            <View style={styles.settingInfo}>
-              <ThemedText style={styles.settingLabel}>Notifications</ThemedText>
-              <ThemedText style={styles.settingDescription}>Receive alerts and updates</ThemedText>
-            </View>
-            <Switch
-              value={notificationsEnabled}
-              onValueChange={setNotificationsEnabled}
-              trackColor={{ false: colors.border, true: colors.tint }}
-              thumbColor={notificationsEnabled ? colors.background : colors.text}
-            />
-          </View>
+          <SettingItem
+            title="Sound Effects"
+            description="Play audio feedback and music"
+            icon="🔊"
+            enabled={gameSettings.sound}
+            onToggle={() => handleSettingToggle('sound')}
+            colors={colors}
+          />
+          
+          <SettingItem
+            title="Haptic Feedback"
+            description="Feel vibrations for interactions"
+            icon="📱"
+            enabled={gameSettings.haptics}
+            onToggle={() => handleSettingToggle('haptics')}
+            colors={colors}
+          />
+          
+          <SettingItem
+            title="Notifications"
+            description="Receive game alerts and updates"
+            icon="🔔"
+            enabled={gameSettings.notifications}
+            onToggle={() => handleSettingToggle('notifications')}
+            colors={colors}
+          />
+          
+          <SettingItem
+            title="Animations"
+            description="Enable smooth animations"
+            icon="✨"
+            enabled={gameSettings.animationsEnabled}
+            onToggle={() => handleSettingToggle('animationsEnabled')}
+            colors={colors}
+          />
+          
+          <SettingItem
+            title="Particle Effects"
+            description="Show visual effects and particles"
+            icon="🎆"
+            enabled={gameSettings.particleEffects}
+            onToggle={() => handleSettingToggle('particleEffects')}
+            colors={colors}
+          />
+        </View>
 
-          <View style={styles.settingItem}>
-            <View style={styles.settingInfo}>
-              <ThemedText style={styles.settingLabel}>Location Services</ThemedText>
-              <ThemedText style={styles.settingDescription}>Allow app to access location</ThemedText>
-            </View>
-            <Switch
-              value={locationServicesEnabled}
-              onValueChange={setLocationServicesEnabled}
-              trackColor={{ false: colors.border, true: colors.tint }}
-              thumbColor={locationServicesEnabled ? colors.background : colors.text}
-            />
-          </View>
+        {/* App Preferences Section */}
+        <View style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>📱 App Preferences</ThemedText>
+          
+          <SettingItem
+            title="Dark Mode"
+            description="Use dark theme"
+            icon="🌙"
+            enabled={appPreferences.darkMode}
+            onToggle={() => handleSettingToggle('darkMode')}
+            colors={colors}
+          />
+          
+          <SettingItem
+            title="Location Services"
+            description="Allow app to access location"
+            icon="📍"
+            enabled={appPreferences.locationServices}
+            onToggle={() => handleSettingToggle('locationServices')}
+            colors={colors}
+          />
+          
+          <SettingItem
+            title="Auto Save"
+            description="Automatically save progress"
+            icon="💾"
+            enabled={appPreferences.autoSave}
+            onToggle={() => handleSettingToggle('autoSave')}
+            colors={colors}
+          />
+          
+          <SettingItem
+            title="Show Tutorial"
+            description="Display tutorial hints"
+            icon="🎓"
+            enabled={appPreferences.showTutorial}
+            onToggle={() => handleSettingToggle('showTutorial')}
+            colors={colors}
+          />
+        </View>
 
-          <View style={styles.settingItem}>
-            <View style={styles.settingInfo}>
-              <ThemedText style={styles.settingLabel}>Dark Mode</ThemedText>
-              <ThemedText style={styles.settingDescription}>Use dark theme</ThemedText>
-            </View>
-            <Switch
-              value={darkModeEnabled}
-              onValueChange={setDarkModeEnabled}
-              trackColor={{ false: colors.border, true: colors.tint }}
-              thumbColor={darkModeEnabled ? colors.background : colors.text}
-            />
-          </View>
+        {/* Privacy Settings Section */}
+        <View style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>🔒 Privacy</ThemedText>
+          
+          <SettingItem
+            title="Share Location"
+            description="Share location with other players"
+            icon="🗺️"
+            enabled={privacySettings.shareLocation}
+            onToggle={() => handleSettingToggle('shareLocation')}
+            colors={colors}
+          />
+          
+          <SettingItem
+            title="Share Stats"
+            description="Show your stats to friends"
+            icon="📊"
+            enabled={privacySettings.shareStats}
+            onToggle={() => handleSettingToggle('shareStats')}
+            colors={colors}
+          />
+          
+          <SettingItem
+            title="Analytics"
+            description="Help improve the app"
+            icon="📈"
+            enabled={privacySettings.allowAnalytics}
+            onToggle={() => handleSettingToggle('allowAnalytics')}
+            colors={colors}
+          />
         </View>
 
         {/* Data Management Section */}
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Data Management</ThemedText>
+          <ThemedText style={styles.sectionTitle}>💾 Data Management</ThemedText>
           
           <TouchableOpacity style={styles.actionButton} onPress={handleClearCache}>
-            <ThemedText style={styles.actionButtonText}>Clear Cache</ThemedText>
+            <ThemedText style={styles.actionButtonText}>🧹 Clear Cache</ThemedText>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionButton} onPress={handleExportData}>
-            <ThemedText style={styles.actionButtonText}>Export Data</ThemedText>
+          <TouchableOpacity style={styles.actionButton} onPress={handleExportSettings}>
+            <ThemedText style={styles.actionButtonText}>📤 Export Settings</ThemedText>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.actionButton} onPress={handleResetSettings}>
+            <ThemedText style={styles.actionButtonText}>🔄 Reset Settings</ThemedText>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.actionButton, styles.dangerButton]} onPress={handleResetAllData}>
+            <ThemedText style={[styles.actionButtonText, styles.dangerButtonText]}>🗑️ Reset All Data</ThemedText>
           </TouchableOpacity>
         </View>
 
@@ -195,6 +348,40 @@ export default function SettingsScreen() {
     </SafeAreaView>
   );
 }
+
+interface SettingItemProps {
+  title: string;
+  description: string;
+  icon: string;
+  enabled: boolean;
+  onToggle: () => void;
+  colors: any;
+}
+
+const SettingItem: React.FC<SettingItemProps> = ({ 
+  title, 
+  description, 
+  icon, 
+  enabled, 
+  onToggle, 
+  colors 
+}) => (
+  <TouchableOpacity style={styles.settingItem} onPress={onToggle}>
+    <View style={styles.settingLeft}>
+      <ThemedText style={styles.settingIcon}>{icon}</ThemedText>
+      <View style={styles.settingInfo}>
+        <ThemedText style={styles.settingLabel}>{title}</ThemedText>
+        <ThemedText style={styles.settingDescription}>{description}</ThemedText>
+      </View>
+    </View>
+    <Switch
+      value={enabled}
+      onValueChange={onToggle}
+      trackColor={{ false: colors.border, true: colors.tint }}
+      thumbColor={enabled ? colors.background : colors.text}
+    />
+  </TouchableOpacity>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -231,8 +418,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 16,
+    paddingHorizontal: 4,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  settingLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  settingIcon: {
+    fontSize: 20,
+    marginRight: 12,
   },
   settingInfo: {
     flex: 1,

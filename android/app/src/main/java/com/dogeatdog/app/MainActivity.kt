@@ -1,4 +1,4 @@
-package com.captura.app
+package com.dogeatdog.app
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

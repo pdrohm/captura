@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "654923717834",
-    "project_id": "captura-game",
-    "storage_bucket": "captura-game.firebasestorage.app"
+    "project_number": "624454210127",
+    "project_id": "dogeatdog-app",
+    "storage_bucket": "dogeatdog-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:654923717834:android:50cb2fa9612d5c88a46833",
+        "mobilesdk_app_id": "1:624454210127:android:16be406b0a33df69ffd03a",
         "android_client_info": {
-          "package_name": "com.captura.app"
+          "package_name": "com.dogeatdog.app"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCPeL8wP-nj64f_TjzfDZgHjEvr5RiqPmk"
+          "current_key": "AIzaSyCFErmQudLpnJlYOWm22T_5zZsmDnBQeP4"
         }
       ],
       "services": {

@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>captura</string>
+    <string>DogEatDog</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -27,14 +27,14 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>captura</string>
-          <string>com.captura.app</string>
+          <string>dogeatdog</string>
+          <string>com.dogeatdog.app</string>
         </array>
       </dict>
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>exp+captura</string>
+          <string>exp+dogeatdog</string>
         </array>
       </dict>
     </array>
@@ -54,11 +54,11 @@
       <true/>
     </dict>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>This app needs access to your location to show nearby territories and center the map on your position.</string>
+    <string>DogEatDog needs access to your location to mark territory and show your position on the map.</string>
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>This app needs access to your location to show nearby territories and center the map on your position.</string>
+    <string>DogEatDog needs access to your location to mark territory and show your position on the map.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app needs access to your location to show nearby territories and center the map on your position.</string>
+    <string>DogEatDog needs access to your location to mark territory and show your position on the map.</string>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>

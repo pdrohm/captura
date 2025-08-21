@@ -1,4 +1,4 @@
-// Core domain types for the Captura app
+// Core domain types for the Dogeatdog app
 
 export interface User {
   uid: string;

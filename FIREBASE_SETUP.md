@@ -8,7 +8,7 @@
 
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Click "Create a project" or "Add project"
-3. Enter project name: `captura` (or your preferred name)
+3. Enter project name: `dogeatdog` (or your preferred name)
 4. Enable Google Analytics (recommended)
 5. Choose Analytics account or create new one
 6. Click "Create project"
@@ -16,7 +16,7 @@
 ## Step 2: Add Android App
 
 1. In Firebase Console, click the Android icon (+ Add app)
-2. Android package name: `com.captura.app`
+2. Android package name: `com.dogeatdog.app`
 3. App nickname: `Captura Android`
 4. Debug signing certificate SHA-1 (optional for now)
 5. Click "Register app"
@@ -26,7 +26,7 @@
 ## Step 3: Add iOS App
 
 1. In Firebase Console, click the iOS icon (+ Add app)
-2. iOS bundle ID: `com.captura.app`
+2. iOS bundle ID: `com.dogeatdog.app`
 3. App nickname: `Captura iOS`
 4. App Store ID (optional)
 5. Click "Register app"

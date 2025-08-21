@@ -1,22 +1,22 @@
 {
   "expo": {
-    "name": "captura",
-    "slug": "captura",
+    "name": "DogEatDog",
+    "slug": "dogeatdog",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
-    "scheme": "captura",
+    "scheme": "dogeatdog",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.captura.app",
+      "bundleIdentifier": "com.dogeatdog.app",
       "googleServicesFile": "./GoogleService-Info.plist",
       "appleTeamId": "CA5W78X6N9",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to show nearby territories and center the map on your position.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs access to your location to show nearby territories and center the map on your position.",
-        "NSLocationAlwaysUsageDescription": "This app needs access to your location to show nearby territories and center the map on your position."
+        "NSLocationWhenInUseUsageDescription": "DogEatDog needs access to your location to mark territory and show your position on the map.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "DogEatDog needs access to your location to mark territory and show your position on the map.",
+        "NSLocationAlwaysUsageDescription": "DogEatDog needs access to your location to mark territory and show your position on the map."
       }
     },
     "android": {
@@ -25,7 +25,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.captura.app",
+      "package": "com.dogeatdog.app",
       "googleServicesFile": "./google-services.json",
       "permissions": [
         "ACCESS_FINE_LOCATION",

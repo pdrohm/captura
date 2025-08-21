@@ -5,7 +5,6 @@ import { Platform } from 'react-native';
 import { HapticTab } from '@/src/components/HapticTab';
 import { IconSymbol } from '@/src/components/IconSymbol';
 import TabBarBackground from '@/src/components/TabBarBackground';
-import { Colors } from '@/src/config/Colors';
 import { useColorScheme } from '@/src/hooks/useColorScheme';
 
 export default function MainTabLayout() {
@@ -14,57 +13,83 @@ export default function MainTabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: '#FF6B6B',
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
             position: 'absolute',
-            backgroundColor: 'transparent',
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            borderTopWidth: 1,
+            borderTopColor: '#FFE5E5',
+            height: 85,
+            paddingBottom: 20,
+            paddingTop: 10,
           },
           default: {
-            backgroundColor: Colors[colorScheme ?? 'light'].background,
+            backgroundColor: '#FFFFFF',
+            borderTopWidth: 1,
+            borderTopColor: '#FFE5E5',
+            height: 65,
+            paddingVertical: 8,
           },
         }),
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
+          fontSize: 11,
+          fontWeight: '700',
+          textTransform: 'uppercase',
+          letterSpacing: 0.5,
         },
+        tabBarInactiveTintColor: '#A0A0A0',
       }}>
+      <Tabs.Screen
+        name="minigames"
+        options={{
+          title: 'Games',
+          tabBarIcon: ({ color, focused }) => (
+            <IconSymbol 
+              size={focused ? 28 : 24} 
+              name={focused ? "gamecontroller.fill" : "gamecontroller"} 
+              color={color} 
+            />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="map"
         options={{
-          title: 'Map',
+          title: 'Territory',
           tabBarIcon: ({ color, focused }) => (
             <IconSymbol 
-              size={24} 
+              size={focused ? 32 : 28} 
               name={focused ? "map.fill" : "map"} 
               color={color} 
+              style={focused ? { transform: [{ scale: 1.1 }] } : undefined}
             />
           ),
         }}
       />
       <Tabs.Screen
-        name="territories"
+        name="profile"
         options={{
-          title: 'Territories',
+          title: 'Profile',
           tabBarIcon: ({ color, focused }) => (
             <IconSymbol 
-              size={24} 
-              name={focused ? "list.bullet.rectangle.fill" : "list.bullet.rectangle"} 
+              size={focused ? 28 : 24} 
+              name={focused ? "person.crop.circle.fill" : "person.crop.circle"} 
               color={color} 
             />
           ),
         }}
       />
-      <Tabs.Screen
+       <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
           tabBarIcon: ({ color, focused }) => (
             <IconSymbol 
-              size={24} 
+              size={focused ? 28 : 24} 
               name={focused ? "gearshape.fill" : "gearshape"} 
               color={color} 
             />

@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 // Import themes
 import { FirebaseProvider } from '@/src/contexts/FirebaseContext';
 import { useAuthListener } from '@/src/hooks/useAuthListener';
+import { useDailyReset } from '@/src/hooks/useDailyReset';
 import { analyticsService, authService, firestoreService, storageService } from '@/src/services/firebase';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useColorScheme } from 'react-native';
@@ -36,5 +37,6 @@ export default function RootLayout() {
 
 function AuthListener() {
   useAuthListener();
+  useDailyReset(); // Reset daily game data
   return null;
 }

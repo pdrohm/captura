@@ -1,4 +1,4 @@
-package com.captura.app
+package com.dogeatdog.app
 
 import android.app.Application
 import android.content.res.Configuration
