@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Region } from 'react-native-maps';
 import Animated, {
   useAnimatedStyle,
@@ -14,7 +14,7 @@ import { ParticleEffect } from '../../../src/components/game/ParticleEffect';
 import { PlayerStatsCard } from '../../../src/components/game/PlayerStatsCard';
 import { TerritoryCircle } from '../../../src/components/game/TerritoryCircle';
 import { UrinateButton } from '../../../src/components/game/UrinateButton';
-import { CARTOON_COLORS, CARTOON_MAP_STYLE } from '../../../src/config/mapStyles';
+import { CARTOON_COLORS, SIMPLE_GAME_MAP_STYLE } from '../../../src/config/mapStyles';
 import { useGameStore } from '../../../src/stores/gameStore';
 
 // Dimensions available if needed for responsive design
@@ -31,8 +31,14 @@ export default function MapScreen() {
   const statsOpacity = useSharedValue(0);
   const buttonScale = useSharedValue(1);
 
-  // Import enhanced cartoon map style
-  const customMapStyle = CARTOON_MAP_STYLE;
+  // Game-inspired map style
+  const customMapStyle = SIMPLE_GAME_MAP_STYLE;
+  
+  // Debug: Log the custom style
+  console.log('Platform:', Platform.OS);
+  console.log('Custom map style from JSON:', JSON.stringify(customMapStyle, null, 2));
+  console.log('Style type:', typeof customMapStyle);
+  console.log('Style length:', Array.isArray(customMapStyle) ? customMapStyle.length : 'Not an array');
 
   // Get user location on component mount
   useEffect(() => {
@@ -121,7 +127,7 @@ export default function MapScreen() {
       <TerritoryCircle
         key={territory.id}
         territory={territory}
-        opacity={0.45} // Slightly more visible for cartoon effect
+        opacity={0.8} // Very visible for maximum game impact
       />
     )), [territories]
   );
@@ -130,10 +136,14 @@ export default function MapScreen() {
     return (
       <View style={styles.loadingContainer}>
         <LinearGradient
-          colors={[CARTOON_COLORS.ui.info, CARTOON_COLORS.ui.primary, CARTOON_COLORS.ui.secondary]}
+          colors={[CARTOON_COLORS.ui.secondary, CARTOON_COLORS.ui.primary, CARTOON_COLORS.ui.success]}
           style={styles.loadingGradient}
         >
-          <Text style={styles.loadingText}>🐕 Finding your location...</Text>
+          <View style={styles.loadingContent}>
+            <Text style={styles.loadingEmoji}>🐕‍🦺</Text>
+            <Text style={styles.loadingText}>Finding your territory...</Text>
+            <Text style={styles.loadingSubtext}>Get ready to mark your spot!</Text>
+          </View>
         </LinearGradient>
       </View>
     );
@@ -141,6 +151,8 @@ export default function MapScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Game-style background overlay */}
+      <View style={styles.mapOverlay} pointerEvents="none" />
       <MapView
         style={styles.map}
         initialRegion={initialRegion}
@@ -151,12 +163,14 @@ export default function MapScreen() {
         zoomEnabled={true}
         pitchEnabled={true}
         rotateEnabled={true}
-        mapType="mutedStandard"
+        mapType="standard"
         showsCompass={false}
         showsScale={false}
         showsBuildings={false}
         showsTraffic={false}
         showsIndoors={false}
+        toolbarEnabled={false}
+        
       >
         {/* Render all territories */}
         {territoryCircles}
@@ -186,7 +200,7 @@ export default function MapScreen() {
               activeOpacity={0.8}
             >
               <LinearGradient
-                colors={[CARTOON_COLORS.ui.info, CARTOON_COLORS.ui.primary]}
+                colors={[CARTOON_COLORS.ui.secondary, CARTOON_COLORS.ui.primary]}
                 style={styles.statsButtonGradient}
               >
                 <Text style={styles.statsButtonText}>📊</Text>
@@ -219,17 +233,49 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  loadingContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingEmoji: {
+    fontSize: 48,
+    marginBottom: 16,
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
   loadingText: {
-    fontSize: 18,
+    fontSize: 24,
+    fontWeight: '800',
+    color: CARTOON_COLORS.ui.background,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+    marginBottom: 8,
+  },
+  loadingSubtext: {
+    fontSize: 16,
     fontWeight: '600',
     color: CARTOON_COLORS.ui.background,
     textAlign: 'center',
     textShadowColor: 'rgba(0,0,0,0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
+    opacity: 0.9,
   },
   map: {
     flex: 1,
+  },
+  mapOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(74, 144, 226, 0.1)', // Subtle blue tint like Pokémon GO
+    zIndex: 1,
+    pointerEvents: 'none',
   },
   statsOverlay: {
     position: 'absolute',

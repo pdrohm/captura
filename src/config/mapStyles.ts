@@ -1,103 +1,122 @@
-// Enhanced cartoon-style map configuration
-export const CARTOON_MAP_STYLE = [
-  // Water bodies - bright, clean blue
+// Pokémon GO inspired map styling - vibrant and game-like
+// Note: Custom styling works best on iOS, Android has limited support
+export const POKEMON_GO_MAP_STYLE = [
+  // Water bodies - vivid blue like Pokémon GO
   {
     featureType: 'water',
     elementType: 'geometry',
     stylers: [
-      { color: '#5DADE2' }, // Bright blue
-      { saturation: 60 },
-      { lightness: 10 }
+      { color: '#4A90E2' }, // Pokémon GO blue
+      { saturation: 100 },
+      { lightness: 5 }
     ],
   },
   {
     featureType: 'water',
     elementType: 'labels.text.fill',
     stylers: [
-      { color: '#2E86AB' },
+      { color: '#FFFFFF' },
       { weight: 'bold' }
     ],
   },
+  {
+    featureType: 'water',
+    elementType: 'labels.text.stroke',
+    stylers: [
+      { color: '#FF0000' },
+      { weight: 2 }
+    ],
+  },
   
-  // Landscape/Parks - vibrant green
+  // Landscape - vibrant green like game maps
   {
     featureType: 'landscape',
     elementType: 'geometry',
     stylers: [
-      { color: '#A8E6CF' }, // Soft mint green
-      { saturation: 40 },
-      { lightness: 20 }
+      { color: '#98D982' }, // Bright game green
+      { saturation: 80 },
+      { lightness: 15 }
     ],
   },
   {
     featureType: 'landscape.natural',
     elementType: 'geometry',
     stylers: [
-      { color: '#7FB069' }, // Natural green
-      { saturation: 50 }
+      { color: '#7BC142' }, // Vivid nature green
+      { saturation: 90 }
     ],
   },
   
-  // Parks and recreational areas
+  // Parks - even more vibrant for game feel
   {
     featureType: 'poi.park',
     elementType: 'geometry',
     stylers: [
-      { color: '#88D498' }, // Park green
-      { saturation: 55 }
+      { color: '#6AB04C' }, // Rich park green
+      { saturation: 100 }
     ],
   },
   {
     featureType: 'poi.park',
     elementType: 'labels.text.fill',
     stylers: [
-      { color: '#2D5016' },
+      { color: '#FFFFFF' },
       { weight: 'bold' }
     ],
   },
+  {
+    featureType: 'poi.park',
+    elementType: 'labels.text.stroke',
+    stylers: [
+      { color: '#2D5016' },
+      { weight: 3 }
+    ],
+  },
   
-  // Roads - warm, friendly colors
+  // Roads - bright and game-like
   {
     featureType: 'road',
     elementType: 'geometry',
     stylers: [
-      { color: '#FFE5B4' }, // Soft peach
-      { saturation: 30 },
-      { lightness: 40 }
+      { color: '#F39801' }, // Bright orange
+      { saturation: 100 },
+      { lightness: 20 }
     ],
   },
   {
     featureType: 'road.highway',
     elementType: 'geometry',
     stylers: [
-      { color: '#FFD93D' }, // Golden yellow
-      { saturation: 70 },
-      { weight: 3 }
+      { color: '#E55039' }, // Bright red-orange
+      { saturation: 100 },
+      { weight: 4 }
     ],
   },
   {
     featureType: 'road.arterial',
     elementType: 'geometry',
     stylers: [
-      { color: '#FFEB9C' }, // Light yellow
-      { weight: 2 }
+      { color: '#FA6900' }, // Vibrant orange
+      { saturation: 90 },
+      { weight: 3 }
     ],
   },
   {
     featureType: 'road.local',
     elementType: 'geometry',
     stylers: [
-      { color: '#FFF2CC' }, // Very light yellow
-      { weight: 1 }
+      { color: '#FFA502' }, // Light orange
+      { saturation: 80 },
+      { weight: 2 }
     ],
   },
   
-  // Road labels - clean and readable
+  // Road labels - high contrast for readability
   {
     featureType: 'road',
     elementType: 'labels.text.fill',
     stylers: [
-      { color: '#8B4513' }, // Brown text
+      { color: '#FFFFFF' },
       { weight: 'bold' }
     ],
   },
@@ -105,116 +124,185 @@ export const CARTOON_MAP_STYLE = [
     featureType: 'road',
     elementType: 'labels.text.stroke',
     stylers: [
-      { color: '#FFFFFF' },
-      { weight: 3 }
+      { color: '#2C2C54' },
+      { weight: 4 }
     ],
   },
   
-  // Buildings - soft, clean colors
+  // Buildings - colorful like game structures
   {
     featureType: 'poi.business',
     elementType: 'geometry',
     stylers: [
-      { color: '#E8E8E8' }, // Light gray
-      { saturation: -20 }
+      { color: '#D63031' }, // Bright red
+      { saturation: 80 }
     ],
   },
-  
-  // Hide clutter
   {
-    featureType: 'poi',
-    elementType: 'labels',
-    stylers: [{ visibility: 'simplified' }],
-  },
-  {
-    featureType: 'poi.business',
-    elementType: 'labels',
-    stylers: [{ visibility: 'off' }],
+    featureType: 'poi.school',
+    elementType: 'geometry',
+    stylers: [
+      { color: '#A29BFE' }, // Purple
+      { saturation: 70 }
+    ],
   },
   {
     featureType: 'poi.medical',
-    elementType: 'labels',
-    stylers: [{ visibility: 'off' }],
+    elementType: 'geometry',
+    stylers: [
+      { color: '#00B894' }, // Teal
+      { saturation: 90 }
+    ],
   },
   {
     featureType: 'poi.government',
-    elementType: 'labels',
-    stylers: [{ visibility: 'off' }],
-  },
-  {
-    featureType: 'transit',
-    elementType: 'labels',
-    stylers: [{ visibility: 'off' }],
+    elementType: 'geometry',
+    stylers: [
+      { color: '#FDCB6E' }, // Yellow
+      { saturation: 80 }
+    ],
   },
   
-  // Administrative boundaries - subtle
+  // Enhanced POI visibility for game feel
+  {
+    featureType: 'poi',
+    elementType: 'labels.text.fill',
+    stylers: [
+      { color: '#FFFFFF' },
+      { weight: 'bold' }
+    ],
+  },
+  {
+    featureType: 'poi',
+    elementType: 'labels.text.stroke',
+    stylers: [
+      { color: '#2C2C54' },
+      { weight: 3 }
+    ],
+  },
+  
+  // Transit - vibrant colors
+  {
+    featureType: 'transit.station',
+    elementType: 'geometry',
+    stylers: [
+      { color: '#6C5CE7' }, // Purple
+      { saturation: 100 }
+    ],
+  },
+  {
+    featureType: 'transit.line',
+    elementType: 'geometry',
+    stylers: [
+      { color: '#00CEC9' }, // Cyan
+      { weight: 3 }
+    ],
+  },
+  
+  // Administrative boundaries - more visible
   {
     featureType: 'administrative',
     elementType: 'geometry.stroke',
     stylers: [
-      { color: '#C0C0C0' },
-      { weight: 1 },
-      { visibility: 'simplified' }
+      { color: '#2D3436' },
+      { weight: 2 },
+      { visibility: 'on' }
     ],
   },
   {
     featureType: 'administrative',
     elementType: 'labels.text.fill',
     stylers: [
-      { color: '#666666' },
+      { color: '#2D3436' },
       { weight: 'bold' }
     ],
   },
+  {
+    featureType: 'administrative',
+    elementType: 'labels.text.stroke',
+    stylers: [
+      { color: '#FFFFFF' },
+      { weight: 3 }
+    ],
+  },
   
-  // Clean up other elements
+  // Man-made structures - game-like colors
   {
     featureType: 'landscape.man_made',
     elementType: 'geometry',
     stylers: [
-      { color: '#F0F0F0' }, // Very light gray
-      { saturation: -10 }
+      { color: '#DDA0DD' }, // Plum
+      { saturation: 60 }
     ],
   },
 ];
 
-// Color palette for territories and game elements
+// Simple styling that might work better
+export const SIMPLE_GAME_MAP_STYLE = [
+  {
+    featureType: 'water',
+    elementType: 'geometry',
+    stylers: [
+      { color: '#4A90E2' }
+    ],
+  },
+  {
+    featureType: 'road',
+    elementType: 'geometry',
+    stylers: [
+      { color: '#F39801' }
+    ],
+  },
+  {
+    featureType: 'landscape',
+    elementType: 'geometry',
+    stylers: [
+      { color: '#98D982' }
+    ],
+  },
+];
+
+// Keep the original as an alternative
+export const CARTOON_MAP_STYLE = SIMPLE_GAME_MAP_STYLE;
+
+// Pokémon GO inspired color palette
 export const CARTOON_COLORS = {
-  // Bright, cartoon-style colors for territories
+  // Vibrant game-style colors for territories
   territory: {
-    player: '#FF6B6B',     // Coral red
-    opponent1: '#4ECDC4',   // Teal
-    opponent2: '#45B7D1',   // Sky blue
-    opponent3: '#F9CA24',   // Golden yellow
-    opponent4: '#6C5CE7',   // Purple
-    opponent5: '#FD79A8',   // Pink
-    opponent6: '#00B894',   // Emerald
-    opponent7: '#FDCB6E',   // Orange
-    neutral: '#B2BEC3',     // Light gray
+    player: '#E55039',     // Bright red-orange
+    opponent1: '#4A90E2',   // Pokémon GO blue
+    opponent2: '#6AB04C',   // Vibrant green
+    opponent3: '#F39801',   // Bright orange
+    opponent4: '#6C5CE7',   // Electric purple
+    opponent5: '#FD79A8',   // Hot pink
+    opponent6: '#00CEC9',   // Cyan
+    opponent7: '#FDCB6E',   // Golden yellow
+    neutral: '#95A5A6',     // Neutral gray
   },
   
-  // UI element colors
+  // Game-inspired UI colors
   ui: {
-    primary: '#FF6B6B',
-    secondary: '#4ECDC4', 
-    success: '#00B894',
-    warning: '#FDCB6E',
-    error: '#E17055',
-    info: '#74B9FF',
+    primary: '#E55039',     // Bright red-orange
+    secondary: '#4A90E2',   // Pokémon blue
+    success: '#6AB04C',     // Vibrant green
+    warning: '#F39801',     // Bright orange
+    error: '#D63031',       // Deep red
+    info: '#74B9FF',        // Light blue
     background: '#FFFFFF',
     surface: '#F8F9FA',
-    text: '#2D3436',
+    text: '#2C2C54',        // Dark blue-gray
     textLight: '#636E72',
-    border: '#DDD',
-    shadow: 'rgba(0, 0, 0, 0.1)',
+    border: '#DDA0DD',      // Light purple
+    shadow: 'rgba(44, 44, 84, 0.2)', // Darker shadow
   },
   
-  // Map-specific colors
+  // Map-specific game colors
   map: {
-    userLocation: '#FF6B6B',
-    conquestPath: '#FF6B35',
-    startMarker: '#00B894',
-    endMarker: '#E17055',
-    trackingPoint: '#FDCB6E',
+    userLocation: '#E55039',  // Player red
+    conquestPath: '#F39801',  // Bright orange path
+    startMarker: '#6AB04C',   // Green start
+    endMarker: '#D63031',     // Red end
+    trackingPoint: '#FDCB6E', // Yellow tracking
   }
 } as const;
 

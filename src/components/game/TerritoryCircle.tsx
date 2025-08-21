@@ -1,7 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Circle } from 'react-native-maps';
 import type { Territory } from '../../types/game';
-import { CARTOON_COLORS } from '../../config/mapStyles';
+import { CARTOON_COLORS, MAP_ANIMATIONS } from '../../config/mapStyles';
+import Animated, {
+  useSharedValue,
+  useAnimatedProps,
+  withRepeat,
+  withTiming,
+  interpolate,
+} from 'react-native-reanimated';
 
 interface TerritoryCircleProps {
   territory: Territory;
@@ -10,9 +17,9 @@ interface TerritoryCircleProps {
 
 export const TerritoryCircle: React.FC<TerritoryCircleProps> = React.memo(({ 
   territory, 
-  opacity = 0.35 
+  opacity = 0.6 
 }) => {
-  // Enhanced cartoon-style colors and styling
+  // Enhanced game-style colors and styling
   const { fillColor, strokeColor } = useMemo(() => {
     const baseColor = territory.color || CARTOON_COLORS.territory.neutral;
     
@@ -29,7 +36,7 @@ export const TerritoryCircle: React.FC<TerritoryCircleProps> = React.memo(({
 
     return {
       fillColor: hexToRgba(baseColor, opacity),
-      strokeColor: hexToRgba(baseColor, 0.8), // Stronger stroke opacity
+      strokeColor: hexToRgba(baseColor, 1.0), // Full opacity stroke for game effect
     };
   }, [territory.color, opacity]);
 
@@ -44,8 +51,8 @@ export const TerritoryCircle: React.FC<TerritoryCircleProps> = React.memo(({
       radius={territory.radius}
       fillColor={fillColor}
       strokeColor={strokeColor}
-      strokeWidth={3} // Thicker stroke for cartoon effect
-      zIndex={1}
+      strokeWidth={5} // Much thicker stroke for game effect
+      zIndex={10}
     />
   );
 });
