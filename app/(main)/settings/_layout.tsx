@@ -10,6 +10,36 @@ export default function SettingsLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="game"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="app"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="privacy"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="data"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="profile"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

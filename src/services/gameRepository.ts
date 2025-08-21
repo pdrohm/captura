@@ -45,7 +45,7 @@ export interface IGameRepository {
   subscribeToGameState: (userId: string, callback: (gameState: GameState | null) => void) => () => void;
 
   // Leaderboards
-  getLeaderboard: (type: 'territories' | 'level' | 'coins') => Promise<Array<{ userId: string; value: number; displayName: string }>>;
+  getLeaderboard: (type: 'territories' | 'level' | 'coins') => Promise<{ userId: string; value: number; displayName: string }[]>;
   updateLeaderboardScore: (userId: string, type: 'territories' | 'level' | 'coins', value: number) => Promise<void>;
 }
 
@@ -523,7 +523,7 @@ export class FirestoreGameRepository implements IGameRepository {
   }
 
   // Leaderboard methods
-  async getLeaderboard(type: 'territories' | 'level' | 'coins'): Promise<Array<{ userId: string; value: number; displayName: string }>> {
+  async getLeaderboard(type: 'territories' | 'level' | 'coins'): Promise<{ userId: string; value: number; displayName: string }[]> {
     try {
       const snapshot = await this.firestore()
         .collection('leaderboards')

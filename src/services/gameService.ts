@@ -45,7 +45,7 @@ export interface IGameService {
   updateGameSettings: (userId: string, settings: GameState['settings']) => Promise<void>;
 
   // Leaderboards
-  getLeaderboard: (type: 'territories' | 'level' | 'coins') => Promise<Array<{ userId: string; value: number; displayName: string }>>;
+  getLeaderboard: (type: 'territories' | 'level' | 'coins') => Promise<{ userId: string; value: number; displayName: string }[]>;
   updateLeaderboardScore: (userId: string, type: 'territories' | 'level' | 'coins', value: number) => Promise<void>;
 
   // Real-time subscriptions
@@ -350,7 +350,7 @@ export class GameService implements IGameService {
   }
 
   // Leaderboards
-  async getLeaderboard(type: 'territories' | 'level' | 'coins'): Promise<Array<{ userId: string; value: number; displayName: string }>> {
+  async getLeaderboard(type: 'territories' | 'level' | 'coins'): Promise<{ userId: string; value: number; displayName: string }[]> {
     return await gameRepository.getLeaderboard(type);
   }
 
