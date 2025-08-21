@@ -78,7 +78,7 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
         >
           <Entypo 
             name="water" 
-            size={32} 
+            size={24} 
             color={disabled ? '#CCCCCC' : '#FFFFFF'} 
             style={styles.icon}
           />
@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0,0,0,0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+
   },
   text: {
     color: CARTOON_COLORS.ui.background,

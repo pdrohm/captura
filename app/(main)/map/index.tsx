@@ -15,13 +15,20 @@ import { PlayerStatsCard } from '../../../src/components/game/PlayerStatsCard';
 import { TerritoryCircle } from '../../../src/components/game/TerritoryCircle';
 import { UrinateButton } from '../../../src/components/game/UrinateButton';
 import { CARTOON_COLORS, SIMPLE_GAME_MAP_STYLE } from '../../../src/config/mapStyles';
+import { useFirestoreGame } from '../../../src/hooks/useFirestoreGame';
 import { useGameStore } from '../../../src/stores/gameStore';
 
 // Dimensions available if needed for responsive design
 // const { width, height } = Dimensions.get('window');
 
 export default function MapScreen() {
-  const { territories, player, markTerritory } = useGameStore();
+  const { territories, player } = useGameStore();
+  const { 
+    markTerritory, 
+    isLoading, 
+    error, 
+    isInitialized 
+  } = useFirestoreGame();
   const [initialRegion, setInitialRegion] = useState<Region | null>(null);
   const [userLocation, setUserLocation] = useState<Location.LocationObject | null>(null);
   const [showStats, setShowStats] = useState(false);
@@ -75,7 +82,7 @@ export default function MapScreen() {
       return;
     }
 
-    const success = markTerritory(
+    const success = await markTerritory(
       userLocation.coords.latitude,
       userLocation.coords.longitude
     );
@@ -122,17 +129,42 @@ export default function MapScreen() {
   const remainingUrinations = player.maxDailyUrinations - player.dailyUrinations;
 
   // Memoize territory circles to prevent unnecessary re-renders
-  const territoryCircles = useMemo(() => 
-    territories.map((territory) => (
-      <TerritoryCircle
-        key={territory.id}
-        territory={territory}
-        opacity={0.8} // Very visible for maximum game impact
-      />
-    )), [territories]
-  );
+  const territoryCircles = useMemo(() => {
+    // Deduplicate territories by ID to prevent duplicate keys
+    const uniqueTerritories = territories.reduce((acc, territory) => {
+      if (!acc.find(t => t.id === territory.id)) {
+        acc.push(territory);
+      }
+      return acc;
+    }, [] as typeof territories);
 
-  if (!initialRegion) {
+    return uniqueTerritories.map((territory) => {
+      // Handle createdAt which might be a Date or Firestore timestamp
+      let createdAtTime: number;
+      if (territory.createdAt) {
+        if (territory.createdAt instanceof Date) {
+          createdAtTime = territory.createdAt.getTime();
+        } else if (typeof territory.createdAt === 'object' && 'toDate' in territory.createdAt) {
+          // Firestore timestamp
+          createdAtTime = (territory.createdAt as any).toDate().getTime();
+        } else {
+          createdAtTime = Date.now();
+        }
+      } else {
+        createdAtTime = Date.now();
+      }
+
+      return (
+        <TerritoryCircle
+          key={`territory-${territory.id}-${createdAtTime}`}
+          territory={territory}
+          opacity={0.8} // Very visible for maximum game impact
+        />
+      );
+    });
+  }, [territories]);
+
+  if (!initialRegion || !isInitialized) {
     return (
       <View style={styles.loadingContainer}>
         <LinearGradient
@@ -141,8 +173,12 @@ export default function MapScreen() {
         >
           <View style={styles.loadingContent}>
             <Text style={styles.loadingEmoji}>🐕‍🦺</Text>
-            <Text style={styles.loadingText}>Finding your territory...</Text>
-            <Text style={styles.loadingSubtext}>Get ready to mark your spot!</Text>
+            <Text style={styles.loadingText}>
+              {!initialRegion ? 'Finding your territory...' : 'Connecting to multiplayer...'}
+            </Text>
+            <Text style={styles.loadingSubtext}>
+              {!initialRegion ? 'Get ready to mark your spot!' : 'Loading game data...'}
+            </Text>
           </View>
         </LinearGradient>
       </View>
@@ -183,10 +219,17 @@ export default function MapScreen() {
         </Animated.View>
       )}
 
+      {/* Error Display */}
+      {error && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>⚠️ {error}</Text>
+        </View>
+      )}
+
       {/* Urinate Button */}
       <UrinateButton
         onPress={handleMarkTerritory}
-        disabled={remainingUrinations <= 0}
+        disabled={remainingUrinations <= 0 || isLoading}
         remainingUrinations={remainingUrinations}
       />
 
@@ -318,5 +361,21 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0,0,0,0.2)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+  },
+  errorContainer: {
+    position: 'absolute',
+    top: 100,
+    left: 16,
+    right: 16,
+    backgroundColor: CARTOON_COLORS.ui.error,
+    padding: 12,
+    borderRadius: 8,
+    zIndex: 1001,
+  },
+  errorText: {
+    color: CARTOON_COLORS.ui.background,
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });
