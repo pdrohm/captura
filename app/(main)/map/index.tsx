@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Region } from 'react-native-maps';
 import Animated, {
   useAnimatedStyle,
@@ -14,9 +14,11 @@ import { ParticleEffect } from '../../../src/components/game/ParticleEffect';
 import { PlayerStatsCard } from '../../../src/components/game/PlayerStatsCard';
 import { TerritoryCircle } from '../../../src/components/game/TerritoryCircle';
 import { UrinateButton } from '../../../src/components/game/UrinateButton';
+import { CARTOON_COLORS, CARTOON_MAP_STYLE } from '../../../src/config/mapStyles';
 import { useGameStore } from '../../../src/stores/gameStore';
 
-const { width, height } = Dimensions.get('window');
+// Dimensions available if needed for responsive design
+// const { width, height } = Dimensions.get('window');
 
 export default function MapScreen() {
   const { territories, player, markTerritory } = useGameStore();
@@ -29,39 +31,8 @@ export default function MapScreen() {
   const statsOpacity = useSharedValue(0);
   const buttonScale = useSharedValue(1);
 
-  // Custom map style (cartoon-like)
-  const customMapStyle = [
-    {
-      featureType: 'water',
-      elementType: 'geometry',
-      stylers: [{ color: '#4FC3F7' }, { saturation: 80 }],
-    },
-    {
-      featureType: 'landscape',
-      elementType: 'geometry',
-      stylers: [{ color: '#81C784' }, { saturation: 40 }],
-    },
-    {
-      featureType: 'road',
-      elementType: 'geometry',
-      stylers: [{ color: '#FFB74D' }, { weight: 2 }],
-    },
-    {
-      featureType: 'poi',
-      elementType: 'labels',
-      stylers: [{ visibility: 'off' }],
-    },
-    {
-      featureType: 'transit',
-      elementType: 'labels',
-      stylers: [{ visibility: 'off' }],
-    },
-    {
-      featureType: 'administrative',
-      elementType: 'labels',
-      stylers: [{ visibility: 'simplified' }],
-    },
-  ];
+  // Import enhanced cartoon map style
+  const customMapStyle = CARTOON_MAP_STYLE;
 
   // Get user location on component mount
   useEffect(() => {
@@ -87,7 +58,7 @@ export default function MapScreen() {
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       });
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to get current location');
     }
   };
@@ -150,7 +121,7 @@ export default function MapScreen() {
       <TerritoryCircle
         key={territory.id}
         territory={territory}
-        opacity={0.4}
+        opacity={0.45} // Slightly more visible for cartoon effect
       />
     )), [territories]
   );
@@ -159,10 +130,10 @@ export default function MapScreen() {
     return (
       <View style={styles.loadingContainer}>
         <LinearGradient
-          colors={['#4FC3F7', '#29B6F6', '#0288D1']}
+          colors={[CARTOON_COLORS.ui.info, CARTOON_COLORS.ui.primary, CARTOON_COLORS.ui.secondary]}
           style={styles.loadingGradient}
         >
-          {/* Loading indicator could go here */}
+          <Text style={styles.loadingText}>🐕 Finding your location...</Text>
         </LinearGradient>
       </View>
     );
@@ -173,12 +144,19 @@ export default function MapScreen() {
       <MapView
         style={styles.map}
         initialRegion={initialRegion}
+        customMapStyle={customMapStyle}
         showsUserLocation={true}
         showsMyLocationButton={false}
         scrollEnabled={true}
         zoomEnabled={true}
         pitchEnabled={true}
         rotateEnabled={true}
+        mapType="mutedStandard"
+        showsCompass={false}
+        showsScale={false}
+        showsBuildings={false}
+        showsTraffic={false}
+        showsIndoors={false}
       >
         {/* Render all territories */}
         {territoryCircles}
@@ -198,13 +176,17 @@ export default function MapScreen() {
         remainingUrinations={remainingUrinations}
       />
 
-      {/* Stats Toggle Button */}
+      {/* Stats Toggle Button - Enhanced Cartoon Style */}
       <View style={styles.topButtons} pointerEvents="box-none">
         <SafeAreaView pointerEvents="box-none">
           <View style={styles.buttonContainer} pointerEvents="box-none">
-            <TouchableOpacity style={styles.statsButton} onPress={toggleStats}>
+            <TouchableOpacity 
+              style={[styles.statsButton, styles.cartoonButton]} 
+              onPress={toggleStats}
+              activeOpacity={0.8}
+            >
               <LinearGradient
-                colors={['#667eea', '#764ba2']}
+                colors={[CARTOON_COLORS.ui.info, CARTOON_COLORS.ui.primary]}
                 style={styles.statsButtonGradient}
               >
                 <Text style={styles.statsButtonText}>📊</Text>
@@ -227,6 +209,7 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: CARTOON_COLORS.ui.background,
   },
   loadingContainer: {
     flex: 1,
@@ -235,6 +218,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: CARTOON_COLORS.ui.background,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   map: {
     flex: 1,
@@ -256,14 +248,18 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   statsButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    elevation: 8,
+    shadowColor: CARTOON_COLORS.ui.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+  cartoonButton: {
+    borderWidth: 3,
+    borderColor: CARTOON_COLORS.ui.background,
   },
   statsButtonGradient: {
     flex: 1,
@@ -272,7 +268,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statsButtonText: {
-    fontSize: 20,
+    fontSize: 22,
+    textShadowColor: 'rgba(0,0,0,0.2)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
-
 });

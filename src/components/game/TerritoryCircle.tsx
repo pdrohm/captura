@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Circle } from 'react-native-maps';
 import type { Territory } from '../../types/game';
+import { CARTOON_COLORS } from '../../config/mapStyles';
 
 interface TerritoryCircleProps {
   territory: Territory;
@@ -9,12 +10,28 @@ interface TerritoryCircleProps {
 
 export const TerritoryCircle: React.FC<TerritoryCircleProps> = React.memo(({ 
   territory, 
-  opacity = 0.3 
+  opacity = 0.35 
 }) => {
-  const fillColor = useMemo(() => 
-    `${territory.color}${Math.round(opacity * 255).toString(16).padStart(2, '0')}`,
-    [territory.color, opacity]
-  );
+  // Enhanced cartoon-style colors and styling
+  const { fillColor, strokeColor } = useMemo(() => {
+    const baseColor = territory.color || CARTOON_COLORS.territory.neutral;
+    
+    // Convert hex to rgba for better opacity control
+    const hexToRgba = (hex: string, alpha: number) => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      if (!result) return `rgba(255, 107, 107, ${alpha})`; // fallback to coral
+      
+      const r = parseInt(result[1], 16);
+      const g = parseInt(result[2], 16);
+      const b = parseInt(result[3], 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    };
+
+    return {
+      fillColor: hexToRgba(baseColor, opacity),
+      strokeColor: hexToRgba(baseColor, 0.8), // Stronger stroke opacity
+    };
+  }, [territory.color, opacity]);
 
   const center = useMemo(() => ({
     latitude: territory.latitude,
@@ -26,8 +43,9 @@ export const TerritoryCircle: React.FC<TerritoryCircleProps> = React.memo(({
       center={center}
       radius={territory.radius}
       fillColor={fillColor}
-      strokeColor={territory.color}
-      strokeWidth={2}
+      strokeColor={strokeColor}
+      strokeWidth={3} // Thicker stroke for cartoon effect
+      zIndex={1}
     />
   );
 });

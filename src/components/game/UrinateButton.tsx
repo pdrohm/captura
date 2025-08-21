@@ -9,6 +9,7 @@ import Animated, {
   withSequence,
   withSpring
 } from 'react-native-reanimated';
+import { CARTOON_COLORS } from '../../config/mapStyles';
 import { useGameSettings } from '../../stores/settingsStore';
 
 interface UrinateButtonProps {
@@ -67,7 +68,10 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
         disabled={disabled}
       >
         <LinearGradient
-          colors={disabled ? ['#CCCCCC', '#999999'] : ['#FF6B6B', '#FF8E53']}
+          colors={disabled ? 
+            [CARTOON_COLORS.ui.textLight, CARTOON_COLORS.ui.border] : 
+            [CARTOON_COLORS.ui.primary, CARTOON_COLORS.ui.warning]
+          }
           style={styles.button}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -99,36 +103,47 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   button: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 88,
+    height: 88,
+    borderRadius: 44,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 8,
-    shadowColor: '#FF6B6B',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    elevation: 10,
+    shadowColor: CARTOON_COLORS.ui.shadow,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    borderWidth: 4,
+    borderColor: CARTOON_COLORS.ui.background,
   },
   disabledContainer: {
     opacity: 0.6,
   },
   icon: {
     marginBottom: 2,
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   text: {
-    color: '#FFFFFF',
+    color: CARTOON_COLORS.ui.background,
     fontSize: 8,
     fontWeight: '800',
     letterSpacing: 0.5,
     textAlign: 'center',
     marginTop: 2,
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   counter: {
-    color: '#FFFFFF',
-    fontSize: 7,
-    fontWeight: '600',
+    color: CARTOON_COLORS.ui.background,
+    fontSize: 8,
+    fontWeight: '700',
     marginTop: 1,
+    textShadowColor: 'rgba(0,0,0,0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   disabledText: {
     color: '#CCCCCC',
