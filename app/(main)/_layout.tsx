@@ -21,16 +21,12 @@ export default function MainTabLayout() {
           ios: {
             position: 'absolute',
             backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            borderTopWidth: 1,
-            borderTopColor: '#FFE5E5',
             height: 85,
             paddingBottom: 20,
             paddingTop: 10,
           },
           default: {
             backgroundColor: '#FFFFFF',
-            borderTopWidth: 1,
-            borderTopColor: '#FFE5E5',
             height: 65,
             paddingVertical: 8,
           },
