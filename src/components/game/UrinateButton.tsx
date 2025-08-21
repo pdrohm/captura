@@ -1,12 +1,13 @@
+import { Entypo } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withSequence,
-    withSpring
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring
 } from 'react-native-reanimated';
 import { useGameSettings } from '../../stores/settingsStore';
 
@@ -71,12 +72,13 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
-          <Text style={[styles.emoji, disabled && styles.disabledEmoji]}>
-            💧
-          </Text>
-          <Text style={[styles.text, disabled && styles.disabledText]}>
-            {disabled ? 'OUT OF AMMO' : 'MARK TERRITORY'}
-          </Text>
+          <Entypo 
+            name="water" 
+            size={32} 
+            color={disabled ? '#CCCCCC' : '#FFFFFF'} 
+            style={styles.icon}
+          />
+         
           <Text style={[styles.counter, disabled && styles.disabledText]}>
             {remainingUrinations} left
           </Text>
@@ -89,16 +91,17 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 120,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
+    bottom: Platform.select({
+      ios: 105, // iOS tab bar height (85) + padding (20)
+      android: 85, // Android tab bar height (65) + padding (20)
+    }),
+    right: 20,
     zIndex: 1000,
   },
   button: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 8,
@@ -110,25 +113,22 @@ const styles = StyleSheet.create({
   disabledContainer: {
     opacity: 0.6,
   },
-  emoji: {
-    fontSize: 32,
-    marginBottom: 4,
-  },
-  disabledEmoji: {
-    opacity: 0.5,
+  icon: {
+    marginBottom: 2,
   },
   text: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 8,
     fontWeight: '800',
-    letterSpacing: 1,
+    letterSpacing: 0.5,
     textAlign: 'center',
+    marginTop: 2,
   },
   counter: {
     color: '#FFFFFF',
-    fontSize: 10,
+    fontSize: 7,
     fontWeight: '600',
-    marginTop: 2,
+    marginTop: 1,
   },
   disabledText: {
     color: '#CCCCCC',

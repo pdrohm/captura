@@ -192,13 +192,11 @@ export default function MapScreen() {
       )}
 
       {/* Urinate Button */}
-      <View style={styles.urinateButtonContainer} pointerEvents="box-none">
-        <UrinateButton
-          onPress={handleMarkTerritory}
-          disabled={remainingUrinations <= 0}
-          remainingUrinations={remainingUrinations}
-        />
-      </View>
+      <UrinateButton
+        onPress={handleMarkTerritory}
+        disabled={remainingUrinations <= 0}
+        remainingUrinations={remainingUrinations}
+      />
 
       {/* Stats Toggle Button */}
       <View style={styles.topButtons} pointerEvents="box-none">
@@ -276,11 +274,5 @@ const styles = StyleSheet.create({
   statsButtonText: {
     fontSize: 20,
   },
-  urinateButtonContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1000,
-  },
+
 });
