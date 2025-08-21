@@ -1,10 +1,11 @@
+import { FontAwesome6 } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withSpring,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
 } from 'react-native-reanimated';
 import type { PlayerStats } from '../../types/game';
 
@@ -53,7 +54,8 @@ export const PlayerStatsCard: React.FC<PlayerStatsCardProps> = ({
             <Text style={styles.levelText}>LVL {stats.level}</Text>
           </View>
           <View style={styles.coinsContainer}>
-            <Text style={styles.coinsText}>🪙 {stats.coins}</Text>
+            <FontAwesome6 name="coins" size={24} color="white" />
+            <Text style={styles.coinsText}>{stats.coins}</Text>
           </View>
         </View>
 

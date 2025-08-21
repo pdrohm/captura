@@ -1,10 +1,11 @@
-import React from 'react';
-import { ScrollView, View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useGameStore } from '../../../src/stores/gameStore';
+import { router } from 'expo-router';
+import React from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MinigameCard } from '../../../src/components/game/MinigameCard';
 import { PlayerStatsCard } from '../../../src/components/game/PlayerStatsCard';
-import * as Haptics from 'expo-haptics';
+import { useGameStore } from '../../../src/stores/gameStore';
 
 export default function MinigamesScreen() {
   const { minigames, player, completeMinigame } = useGameStore();
@@ -12,14 +13,18 @@ export default function MinigamesScreen() {
   const handleMinigamePress = (minigameId: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     
-    // Simulate minigame completion for now
-    // In a real app, this would navigate to the actual minigame
-    completeMinigame(minigameId);
-    
-    // Show success feedback
-    setTimeout(() => {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    }, 200);
+    if (minigameId === 'roulette') {
+      // Navigate to roulette game
+      router.push('/minigames/roulette');
+    } else {
+      // Simulate minigame completion for other games
+      completeMinigame(minigameId);
+      
+      // Show success feedback
+      setTimeout(() => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }, 200);
+    }
   };
 
   return (

@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Region } from 'react-native-maps';
 import Animated, {
   useAnimatedStyle,
@@ -41,11 +41,6 @@ export default function MapScreen() {
   // Game-inspired map style
   const customMapStyle = SIMPLE_GAME_MAP_STYLE;
   
-  // Debug: Log the custom style
-  console.log('Platform:', Platform.OS);
-  console.log('Custom map style from JSON:', JSON.stringify(customMapStyle, null, 2));
-  console.log('Style type:', typeof customMapStyle);
-  console.log('Style length:', Array.isArray(customMapStyle) ? customMapStyle.length : 'Not an array');
 
   // Get user location on component mount
   useEffect(() => {

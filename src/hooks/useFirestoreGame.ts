@@ -34,16 +34,13 @@ export const useFirestoreGame = () => {
       if (!existingPlayer) {
         // Initialize new player with current local stats
         await gameService.initializePlayer(user.uid, player);
-        console.log('✅ New player initialized in Firestore');
       } else {
         // Sync local store with Firestore data
         useGameStore.setState({ player: existingPlayer });
-        console.log('✅ Player data synced from Firestore');
       }
 
       setIsInitialized(true);
     } catch (err) {
-      console.error('❌ Failed to initialize player:', err);
       setError('Failed to initialize player');
     } finally {
       setIsLoading(false);
@@ -77,10 +74,7 @@ export const useFirestoreGame = () => {
         },
       }));
       
-      console.log('✅ All territories loaded from Firestore:', allTerritories.length);
-      console.log('✅ User territory count updated:', userTerritoryCount);
     } catch (err) {
-      console.error('❌ Failed to load territories:', err);
       setError('Failed to load territories');
     } finally {
       setIsLoading(false);
@@ -128,10 +122,8 @@ export const useFirestoreGame = () => {
       // Check achievements
       localCheckAchievements();
 
-      console.log('✅ Territory marked in Firestore:', newTerritory.id);
       return true;
     } catch (err) {
-      console.error('❌ Failed to mark territory:', err);
       setError(err instanceof Error ? err.message : 'Failed to mark territory');
       return false;
     } finally {
@@ -146,9 +138,7 @@ export const useFirestoreGame = () => {
     try {
       isSyncingRef.current = true;
       await gameService.updatePlayerStats(user.uid, player);
-      console.log('✅ Player stats synced to Firestore');
     } catch (err) {
-      console.error('❌ Failed to sync player stats:', err);
       setError('Failed to sync player stats');
     } finally {
       isSyncingRef.current = false;
@@ -161,7 +151,6 @@ export const useFirestoreGame = () => {
   useEffect(() => {
     if (!user?.uid || !isInitialized) return;
 
-    console.log('🔄 Setting up real-time subscriptions...');
 
     // Subscribe to player stats changes
     const unsubscribePlayer = gameService.subscribeToPlayerStats(user.uid, (stats) => {
@@ -171,7 +160,6 @@ export const useFirestoreGame = () => {
         if (currentTime - lastPlayerUpdateRef.current > 2000) { // Increased debounce to 2 seconds
           useGameStore.setState({ player: stats });
           lastPlayerUpdateRef.current = currentTime;
-          console.log('🔄 Player stats updated from Firestore');
         }
       }
     });
@@ -193,8 +181,6 @@ export const useFirestoreGame = () => {
           },
         }));
         
-        console.log('🔄 Territories updated from Firestore:', territories.length);
-        console.log('🔄 User territory count updated:', userTerritoryCount);
       }, 500); // 500ms debounce
     });
 
@@ -202,7 +188,6 @@ export const useFirestoreGame = () => {
     const unsubscribeGameState = gameService.subscribeToGameState(user.uid, (gameState) => {
       if (gameState) {
         useGameStore.setState(gameState);
-        console.log('🔄 Game state updated from Firestore');
       }
     });
 
@@ -211,7 +196,6 @@ export const useFirestoreGame = () => {
       unsubscribePlayer();
       unsubscribeTerritories();
       unsubscribeGameState();
-      console.log('🔄 Real-time subscriptions cleaned up');
     };
   }, [user?.uid, isInitialized, calculateUserTerritoryCount]);
 
@@ -237,9 +221,7 @@ export const useFirestoreGame = () => {
     try {
       await gameService.resetDailyUrinations(user.uid);
       localResetDailyUrinations();
-      console.log('✅ Daily urinations reset in Firestore');
     } catch (err) {
-      console.error('❌ Failed to reset daily urinations:', err);
       setError('Failed to reset daily urinations');
     }
   }, [user?.uid, localResetDailyUrinations]);
@@ -251,9 +233,7 @@ export const useFirestoreGame = () => {
     try {
       await gameService.updateGameSettings(user.uid, settings);
       localUpdateSettings(settings);
-      console.log('✅ Settings updated in Firestore');
     } catch (err) {
-      console.error('❌ Failed to update settings:', err);
       setError('Failed to update settings');
     }
   }, [user?.uid, localUpdateSettings]);
@@ -263,7 +243,6 @@ export const useFirestoreGame = () => {
     try {
       return await gameService.getLeaderboard(type);
     } catch (err) {
-      console.error('❌ Failed to get leaderboard:', err);
       setError('Failed to get leaderboard');
       return [];
     }
@@ -274,7 +253,6 @@ export const useFirestoreGame = () => {
     try {
       return await gameService.getTerritoriesInRadius(latitude, longitude, radius);
     } catch (err) {
-      console.error('❌ Failed to get territories in radius:', err);
       setError('Failed to get territories in radius');
       return [];
     }

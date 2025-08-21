@@ -87,6 +87,9 @@ interface GameStore extends GameState {
   purchaseSkin: (skinId: string) => boolean;
   resetDailyUrinations: () => void;
   addExperience: (amount: number) => void;
+  addCoins: (amount: number) => void;
+  addDailyUrinations: (amount: number) => void;
+  addTerritoryRadius: (amount: number) => void;
   updateSettings: (settings: Partial<GameState['settings']>) => void;
   clearAllData: () => void;
   checkAchievements: () => void;
@@ -207,6 +210,33 @@ export const useGameStore = create<GameStore>()(
             },
           };
         });
+      },
+
+      addCoins: (amount: number) => {
+        set((state) => ({
+          player: {
+            ...state.player,
+            coins: state.player.coins + amount,
+          },
+        }));
+      },
+
+      addDailyUrinations: (amount: number) => {
+        set((state) => ({
+          player: {
+            ...state.player,
+            maxDailyUrinations: state.player.maxDailyUrinations + amount,
+          },
+        }));
+      },
+
+      addTerritoryRadius: (amount: number) => {
+        set((state) => ({
+          player: {
+            ...state.player,
+            territoryRadius: state.player.territoryRadius + amount,
+          },
+        }));
       },
 
       checkAchievements: () => {

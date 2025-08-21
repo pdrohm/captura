@@ -1,3 +1,4 @@
+import { FontAwesome6 } from '@expo/vector-icons';
 import React, { useEffect, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
@@ -222,10 +223,10 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
 
   if (!visible) return null;
 
-  const getParticleEmoji = () => {
+  const getParticleIcon = () => {
     switch (type) {
       case 'celebration': return '🎉';
-      case 'coins': return '🪙';
+      case 'coins': return 'coins';
       default: return '💧';
     }
   };
@@ -246,9 +247,13 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
         style={[styles.particle, animatedStyle]}
       >
         <View style={styles.particleContent}>
-          <Animated.Text style={styles.particleEmoji}>
-            {getParticleEmoji()}
-          </Animated.Text>
+          {type === 'coins' ? (
+            <FontAwesome6 name="coins" size={20} color="#FFD700" />
+          ) : (
+            <Animated.Text style={styles.particleEmoji}>
+              {getParticleIcon()}
+            </Animated.Text>
+          )}
         </View>
       </Animated.View>
     );
