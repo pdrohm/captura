@@ -21,6 +21,7 @@ export default function ProfileSettingsScreen() {
   const { auth } = useFirebase();
   const { user, updateUserColor } = useAuthStore();
   const [colorPickerVisible, setColorPickerVisible] = React.useState(false);
+  const [userColorPickerVisible, setUserColorPickerVisible] = React.useState(false);
 
   const handleColorSelect = async (color: string) => {
     try {
@@ -31,6 +32,18 @@ export default function ProfileSettingsScreen() {
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to update color. Please try again.');
+    }
+  };
+
+  const handleUserColorSelect = async (color: string) => {
+    try {
+      if (auth) {
+        await updateUserColor(auth, color);
+        setUserColorPickerVisible(false);
+        Alert.alert('Success', 'Your player color has been updated!');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update player color. Please try again.');
     }
   };
 
@@ -168,6 +181,31 @@ export default function ProfileSettingsScreen() {
               <ColorPicker
                 selectedColor={user.color || undefined}
                 onColorSelect={handleColorSelect}
+              />
+            </View>
+          )}
+
+          <TouchableOpacity 
+            style={styles.settingItem}
+            onPress={() => setUserColorPickerVisible(!userColorPickerVisible)}
+          >
+            <View style={styles.settingLeft}>
+              <ThemedText style={styles.settingIcon}>👤</ThemedText>
+              <View style={styles.settingInfo}>
+                <ThemedText style={styles.settingLabel}>Player Color</ThemedText>
+                <ThemedText style={styles.settingDescription}>Your personal color for territories</ThemedText>
+              </View>
+            </View>
+            <View style={styles.colorPreview}>
+              <View style={[styles.colorCircle, { backgroundColor: user.color || '#007AFF' }]} />
+            </View>
+          </TouchableOpacity>
+
+          {userColorPickerVisible && (
+            <View style={styles.colorPickerContainer}>
+              <ColorPicker
+                selectedColor={user.color || undefined}
+                onColorSelect={handleUserColorSelect}
               />
             </View>
           )}

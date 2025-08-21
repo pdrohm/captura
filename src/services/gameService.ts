@@ -130,7 +130,7 @@ export class GameService implements IGameService {
   }
 
   // Territory management
-  async markTerritory(userId: string, latitude: number, longitude: number, radius: number, color: string): Promise<Territory> {
+  async markTerritory(userId: string, latitude: number, longitude: number, radius: number, color: string, userDisplayName?: string, userColor?: string): Promise<Territory> {
     const currentStats = await this.getPlayerStats(userId);
     if (!currentStats) {
       throw new Error('Player not found');
@@ -140,7 +140,10 @@ export class GameService implements IGameService {
       throw new Error('Daily urination limit reached');
     }
 
-    // Create territory
+    // Get user data for territory owner info
+    const userData = await this.getUserData(userId);
+
+    // Create territory with owner information
     const territory = await gameRepository.createTerritory({
       playerId: userId,
       latitude,
@@ -148,6 +151,13 @@ export class GameService implements IGameService {
       radius,
       color,
       type: this.getTerritoryType(radius),
+      owner: userData ? {
+        uid: userId,
+        displayName: userDisplayName || userData.displayName || 'Unknown Player',
+        photoURL: userData.photoURL,
+        email: userData.email || '',
+        color: userColor || userData.color || color, // Use provided color, user's color, or territory color as fallback
+      } : null,
     });
 
     // Update player stats
@@ -167,6 +177,10 @@ export class GameService implements IGameService {
 
   async getPlayerTerritories(userId: string): Promise<Territory[]> {
     return await gameRepository.getPlayerTerritories(userId);
+  }
+
+  async getUserData(userId: string): Promise<{ displayName: string | null; photoURL: string | null; email: string | null; color: string | null } | null> {
+    return await gameRepository.getUserData(userId);
   }
 
   async getAllTerritories(): Promise<Territory[]> {

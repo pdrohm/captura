@@ -1,7 +1,7 @@
 import { gameService } from '@/src/services/gameService';
 import { useAuthStore } from '@/src/stores/authStore';
 import { useGameStore } from '@/src/stores/gameStore';
-import { GameState } from '@/src/types/game';
+import { GameState, Territory } from '@/src/types/game';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const useFirestoreGame = () => {
@@ -50,6 +50,12 @@ export const useFirestoreGame = () => {
     }
   }, [user?.uid, player]);
 
+  // Calculate user's territory count from all territories
+  const calculateUserTerritoryCount = useCallback((allTerritories: Territory[]) => {
+    if (!user?.uid) return 0;
+    return allTerritories.filter(territory => territory.playerId === user.uid).length;
+  }, [user?.uid]);
+
   // Load territories from Firestore
   const loadTerritories = useCallback(async () => {
     if (!user?.uid) return;
@@ -58,17 +64,28 @@ export const useFirestoreGame = () => {
       setIsLoading(true);
       setError(null);
 
-      const firestoreTerritories = await gameService.getAllTerritories();
-      useGameStore.setState({ territories: firestoreTerritories });
+      // Load all territories for display (so you can see other players' territories)
+      const allTerritories = await gameService.getAllTerritories();
+      useGameStore.setState({ territories: allTerritories });
       
-      console.log('✅ Territories loaded from Firestore:', firestoreTerritories.length);
+      // Update player's totalTerritory count based on their actual territories
+      const userTerritoryCount = calculateUserTerritoryCount(allTerritories);
+      useGameStore.setState(state => ({
+        player: {
+          ...state.player,
+          totalTerritory: userTerritoryCount,
+        },
+      }));
+      
+      console.log('✅ All territories loaded from Firestore:', allTerritories.length);
+      console.log('✅ User territory count updated:', userTerritoryCount);
     } catch (err) {
       console.error('❌ Failed to load territories:', err);
       setError('Failed to load territories');
     } finally {
       setIsLoading(false);
     }
-  }, [user?.uid]);
+  }, [user?.uid, calculateUserTerritoryCount]);
 
 
 
@@ -86,13 +103,15 @@ export const useFirestoreGame = () => {
         return false;
       }
 
-      // Mark territory in Firestore
+      // Mark territory in Firestore with user info
       const newTerritory = await gameService.markTerritory(
         user.uid,
         latitude,
         longitude,
         player.territoryRadius,
-        getRandomTerritoryColor()
+        getRandomTerritoryColor(),
+        user.displayName || undefined,
+        user.color || undefined
       );
 
       // Update local store
@@ -164,7 +183,18 @@ export const useFirestoreGame = () => {
       clearTimeout(territoriesTimeout);
       territoriesTimeout = setTimeout(() => {
         useGameStore.setState({ territories });
+        
+        // Update player's totalTerritory count based on their actual territories
+        const userTerritoryCount = calculateUserTerritoryCount(territories);
+        useGameStore.setState(state => ({
+          player: {
+            ...state.player,
+            totalTerritory: userTerritoryCount,
+          },
+        }));
+        
         console.log('🔄 Territories updated from Firestore:', territories.length);
+        console.log('🔄 User territory count updated:', userTerritoryCount);
       }, 500); // 500ms debounce
     });
 
@@ -183,7 +213,7 @@ export const useFirestoreGame = () => {
       unsubscribeGameState();
       console.log('🔄 Real-time subscriptions cleaned up');
     };
-  }, [user?.uid, isInitialized]);
+  }, [user?.uid, isInitialized, calculateUserTerritoryCount]);
 
   // Initialize on mount
   useEffect(() => {
@@ -250,6 +280,13 @@ export const useFirestoreGame = () => {
     }
   }, []);
 
+  // Get user's own territories (for stats, profile, etc.)
+  const getUserTerritories = useCallback(() => {
+    if (!user?.uid) return [];
+    const allTerritories = useGameStore.getState().territories;
+    return allTerritories.filter(territory => territory.playerId === user.uid);
+  }, [user?.uid]);
+
   return {
     // State
     isLoading,
@@ -267,6 +304,9 @@ export const useFirestoreGame = () => {
     syncPlayerStats,
     loadTerritories,
     initializePlayer,
+    
+    // Territory helpers
+    getUserTerritories,
   };
 };
 

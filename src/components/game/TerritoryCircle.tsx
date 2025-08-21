@@ -1,14 +1,7 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { Circle } from 'react-native-maps';
+import { CARTOON_COLORS } from '../../config/mapStyles';
 import type { Territory } from '../../types/game';
-import { CARTOON_COLORS, MAP_ANIMATIONS } from '../../config/mapStyles';
-import Animated, {
-  useSharedValue,
-  useAnimatedProps,
-  withRepeat,
-  withTiming,
-  interpolate,
-} from 'react-native-reanimated';
 
 interface TerritoryCircleProps {
   territory: Territory;
@@ -21,7 +14,8 @@ export const TerritoryCircle: React.FC<TerritoryCircleProps> = React.memo(({
 }) => {
   // Enhanced game-style colors and styling
   const { fillColor, strokeColor } = useMemo(() => {
-    const baseColor = territory.color || CARTOON_COLORS.territory.neutral;
+    // Use owner's color if available, otherwise fall back to territory color
+    const baseColor = territory.owner?.color || territory.color || CARTOON_COLORS.territory.neutral;
     
     // Convert hex to rgba for better opacity control
     const hexToRgba = (hex: string, alpha: number) => {
@@ -38,7 +32,7 @@ export const TerritoryCircle: React.FC<TerritoryCircleProps> = React.memo(({
       fillColor: hexToRgba(baseColor, opacity),
       strokeColor: hexToRgba(baseColor, 1.0), // Full opacity stroke for game effect
     };
-  }, [territory.color, opacity]);
+  }, [territory.owner?.color, territory.color, opacity]);
 
   const center = useMemo(() => ({
     latitude: territory.latitude,

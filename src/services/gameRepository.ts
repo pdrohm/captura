@@ -159,6 +159,30 @@ export class FirestoreGameRepository implements IGameRepository {
     }
   }
 
+  async getUserData(userId: string): Promise<{ displayName: string | null; photoURL: string | null; email: string | null; color: string | null } | null> {
+    try {
+      const userDoc = await this.firestore()
+        .collection('users')
+        .doc(userId)
+        .get();
+
+      if (!userDoc.exists) {
+        return null;
+      }
+
+      const userData = userDoc.data();
+      return {
+        displayName: userData?.displayName || null,
+        photoURL: userData?.photoURL || null,
+        email: userData?.email || null,
+        color: userData?.color || null,
+      };
+    } catch (error) {
+      console.error('Failed to get user data:', error);
+      return null;
+    }
+  }
+
   async getAllTerritories(): Promise<Territory[]> {
     try {
       const snapshot = await this.firestore()
