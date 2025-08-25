@@ -1,5 +1,7 @@
+import { RetroButton } from '@/src/components/RetroButton';
 import { ThemedText } from '@/src/components/ThemedText';
-import { Colors } from '@/src/config/Colors';
+import { Colors, RetroColors } from '@/src/config/Colors';
+import { RetroText, RetroBorders, RetroRadius, RetroShadows } from '@/src/config/retroStyles';
 import { useFirebase } from '@/src/contexts/FirebaseContext';
 import { useColorScheme } from '@/src/hooks/useColorScheme';
 import { useAuthStore } from '@/src/stores/authStore';
@@ -8,11 +10,11 @@ import { useAppPreferences, useGameSettings, usePrivacySettings, useSettingsStor
 import { router } from 'expo-router';
 import React from 'react';
 import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    Alert,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -32,33 +34,46 @@ const SettingsCard: React.FC<SettingsCardProps> = ({
   color, 
   onPress, 
   badge 
-}) => (
-  <TouchableOpacity 
-    style={[styles.card, { borderLeftColor: color }]} 
-    onPress={onPress}
-    activeOpacity={0.7}
-  >
-    <View style={styles.cardContent}>
-      <View style={styles.cardLeft}>
-        <View style={[styles.iconContainer, { backgroundColor: color }]}>
-          <ThemedText style={styles.cardIcon}>{icon}</ThemedText>
-        </View>
-        <View style={styles.cardText}>
-          <ThemedText style={styles.cardTitle}>{title}</ThemedText>
-          <ThemedText style={styles.cardDescription}>{description}</ThemedText>
-        </View>
-      </View>
-      <View style={styles.cardRight}>
-        {badge && (
-          <View style={[styles.badge, { backgroundColor: color }]}>
-            <ThemedText style={styles.badgeText}>{badge}</ThemedText>
+}) => {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const colors = Colors[colorScheme ?? 'light'];
+  
+  return (
+    <TouchableOpacity 
+      style={[
+        styles.card, 
+        { 
+          backgroundColor: colors.card,
+          borderColor: color,
+          borderLeftColor: color 
+        }
+      ]} 
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <View style={styles.cardContent}>
+        <View style={styles.cardLeft}>
+          <View style={[styles.iconContainer, { backgroundColor: color }]}>
+            <ThemedText style={styles.cardIcon}>{icon}</ThemedText>
           </View>
-        )}
-        <ThemedText style={styles.chevron}>›</ThemedText>
+          <View style={styles.cardText}>
+            <ThemedText style={[styles.cardTitle, { color: colors.text }]}>{title}</ThemedText>
+            <ThemedText style={[styles.cardDescription, { color: colors.textSecondary }]}>{description}</ThemedText>
+          </View>
+        </View>
+        <View style={styles.cardRight}>
+          {badge && (
+            <View style={[styles.badge, { backgroundColor: color }]}>
+              <ThemedText style={styles.badgeText}>{badge}</ThemedText>
+            </View>
+          )}
+          <ThemedText style={[styles.chevron, { color: colors.textMuted }]}>›</ThemedText>
+        </View>
       </View>
-    </View>
-  </TouchableOpacity>
-);
+    </TouchableOpacity>
+  );
+};
 
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
@@ -136,65 +151,71 @@ export default function SettingsScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={styles.header}>
-          <ThemedText style={styles.title}>Settings</ThemedText>
-          <ThemedText style={styles.subtitle}>Customize your experience</ThemedText>
+        <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <ThemedText style={[RetroText.gameTitle, { color: colors.text }]}>⚙️ DOG SETTINGS ⚙️</ThemedText>
+          <ThemedText style={[RetroText.body, { color: colors.textSecondary, textAlign: 'center' }]}>Customize your pup's experience!</ThemedText>
         </View>
 
         {/* User Profile Section */}
         {user && (
           <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Profile</ThemedText>
+            <ThemedText style={[RetroText.title, { color: colors.text, textAlign: 'center', marginBottom: 16 }]}>🐕 MY DOG PROFILE</ThemedText>
             
-            <View style={styles.profileCard}>
-              <View style={[styles.userAvatar, { backgroundColor: user.color || '#007AFF' }]}>
+            <View style={[
+              styles.profileCard, 
+              { 
+                backgroundColor: colors.card,
+                borderColor: colors.border 
+              }
+            ]}>
+              <View style={[styles.userAvatar, { backgroundColor: user.color || RetroColors.dogBrown }]}>
                 <ThemedText style={styles.avatarText}>
-                  {user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                  {user.displayName?.charAt(0) || user.email?.charAt(0) || '🐕'}
                 </ThemedText>
               </View>
               <View style={styles.userInfo}>
-                <ThemedText style={styles.userName}>
-                  {user.displayName || 'User'}
+                <ThemedText style={[RetroText.heading, { color: colors.text }]}>
+                  {user.displayName || 'Good Boy'}
                 </ThemedText>
-                <ThemedText style={styles.userEmail}>{user.email}</ThemedText>
+                <ThemedText style={[RetroText.caption, { color: colors.textSecondary }]}>{user.email}</ThemedText>
               </View>
-              <TouchableOpacity 
-                style={styles.editButton}
+              <RetroButton
+                title="EDIT"
                 onPress={() => router.push('/(main)/settings/profile')}
-              >
-                <ThemedText style={styles.editButtonText}>Edit</ThemedText>
-              </TouchableOpacity>
+                variant="outline"
+                size="small"
+              />
             </View>
           </View>
         )}
 
         {/* Settings Categories */}
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Preferences</ThemedText>
+          <ThemedText style={[RetroText.title, { color: colors.text, textAlign: 'center', marginBottom: 16 }]}>🎮 GAME SETTINGS</ThemedText>
           
           <SettingsCard
-            title="Game Settings"
-            description="Sound, haptics, notifications & effects"
-            icon="🎮"
-            color="#FF6B6B"
+            title="🎮 GAME CONTROLS"
+            description="Sound, bark effects & paw haptics"
+            icon="🔊"
+            color={RetroColors.orangeAccent}
             badge={`${gameSettingsCount}/5`}
             onPress={() => router.push('/(main)/settings/game')}
           />
           
           <SettingsCard
-            title="App Preferences"
+            title="📱 DOG APP"
             description="Theme, location & auto-save"
-            icon="📱"
-            color="#4ECDC4"
+            icon="📲"
+            color={RetroColors.mintGreen}
             badge={`${appSettingsCount}/4`}
             onPress={() => router.push('/(main)/settings/app')}
           />
           
           <SettingsCard
-            title="Privacy & Data"
-            description="Location sharing & analytics"
-            icon="🔒"
-            color="#45B7D1"
+            title="🔒 PRIVACY FENCE"
+            description="Location sharing & treat analytics"
+            icon="🛡️"
+            color={RetroColors.softPurple}
             badge={`${privacySettingsCount}/3`}
             onPress={() => router.push('/(main)/settings/privacy')}
           />
@@ -202,29 +223,29 @@ export default function SettingsScreen() {
 
         {/* Data Management */}
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Data Management</ThemedText>
+          <ThemedText style={[RetroText.title, { color: colors.text, textAlign: 'center', marginBottom: 16 }]}>💾 DATA KENNEL</ThemedText>
           
           <SettingsCard
-            title="Export & Import"
-            description="Backup or restore your settings"
-            icon="💾"
-            color="#96CEB4"
+            title="💾 BACKUP TREATS"
+            description="Export & import your dog data"
+            icon="🗂️"
+            color={RetroColors.yellowAccent}
             onPress={() => router.push('/(main)/settings/data')}
           />
           
           <SettingsCard
-            title="Clear Cache"
-            description="Free up storage space"
-            icon="🧹"
-            color="#FFEAA7"
+            title="🧹 CLEAN KENNEL"
+            description="Clear cache & free up space"
+            icon="🏠"
+            color={RetroColors.parkGreen}
             onPress={() => {
               Alert.alert(
-                'Clear Cache',
-                'This will clear temporary data. Continue?',
+                '🧹 Clean Kennel',
+                'This will clear temporary doggy data. Continue?',
                 [
                   { text: 'Cancel', style: 'cancel' },
-                  { text: 'Clear', style: 'destructive', onPress: () => {
-                    Alert.alert('Success', 'Cache cleared successfully!');
+                  { text: 'Clean!', style: 'destructive', onPress: () => {
+                    Alert.alert('🎉 Success!', 'Kennel cleaned successfully!');
                   }}
                 ]
               );
@@ -234,63 +255,83 @@ export default function SettingsScreen() {
 
         {/* Account Actions */}
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Account</ThemedText>
+          <ThemedText style={[RetroText.title, { color: colors.text, textAlign: 'center', marginBottom: 16 }]}>🚨 DANGER ZONE</ThemedText>
           
           <TouchableOpacity 
-            style={[styles.dangerCard, { borderLeftColor: '#FF3B30' }]}
+            style={[
+              styles.dangerCard, 
+              { 
+                backgroundColor: colors.card,
+                borderColor: RetroColors.collarRed,
+                borderLeftColor: RetroColors.collarRed 
+              }
+            ]}
             onPress={handleLogout}
             activeOpacity={0.7}
           >
             <View style={styles.cardContent}>
               <View style={styles.cardLeft}>
-                <View style={[styles.iconContainer, { backgroundColor: '#FF3B30' }]}>
+                <View style={[styles.iconContainer, { backgroundColor: RetroColors.collarRed }]}>
                   <ThemedText style={styles.cardIcon}>🚪</ThemedText>
                 </View>
                 <View style={styles.cardText}>
-                  <ThemedText style={styles.cardTitle}>Logout</ThemedText>
-                  <ThemedText style={styles.cardDescription}>Sign out of your account</ThemedText>
+                  <ThemedText style={[styles.cardTitle, { color: colors.text }]}>🏃 WALK AWAY</ThemedText>
+                  <ThemedText style={[styles.cardDescription, { color: colors.textSecondary }]}>Leave the dog park (logout)</ThemedText>
                 </View>
               </View>
-              <ThemedText style={styles.chevron}>›</ThemedText>
+              <ThemedText style={[styles.chevron, { color: colors.textMuted }]}>›</ThemedText>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={[styles.dangerCard, { borderLeftColor: '#FF9500' }]}
+            style={[
+              styles.dangerCard, 
+              { 
+                backgroundColor: colors.card,
+                borderColor: RetroColors.orangeAccent,
+                borderLeftColor: RetroColors.orangeAccent 
+              }
+            ]}
             onPress={handleResetAllData}
             activeOpacity={0.7}
           >
             <View style={styles.cardContent}>
               <View style={styles.cardLeft}>
-                <View style={[styles.iconContainer, { backgroundColor: '#FF9500' }]}>
-                  <ThemedText style={styles.cardIcon}>🗑️</ThemedText>
+                <View style={[styles.iconContainer, { backgroundColor: RetroColors.orangeAccent }]}>
+                  <ThemedText style={styles.cardIcon}>🧽</ThemedText>
                 </View>
                 <View style={styles.cardText}>
-                  <ThemedText style={styles.cardTitle}>Reset All Data</ThemedText>
-                  <ThemedText style={styles.cardDescription}>Permanently delete everything</ThemedText>
+                  <ThemedText style={[styles.cardTitle, { color: colors.text }]}>🧽 WASH ALL PAWS</ThemedText>
+                  <ThemedText style={[styles.cardDescription, { color: colors.textSecondary }]}>Reset everything to puppy state</ThemedText>
                 </View>
               </View>
-              <ThemedText style={styles.chevron}>›</ThemedText>
+              <ThemedText style={[styles.chevron, { color: colors.textMuted }]}>›</ThemedText>
             </View>
           </TouchableOpacity>
         </View>
 
         {/* App Info */}
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>About</ThemedText>
+          <ThemedText style={[RetroText.title, { color: colors.text, textAlign: 'center', marginBottom: 16 }]}>ℹ️ DOG TAG INFO</ThemedText>
           
-          <View style={styles.infoCard}>
+          <View style={[
+            styles.infoCard, 
+            { 
+              backgroundColor: colors.card,
+              borderColor: colors.border 
+            }
+          ]}>
             <View style={styles.infoRow}>
-              <ThemedText style={styles.infoLabel}>Version</ThemedText>
-              <ThemedText style={styles.infoValue}>1.0.0</ThemedText>
+              <ThemedText style={[styles.infoLabel, { color: colors.text }]}>Version</ThemedText>
+              <ThemedText style={[styles.infoValue, { color: colors.text }]}>1.0.0</ThemedText>
             </View>
             <View style={styles.infoRow}>
-              <ThemedText style={styles.infoLabel}>Build</ThemedText>
-              <ThemedText style={styles.infoValue}>2024.1</ThemedText>
+              <ThemedText style={[styles.infoLabel, { color: colors.text }]}>Build</ThemedText>
+              <ThemedText style={[styles.infoValue, { color: colors.text }]}>2024.1</ThemedText>
             </View>
             <View style={styles.infoRow}>
-              <ThemedText style={styles.infoLabel}>Platform</ThemedText>
-              <ThemedText style={styles.infoValue}>React Native</ThemedText>
+              <ThemedText style={[styles.infoLabel, { color: colors.text }]}>Platform</ThemedText>
+              <ThemedText style={[styles.infoValue, { color: colors.text }]}>React Native</ThemedText>
             </View>
           </View>
         </View>
@@ -314,6 +355,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
     paddingTop: 16,
+    padding: 20,
+    ...RetroBorders.bold,
+    borderRadius: RetroRadius.xxl,
+    backgroundColor: 'transparent',
+    ...RetroShadows.soft,
   },
   title: {
     fontSize: 32,
@@ -322,7 +368,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    opacity: 0.7,
   },
   section: {
     marginBottom: 32,
@@ -333,32 +378,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    ...RetroBorders.sticker,
+    borderRadius: RetroRadius.xl,
     marginBottom: 12,
     borderLeftWidth: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...RetroShadows.soft,
   },
   dangerCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    ...RetroBorders.sticker,
+    borderRadius: RetroRadius.xl,
     marginBottom: 12,
     borderLeftWidth: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...RetroShadows.soft,
   },
   cardContent: {
     flexDirection: 'row',
@@ -373,10 +404,13 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 48,
     height: 48,
-    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderColor: '#000000',
+    borderRadius: RetroRadius.sm,
   },
   cardIcon: {
     fontSize: 20,
@@ -388,12 +422,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 4,
-    color: '#11181C',
   },
   cardDescription: {
     fontSize: 14,
-    opacity: 0.6,
-    color: '#687076',
   },
   cardRight: {
     flexDirection: 'row',
@@ -402,8 +433,10 @@ const styles = StyleSheet.create({
   badge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12,
     marginRight: 8,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#000000',
   },
   badgeText: {
     color: '#FFFFFF',
@@ -412,30 +445,25 @@ const styles = StyleSheet.create({
   },
   chevron: {
     fontSize: 18,
-    opacity: 0.5,
   },
   profileCard: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...RetroBorders.sticker,
+    borderRadius: RetroRadius.xl,
+    ...RetroShadows.soft,
   },
   userAvatar: {
     width: 60,
     height: 60,
-    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderColor: '#000000',
+    borderRadius: RetroRadius.md,
   },
   avatarText: {
     color: 'white',
@@ -449,36 +477,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 4,
-    color: '#11181C',
   },
   userEmail: {
     fontSize: 14,
-    opacity: 0.7,
-    color: '#687076',
-  },
-  editButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  editButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
   },
   infoCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    ...RetroBorders.sticker,
+    borderRadius: RetroRadius.xl,
     padding: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...RetroShadows.soft,
   },
   infoRow: {
     flexDirection: 'row',
@@ -488,13 +495,10 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 16,
-    opacity: 0.8,
-    color: '#11181C',
   },
   infoValue: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#11181C',
   },
   bottomSpacing: {
     height: 20,

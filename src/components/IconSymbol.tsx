@@ -1,12 +1,8 @@
 // Fallback for using MaterialIcons on Android and web.
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolViewProps, SymbolWeight } from 'expo-symbols';
-import { ComponentProps } from 'react';
+import { SymbolWeight } from 'expo-symbols';
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
-
-type IconMapping = Record<SymbolViewProps['name'], ComponentProps<typeof MaterialIcons>['name']>;
-type IconSymbolName = keyof typeof MAPPING;
 
 /**
  * Add your SF Symbols to Material Icons mappings here.
@@ -14,6 +10,7 @@ type IconSymbolName = keyof typeof MAPPING;
  * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
  */
 const MAPPING = {
+  // Navigation
   'house.fill': 'home',
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
@@ -22,7 +19,37 @@ const MAPPING = {
   'map.fill': 'map',
   'list.bullet.rectangle': 'list',
   'list.bullet.rectangle.fill': 'list',
-} as IconMapping;
+  
+  // Game icons
+  'gamecontroller': 'sports-esports',
+  'gamecontroller.fill': 'sports-esports',
+  'person.crop.circle': 'account-circle',
+  'person.crop.circle.fill': 'account-circle',
+  'gearshape': 'settings',
+  'gearshape.fill': 'settings',
+  
+  // Game specific icons
+  'drop': 'water-drop',
+  'drop.fill': 'water-drop',
+  'coin': 'monetization-on',
+  'coins': 'monetization-on',
+  'star': 'star',
+  'star.fill': 'star',
+  'trophy': 'emoji-events',
+  'trophy.fill': 'emoji-events',
+  'target': 'my-location',
+  'wheel': 'casino',
+  'roulette': 'casino',
+  'back': 'arrow-back',
+  'forward': 'arrow-forward',
+  'level': 'trending-up',
+  'crown': 'emoji-events',
+  'diamond': 'diamond',
+} as const;
+
+// Define types based on the actual mapping
+type IconMapping = typeof MAPPING;
+type IconSymbolName = keyof typeof MAPPING;
 
 /**
  * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.

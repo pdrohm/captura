@@ -1,14 +1,18 @@
+import { IconSymbol } from '@/src/components/IconSymbol';
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MinigameCard } from '../../../src/components/game/MinigameCard';
 import { PlayerStatsCard } from '../../../src/components/game/PlayerStatsCard';
+import { Colors } from '../../../src/config/Colors';
+import { RetroBorders, RetroRadius, RetroShadows, RetroText } from '../../../src/config/retroStyles';
 import { useGameStore } from '../../../src/stores/gameStore';
 
 export default function MinigamesScreen() {
   const { minigames, player, completeMinigame } = useGameStore();
+  // Always use light theme
+  const colors = Colors.light;
 
   const handleMinigamePress = (minigameId: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -28,65 +32,67 @@ export default function MinigamesScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <LinearGradient
-        colors={['#667eea', '#764ba2', '#f093fb']}
-        style={styles.background}
-      >
-        <SafeAreaView style={styles.safeArea}>
-          <ScrollView 
-            style={styles.scrollView}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
-          >
-            <View style={styles.header}>
-              <Text style={styles.title}>🎮 Mini Games</Text>
-              <Text style={styles.subtitle}>
-                Play games to improve your doggy skills!
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView 
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <View style={styles.titleContainer}>
+              <IconSymbol name="gamecontroller.fill" size={32} color={colors.primary} />
+              <Text style={[RetroText.gameTitle, { color: colors.text }]}>DOG GAMES</Text>
+              <IconSymbol name="gamecontroller.fill" size={32} color={colors.primary} />
+            </View>
+            <Text style={[RetroText.body, { color: colors.textSecondary, textAlign: 'center' }]}>
+              Train your pup with fun mini-games!
+            </Text>
+          </View>
+
+          <PlayerStatsCard stats={player} />
+
+          <View style={styles.gamesSection}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Available Games</Text>
+            <View style={styles.gamesGrid}>
+              {minigames.map((minigame) => (
+                <MinigameCard
+                  key={minigame.id}
+                  minigame={minigame}
+                  onPress={() => handleMinigamePress(minigame.id)}
+                />
+              ))}
+            </View>
+          </View>
+
+          <View style={styles.infoSection}>
+            <View style={[styles.infoCard, { 
+              backgroundColor: colors.surface,
+              borderColor: colors.border 
+            }]}>
+              <View style={styles.infoTitleContainer}>
+                <IconSymbol name="target" size={24} color={colors.accent} />
+                <Text style={[styles.infoTitle, { color: colors.text }]}>How it Works</Text>
+              </View>
+              <Text style={[styles.infoText, { color: colors.textSecondary }]}>
+                • Complete minigames to earn rewards{'\n'}
+                • Unlock new games by leveling up{'\n'}
+                • Improve your territory marking abilities{'\n'}
+                • Collect coins for the shop
               </Text>
             </View>
+          </View>
 
-            <PlayerStatsCard stats={player} />
-
-            <View style={styles.gamesSection}>
-              <Text style={styles.sectionTitle}>Available Games</Text>
-              <View style={styles.gamesGrid}>
-                {minigames.map((minigame) => (
-                  <MinigameCard
-                    key={minigame.id}
-                    minigame={minigame}
-                    onPress={() => handleMinigamePress(minigame.id)}
-                  />
-                ))}
-              </View>
-            </View>
-
-            <View style={styles.infoSection}>
-              <View style={styles.infoCard}>
-                <Text style={styles.infoTitle}>🎯 How it Works</Text>
-                <Text style={styles.infoText}>
-                  • Complete minigames to earn rewards{'\n'}
-                  • Unlock new games by leveling up{'\n'}
-                  • Improve your territory marking abilities{'\n'}
-                  • Collect coins for the shop
-                </Text>
-              </View>
-            </View>
-
-            {/* Bottom spacing for tab bar */}
-            <View style={styles.bottomSpacing} />
-          </ScrollView>
-        </SafeAreaView>
-      </LinearGradient>
+          {/* Bottom spacing for tab bar */}
+          <View style={styles.bottomSpacing} />
+        </ScrollView>
+      </SafeAreaView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-  },
-  background: {
     flex: 1,
   },
   safeArea: {
@@ -100,34 +106,26 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    paddingVertical: 20,
-    paddingHorizontal: 16,
+    paddingVertical: 28,
+    paddingHorizontal: 24,
+    margin: 20,
+    ...RetroBorders.bold, // Sticker-like border
+    borderRadius: RetroRadius.xxl,
+    ...RetroShadows.soft,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    marginBottom: 8,
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#FFFFFF',
-    opacity: 0.9,
-    textAlign: 'center',
-    lineHeight: 22,
+  
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 12,
   },
   gamesSection: {
     paddingHorizontal: 16,
     marginTop: 20,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    ...RetroText.subtitle,
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -141,23 +139,24 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   infoCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 16,
-    padding: 20,
-    backdropFilter: 'blur(10px)',
+    ...RetroBorders.sticker, // Sticker-like border for info
+    padding: 28,
+    borderRadius: RetroRadius.xxl,
+    ...RetroShadows.soft,
   },
+  infoTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    marginBottom: 16,
+  },
+  
   infoTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 12,
-    textAlign: 'center',
+    ...RetroText.heading,
   },
   infoText: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    opacity: 0.9,
-    lineHeight: 20,
+    ...RetroText.body,
   },
   bottomSpacing: {
     height: 100,

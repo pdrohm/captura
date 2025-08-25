@@ -1,21 +1,21 @@
-// Pokémon GO inspired map styling - vibrant and game-like
-// Note: Custom styling works best on iOS, Android has limited support
-export const POKEMON_GO_MAP_STYLE = [
-  // Water bodies - vivid blue like Pokémon GO
+// Retro-cartoon map styling - soft pastels and paper-like feel
+// Inspired by vintage handheld games and sticker aesthetics
+export const RETRO_CARTOON_MAP_STYLE = [
+  // Water bodies - soft mint green like our secondary color
   {
     featureType: 'water',
     elementType: 'geometry',
     stylers: [
-      { color: '#4A90E2' }, // Pokémon GO blue
-      { saturation: 100 },
-      { lightness: 5 }
+      { color: '#A8DADC' }, // Mint green from our palette
+      { saturation: 60 },
+      { lightness: 10 }
     ],
   },
   {
     featureType: 'water',
     elementType: 'labels.text.fill',
     stylers: [
-      { color: '#FFFFFF' },
+      { color: '#2D2D2D' }, // Soft black text
       { weight: 'bold' }
     ],
   },
@@ -23,37 +23,37 @@ export const POKEMON_GO_MAP_STYLE = [
     featureType: 'water',
     elementType: 'labels.text.stroke',
     stylers: [
-      { color: '#FF0000' },
-      { weight: 2 }
+      { color: '#FFFFFF' }, // White stroke for readability
+      { weight: 3 }
     ],
   },
   
-  // Landscape - vibrant green like game maps
+  // Landscape - warm beige like paper background
   {
     featureType: 'landscape',
     elementType: 'geometry',
     stylers: [
-      { color: '#98D982' }, // Bright game green
-      { saturation: 80 },
-      { lightness: 15 }
+      { color: '#F6E7CB' }, // Warm beige from our palette
+      { saturation: 40 },
+      { lightness: 20 }
     ],
   },
   {
     featureType: 'landscape.natural',
     elementType: 'geometry',
     stylers: [
-      { color: '#7BC142' }, // Vivid nature green
-      { saturation: 90 }
+      { color: '#A8DADC' }, // Mint green for natural areas
+      { saturation: 50 }
     ],
   },
   
-  // Parks - even more vibrant for game feel
+  // Parks - soft mint green for friendly feel
   {
     featureType: 'poi.park',
     elementType: 'geometry',
     stylers: [
-      { color: '#6AB04C' }, // Rich park green
-      { saturation: 100 }
+      { color: '#A8DADC' }, // Mint green from our palette
+      { saturation: 60 }
     ],
   },
   {
@@ -73,22 +73,22 @@ export const POKEMON_GO_MAP_STYLE = [
     ],
   },
   
-  // Roads - bright and game-like
+  // Roads - warm orange accent color
   {
     featureType: 'road',
     elementType: 'geometry',
     stylers: [
-      { color: '#F39801' }, // Bright orange
-      { saturation: 100 },
-      { lightness: 20 }
+      { color: '#F4A261' }, // Orange accent from our palette
+      { saturation: 70 },
+      { lightness: 15 }
     ],
   },
   {
     featureType: 'road.highway',
     elementType: 'geometry',
     stylers: [
-      { color: '#E55039' }, // Bright red-orange
-      { saturation: 100 },
+      { color: '#F4A261' }, // Orange accent
+      { saturation: 80 },
       { weight: 4 }
     ],
   },
@@ -96,8 +96,8 @@ export const POKEMON_GO_MAP_STYLE = [
     featureType: 'road.arterial',
     elementType: 'geometry',
     stylers: [
-      { color: '#FA6900' }, // Vibrant orange
-      { saturation: 90 },
+      { color: '#F6BD60' }, // Yellow accent for variety
+      { saturation: 70 },
       { weight: 3 }
     ],
   },
@@ -105,8 +105,8 @@ export const POKEMON_GO_MAP_STYLE = [
     featureType: 'road.local',
     elementType: 'geometry',
     stylers: [
-      { color: '#FFA502' }, // Light orange
-      { saturation: 80 },
+      { color: '#F6BD60' }, // Yellow accent
+      { saturation: 60 },
       { weight: 2 }
     ],
   },
@@ -265,44 +265,44 @@ export const SIMPLE_GAME_MAP_STYLE = [
 // Keep the original as an alternative
 export const CARTOON_MAP_STYLE = SIMPLE_GAME_MAP_STYLE;
 
-// Pokémon GO inspired color palette
+// Retro-cartoon inspired color palette
 export const CARTOON_COLORS = {
-  // Vibrant game-style colors for territories
+  // Soft pastel colors for territories - retro-cartoon style
   territory: {
-    player: '#E55039',     // Bright red-orange
-    opponent1: '#4A90E2',   // Pokémon GO blue
-    opponent2: '#6AB04C',   // Vibrant green
-    opponent3: '#F39801',   // Bright orange
-    opponent4: '#6C5CE7',   // Electric purple
-    opponent5: '#FD79A8',   // Hot pink
-    opponent6: '#00CEC9',   // Cyan
-    opponent7: '#FDCB6E',   // Golden yellow
-    neutral: '#95A5A6',     // Neutral gray
+    player: '#BFA2DB',     // Soft purple (primary)
+    opponent1: '#A8DADC',   // Mint green (secondary)
+    opponent2: '#F4A261',   // Orange accent
+    opponent3: '#F6BD60',   // Yellow accent
+    opponent4: '#E76F51',   // Soft coral
+    opponent5: '#8B7355',   // Muted brown
+    opponent6: '#5C3D2E',   // Warm brown
+    opponent7: '#F6E7CB',   // Warm beige
+    neutral: '#A68B5B',     // Light brown neutral
   },
   
-  // Game-inspired UI colors
+  // Retro-cartoon UI colors
   ui: {
-    primary: '#E55039',     // Bright red-orange
-    secondary: '#4A90E2',   // Pokémon blue
-    success: '#6AB04C',     // Vibrant green
-    warning: '#F39801',     // Bright orange
-    error: '#D63031',       // Deep red
-    info: '#74B9FF',        // Light blue
-    background: '#FFFFFF',
-    surface: '#F8F9FA',
-    text: '#2C2C54',        // Dark blue-gray
-    textLight: '#636E72',
-    border: '#DDA0DD',      // Light purple
-    shadow: 'rgba(44, 44, 84, 0.2)', // Darker shadow
+    primary: '#BFA2DB',     // Soft purple
+    secondary: '#A8DADC',   // Mint green
+    success: '#A8DADC',     // Mint green for success
+    warning: '#F6BD60',     // Yellow for warnings
+    error: '#E76F51',       // Soft coral for errors
+    info: '#BFA2DB',        // Purple for info
+    background: '#FEF9EF',  // Paper background
+    surface: '#F6E7CB',     // Warm beige surface
+    text: '#2D2D2D',        // Soft black text
+    textLight: '#5C3D2E',   // Warm brown text
+    border: '#2D2D2D',      // Strong borders for sticker effect
+    shadow: 'rgba(45, 45, 45, 0.15)', // Soft shadow
   },
   
-  // Map-specific game colors
+  // Map-specific retro colors
   map: {
-    userLocation: '#E55039',  // Player red
-    conquestPath: '#F39801',  // Bright orange path
-    startMarker: '#6AB04C',   // Green start
-    endMarker: '#D63031',     // Red end
-    trackingPoint: '#FDCB6E', // Yellow tracking
+    userLocation: '#BFA2DB',  // Purple player marker
+    conquestPath: '#F4A261',  // Orange path
+    startMarker: '#A8DADC',   // Mint green start
+    endMarker: '#E76F51',     // Coral end
+    trackingPoint: '#F6BD60', // Yellow tracking
   }
 } as const;
 

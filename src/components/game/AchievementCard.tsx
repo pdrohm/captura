@@ -1,4 +1,5 @@
-import { LinearGradient } from 'expo-linear-gradient';
+import { Colors } from '@/src/config/Colors';
+import { useColorScheme } from '@/src/hooks/useColorScheme';
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
@@ -15,6 +16,10 @@ interface AchievementCardProps {
 export const AchievementCard: React.FC<AchievementCardProps> = ({
   achievement,
 }) => {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  const colors = Colors[colorScheme ?? 'light'];
+  
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -37,22 +42,35 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
   };
 
   return (
-    <View style={[styles.container, achievement.isUnlocked && styles.unlockedContainer]}>
-      <LinearGradient
-        colors={achievement.isUnlocked ? ['#FFD700', '#FFA500'] : ['#F0F0F0', '#E0E0E0']}
-        style={styles.gradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
+    <View style={[
+      styles.container, 
+      { 
+        backgroundColor: achievement.isUnlocked ? colors.surface : colors.borderMuted,
+        borderColor: achievement.isUnlocked ? colors.warning : colors.borderMuted
+      }
+    ]}>
+      <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={[styles.icon, achievement.isUnlocked && styles.unlockedIcon]}>
+          <Text style={[
+            styles.icon, 
+            { 
+              opacity: achievement.isUnlocked ? 1 : 0.6,
+              color: colors.text 
+            }
+          ]}>
             {achievement.icon}
           </Text>
           <View style={styles.info}>
-            <Text style={[styles.title, achievement.isUnlocked && styles.unlockedText]}>
+            <Text style={[
+              styles.title, 
+              { color: achievement.isUnlocked ? colors.text : colors.textMuted }
+            ]}>
               {achievement.name}
             </Text>
-            <Text style={[styles.description, achievement.isUnlocked && styles.unlockedDescription]}>
+            <Text style={[
+              styles.description, 
+              { color: achievement.isUnlocked ? colors.textSecondary : colors.textMuted }
+            ]}>
               {achievement.description}
             </Text>
           </View>
@@ -62,23 +80,48 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
         </View>
 
         <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
-            <Animated.View style={[styles.progressFill, progressStyle]} />
+          <View style={[
+            styles.progressBar, 
+            { 
+              backgroundColor: colors.borderMuted,
+              borderColor: colors.border 
+            }
+          ]}>
+            <Animated.View style={[
+              styles.progressFill, 
+              progressStyle, 
+              { backgroundColor: colors.success }
+            ]} />
           </View>
-          <Text style={[styles.progressText, achievement.isUnlocked && styles.unlockedText]}>
+          <Text style={[
+            styles.progressText, 
+            { color: achievement.isUnlocked ? colors.text : colors.textMuted }
+          ]}>
             {achievement.progress}/{achievement.maxProgress}
           </Text>
         </View>
 
-        <View style={styles.rewardContainer}>
-          <Text style={[styles.rewardLabel, achievement.isUnlocked && styles.unlockedText]}>
+        <View style={[
+          styles.rewardContainer, 
+          { 
+            backgroundColor: colors.card,
+            borderColor: colors.border 
+          }
+        ]}>
+          <Text style={[
+            styles.rewardLabel, 
+            { color: achievement.isUnlocked ? colors.text : colors.textMuted }
+          ]}>
             Reward:
           </Text>
-          <Text style={[styles.rewardText, achievement.isUnlocked && styles.unlockedText]}>
+          <Text style={[
+            styles.rewardText, 
+            { color: colors.success }
+          ]}>
             🎁 {getRewardText(achievement.reward)}
           </Text>
         </View>
-      </LinearGradient>
+      </View>
     </View>
   );
 };
@@ -87,20 +130,10 @@ const styles = StyleSheet.create({
   container: {
     marginHorizontal: 16,
     marginBottom: 12,
-    borderRadius: 16,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
+    borderWidth: 2,
+    borderStyle: 'solid',
   },
-  unlockedContainer: {
-    elevation: 8,
-    shadowColor: '#FFD700',
-    shadowOpacity: 0.3,
-  },
-  gradient: {
-    borderRadius: 16,
+  content: {
     padding: 16,
   },
   header: {
@@ -111,10 +144,6 @@ const styles = StyleSheet.create({
   icon: {
     fontSize: 32,
     marginRight: 12,
-    opacity: 0.6,
-  },
-  unlockedIcon: {
-    opacity: 1,
   },
   info: {
     flex: 1,
@@ -122,19 +151,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#666',
     marginBottom: 2,
-  },
-  unlockedText: {
-    color: '#FFFFFF',
   },
   description: {
     fontSize: 12,
-    color: '#888',
     lineHeight: 16,
-  },
-  unlockedDescription: {
-    color: '#FFFFFFCC',
   },
   checkmark: {
     fontSize: 20,
@@ -147,40 +168,35 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
     height: 8,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 4,
+    borderWidth: 1,
+    borderStyle: 'solid',
     marginRight: 12,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#4ECDC4',
-    borderRadius: 4,
   },
   progressText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#666',
     minWidth: 40,
     textAlign: 'right',
   },
   rewardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    borderWidth: 1,
+    borderStyle: 'solid',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 12,
   },
   rewardLabel: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#666',
     marginRight: 8,
   },
   rewardText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#4ECDC4',
   },
 });

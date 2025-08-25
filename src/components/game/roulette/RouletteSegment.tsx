@@ -23,6 +23,21 @@ export const RouletteSegment: React.FC<RouletteSegmentProps> = ({
   const endAngle = (index + 1) * angle;
   const midAngle = (startAngle + endAngle) / 2;
 
+  // Function to determine if text should be black or white based on background color
+  const getTextColor = (backgroundColor: string): string => {
+    // Convert hex to RGB
+    const hex = backgroundColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    // Calculate luminance using the formula: 0.299*R + 0.587*G + 0.114*B
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Use black text on light backgrounds, white text on dark backgrounds
+    return luminance > 0.5 ? '#000000' : '#FFFFFF';
+  };
+
   // Convert angles to radians
   const startRad = (startAngle - 90) * (Math.PI / 180);
   const endRad = (endAngle - 90) * (Math.PI / 180);
@@ -64,8 +79,27 @@ export const RouletteSegment: React.FC<RouletteSegmentProps> = ({
         ]}
       >
         <View style={styles.segmentContent}>
-          <Text style={styles.segmentIcon}>{segment.icon}</Text>
-          <Text style={styles.segmentLabel} numberOfLines={1}>
+          <Text 
+            style={[
+              styles.segmentIcon, 
+              { 
+                color: getTextColor(segment.color),
+                textShadowColor: getTextColor(segment.color) === '#FFFFFF' ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+              }
+            ]}
+          >
+            {segment.icon}
+          </Text>
+          <Text 
+            style={[
+              styles.segmentLabel, 
+              { 
+                color: getTextColor(segment.color),
+                textShadowColor: getTextColor(segment.color) === '#FFFFFF' ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+              }
+            ]} 
+            numberOfLines={1}
+          >
             {segment.label}
           </Text>
         </View>
@@ -105,13 +139,12 @@ const styles = StyleSheet.create({
   segmentIcon: {
     fontSize: 16,
     marginBottom: 2,
+    fontWeight: 'bold',
   },
   segmentLabel: {
     fontSize: 8,
     fontWeight: 'bold',
-    color: '#FFFFFF',
     textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },

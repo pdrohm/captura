@@ -8,6 +8,7 @@ import Animated, {
     useSharedValue,
     withSpring,
 } from 'react-native-reanimated';
+import { Colors } from '../../../config/Colors';
 import type { RouletteStats } from '../../../types/roulette';
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 12,
-    color: '#FFFFFF',
+    color: Colors.light.textSecondary,
     opacity: 0.8,
     marginBottom: 4,
     textAlign: 'center',
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: Colors.light.text,
     textAlign: 'center',
   },
   spinButton: {
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
   spinButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: Colors.light.buttonText,
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: Colors.light.textSecondary,
     opacity: 0.9,
     textAlign: 'center',
     marginBottom: 4,

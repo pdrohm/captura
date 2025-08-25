@@ -1,6 +1,7 @@
 import { FontAwesome6 } from '@expo/vector-icons';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Colors } from '../../../config/Colors';
 import type { RouletteGame } from '../../../types/roulette';
 
 interface RouletteHistoryProps {
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: Colors.light.text,
     marginBottom: 12,
     textAlign: 'center',
   },
@@ -121,14 +122,14 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: Colors.light.text,
     opacity: 0.7,
     marginBottom: 8,
   },
   emptySubtext: {
     fontSize: 14,
-    color: '#FFFFFF',
-    opacity: 0.5,
+    color: Colors.light.textSecondary,
+    opacity: 0.7,
     textAlign: 'center',
   },
   historyItem: {
@@ -147,16 +148,16 @@ const styles = StyleSheet.create({
   },
   historyTime: {
     fontSize: 12,
-    color: '#FFFFFF',
-    opacity: 0.7,
+    color: Colors.light.textSecondary,
+    opacity: 0.8,
   },
   historyCost: {
     alignItems: 'center',
   },
   historyCostText: {
     fontSize: 12,
-    color: '#FFFFFF',
-    opacity: 0.7,
+    color: Colors.light.textSecondary,
+    opacity: 0.8,
     fontWeight: 'bold',
   },
   costContainer: {
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 12,
-    color: '#FFFFFF',
+    color: Colors.light.textSecondary,
     opacity: 0.8,
     marginBottom: 2,
   },

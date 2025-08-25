@@ -7,13 +7,10 @@ import { FirebaseProvider } from '@/src/contexts/FirebaseContext';
 import { useAuthListener } from '@/src/hooks/useAuthListener';
 import { useDailyReset } from '@/src/hooks/useDailyReset';
 import { analyticsService, authService, firestoreService, storageService } from '@/src/services/firebase';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useColorScheme } from 'react-native';
+import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import AuthNavigator from './(auth)/AuthNavigator';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <FirebaseProvider
       auth={authService}
@@ -22,7 +19,7 @@ export default function RootLayout() {
       analytics={analyticsService}
     >
       <AuthListener />
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <ThemeProvider value={DefaultTheme}>
         <AuthNavigator>
           <Stack>
             <Stack.Screen name="(main)" options={{ headerShown: false }} />

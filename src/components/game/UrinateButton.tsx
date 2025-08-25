@@ -1,4 +1,3 @@
-import { Entypo } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
@@ -7,9 +6,11 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSequence,
-  withSpring
+  withSpring,
+  withTiming
 } from 'react-native-reanimated';
-import { CARTOON_COLORS } from '../../config/mapStyles';
+import { IconSymbol } from '../IconSymbol';
+import { Colors, RetroColors } from '../../config/Colors';
 import { useGameSettings } from '../../stores/settingsStore';
 
 interface UrinateButtonProps {
@@ -26,14 +27,23 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
   remainingUrinations,
 }) => {
   const { haptics } = useGameSettings();
+  // ALWAYS use light paper theme
+  const colors = Colors.light;
+  
   const scale = useSharedValue(1);
   const rotation = useSharedValue(0);
+  const glow = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
       { scale: scale.value },
       { rotate: `${rotation.value}deg` }
     ],
+  }));
+
+  const glowStyle = useAnimatedStyle(() => ({
+    opacity: glow.value,
+    transform: [{ scale: 1 + glow.value * 0.2 }],
   }));
 
   const handlePress = () => {
@@ -44,17 +54,24 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     }
 
-    // Animation
+    // Enhanced animations - more playful and bouncy
     scale.value = withSequence(
-      withSpring(0.9, { duration: 100 }),
-      withSpring(1.1, { duration: 200 }),
-      withSpring(1, { duration: 300 })
+      withSpring(0.85, { duration: 150 }),
+      withSpring(1.15, { duration: 250 }),
+      withSpring(1, { duration: 400 })
     );
 
     rotation.value = withSequence(
-      withSpring(-5, { duration: 100 }),
-      withSpring(5, { duration: 100 }),
-      withSpring(0, { duration: 100 })
+      withSpring(-8, { duration: 120 }),
+      withSpring(8, { duration: 120 }),
+      withSpring(-4, { duration: 100 }),
+      withSpring(0, { duration: 200 })
+    );
+
+    // Glow effect
+    glow.value = withSequence(
+      withTiming(1, { duration: 200 }),
+      withTiming(0, { duration: 600 })
     );
 
     onPress();
@@ -62,31 +79,70 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
 
   return (
     <View style={styles.container}>
+      {/* Glow effect background */}
+      <Animated.View style={[styles.glowBackground, glowStyle]} />
+      
       <AnimatedTouchableOpacity
-        style={[animatedStyle, disabled && styles.disabledContainer]}
+        style={[animatedStyle]}
         onPress={handlePress}
         disabled={disabled}
+        activeOpacity={0.8}
       >
-        <LinearGradient
-          colors={disabled ? 
-            [CARTOON_COLORS.ui.textLight, CARTOON_COLORS.ui.border] : 
-            [CARTOON_COLORS.ui.primary, CARTOON_COLORS.ui.warning]
+        {/* Sticker-like button with gradient background */}
+        <View style={[
+          styles.stickerButton,
+          {
+            borderColor: colors.border,
+            opacity: disabled ? 0.6 : 1,
           }
-          style={styles.button}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <Entypo 
-            name="water" 
-            size={24} 
-            color={disabled ? '#CCCCCC' : '#FFFFFF'} 
-            style={styles.icon}
+        ]}>
+          {/* Beautiful gradient background */}
+          <LinearGradient
+            colors={disabled 
+              ? [colors.textMuted, colors.textSecondary]
+              : [RetroColors.yellowAccent, RetroColors.orangeAccent]
+            }
+            locations={[0, 1]}
+            style={styles.gradientBackground}
           />
-         
-          <Text style={[styles.counter, disabled && styles.disabledText]}>
-            {remainingUrinations} left
+          
+          {/* Content container */}
+          <View style={styles.buttonContent}>
+            {/* Water drop icon */}
+            <View style={styles.iconContainer}>
+              <IconSymbol
+                name="drop.fill"
+                size={28}
+                color={disabled ? colors.textMuted : colors.text}
+                style={styles.waterDropIcon}
+              />
+            </View>
+            
+            {/* Counter badge */}
+            <View style={[
+              styles.counterBadge,
+              {
+                backgroundColor: disabled ? colors.textMuted : colors.card,
+                borderColor: colors.border,
+              }
+            ]}>
+              <Text style={[
+                styles.counterText,
+                { color: disabled ? colors.textSecondary : colors.text }
+              ]}>
+                {remainingUrinations}
+              </Text>
+            </View>
+          </View>
+          
+          {/* Action text */}
+          <Text style={[
+            styles.actionText,
+            { color: disabled ? colors.textMuted : colors.text }
+          ]}>
+            {disabled ? 'Empty' : 'Mark!'}
           </Text>
-        </LinearGradient>
+        </View>
       </AnimatedTouchableOpacity>
     </View>
   );
@@ -96,57 +152,87 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     bottom: Platform.select({
-      ios: 105, // iOS tab bar height (85) + padding (20)
-      android: 85, // Android tab bar height (65) + padding (20)
+      ios: 110, // Custom tab bar height (85) + padding (25)
+      android: 90, // Custom tab bar height (75) + padding (15)
     }),
     right: 20,
     zIndex: 1000,
   },
-  button: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
+  
+  glowBackground: {
+    position: 'absolute',
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    backgroundColor: RetroColors.yellowAccent,
+    opacity: 0,
+  },
+  
+  stickerButton: {
+    width: 100,
+    height: 100,
+    borderRadius: 32, // Very rounded like sticker
+    borderWidth: 4, // Thick sticker border
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 10,
-    shadowColor: CARTOON_COLORS.ui.shadow,
+    overflow: 'hidden',
+    shadowColor: Colors.light.border,
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    borderWidth: 4,
-    borderColor: CARTOON_COLORS.ui.background,
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  disabledContainer: {
-    opacity: 0.6,
+  
+  gradientBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 28, // Match button radius minus border
   },
-  icon: {
-    marginBottom: 2,
-    textShadowColor: 'rgba(0,0,0,0.3)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-
+  
+  buttonContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: -8,
   },
-  text: {
-    color: CARTOON_COLORS.ui.background,
-    fontSize: 8,
-    fontWeight: '800',
-    letterSpacing: 0.5,
-    textAlign: 'center',
+  
+  iconContainer: {
+    marginBottom: 4,
+  },
+  
+  waterDropIcon: {
+    // Icon styling handled by IconSymbol component
+  },
+  
+  counterBadge: {
+    minWidth: 24,
+    height: 20,
+    borderRadius: 12,
+    borderWidth: 2,
+    paddingHorizontal: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 2,
-    textShadowColor: 'rgba(0,0,0,0.3)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
   },
-  counter: {
-    color: CARTOON_COLORS.ui.background,
-    fontSize: 8,
-    fontWeight: '700',
-    marginTop: 1,
-    textShadowColor: 'rgba(0,0,0,0.3)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+  
+  counterText: {
+    fontSize: 12,
+    fontWeight: '900',
+    textAlign: 'center',
+    letterSpacing: 0.5,
   },
-  disabledText: {
-    color: '#CCCCCC',
+  
+  actionText: {
+    fontSize: 10,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    textAlign: 'center',
+    marginTop: 6,
+    textShadowColor: 'rgba(45, 45, 45, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
 });

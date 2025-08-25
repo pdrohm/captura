@@ -15,6 +15,9 @@ import { PlayerStatsCard } from '../../../src/components/game/PlayerStatsCard';
 import { TerritoryCircle } from '../../../src/components/game/TerritoryCircle';
 import { UrinateButton } from '../../../src/components/game/UrinateButton';
 import { CARTOON_COLORS, SIMPLE_GAME_MAP_STYLE } from '../../../src/config/mapStyles';
+import { useColorScheme } from '../../../src/hooks/useColorScheme';
+import { Colors, RetroColors } from '../../../src/config/Colors';
+import { RetroText, RetroBorders, RetroRadius, RetroShadows } from '../../../src/config/retroStyles';
 import { useFirestoreGame } from '../../../src/hooks/useFirestoreGame';
 import { useGameStore } from '../../../src/stores/gameStore';
 
@@ -29,6 +32,8 @@ export default function MapScreen() {
     error, 
     isInitialized 
   } = useFirestoreGame();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
   const [initialRegion, setInitialRegion] = useState<Region | null>(null);
   const [userLocation, setUserLocation] = useState<Location.LocationObject | null>(null);
   const [showStats, setShowStats] = useState(false);
@@ -162,20 +167,18 @@ export default function MapScreen() {
   if (!initialRegion || !isInitialized) {
     return (
       <View style={styles.loadingContainer}>
-        <LinearGradient
-          colors={[CARTOON_COLORS.ui.secondary, CARTOON_COLORS.ui.primary, CARTOON_COLORS.ui.success]}
-          style={styles.loadingGradient}
-        >
-          <View style={styles.loadingContent}>
+        <View style={[styles.loadingContent, { backgroundColor: colors.background }]}>
+          <View style={[styles.loadingCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[RetroText.gameTitle, { color: colors.text, textAlign: 'center', marginBottom: 16 }]}>🌍 MAP LOADING 🐕</Text>
             <Text style={styles.loadingEmoji}>🐕‍🦺</Text>
-            <Text style={styles.loadingText}>
-              {!initialRegion ? 'Finding your territory...' : 'Connecting to multiplayer...'}
+            <Text style={[styles.loadingText, { color: colors.text }]}>
+              {!initialRegion ? '🗺️ FINDING YOUR TERRITORY...' : '📡 CONNECTING TO DOG NETWORK...'}
             </Text>
-            <Text style={styles.loadingSubtext}>
-              {!initialRegion ? 'Get ready to mark your spot!' : 'Loading game data...'}
+            <Text style={[styles.loadingSubtext, { color: colors.textSecondary }]}>
+              {!initialRegion ? 'Get ready to mark your spot!' : 'Loading good boy data...'}
             </Text>
           </View>
-        </LinearGradient>
+        </View>
       </View>
     );
   }
@@ -216,8 +219,8 @@ export default function MapScreen() {
 
       {/* Error Display */}
       {error && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>⚠️ {error}</Text>
+        <View style={[styles.errorContainer, { backgroundColor: RetroColors.collarRed, borderColor: colors.border }]}>
+          <Text style={[styles.errorText, { color: colors.background }]}>⚠️ {error}</Text>
         </View>
       )}
 
@@ -228,21 +231,16 @@ export default function MapScreen() {
         remainingUrinations={remainingUrinations}
       />
 
-      {/* Stats Toggle Button - Enhanced Cartoon Style */}
+      {/* Stats Toggle Button - Retro Dog Game Style */}
       <View style={styles.topButtons} pointerEvents="box-none">
         <SafeAreaView pointerEvents="box-none">
           <View style={styles.buttonContainer} pointerEvents="box-none">
             <TouchableOpacity 
-              style={[styles.statsButton, styles.cartoonButton]} 
+              style={[styles.statsButton, { backgroundColor: RetroColors.softPurple, borderColor: colors.border }]} 
               onPress={toggleStats}
               activeOpacity={0.8}
             >
-              <LinearGradient
-                colors={[CARTOON_COLORS.ui.secondary, CARTOON_COLORS.ui.primary]}
-                style={styles.statsButtonGradient}
-              >
-                <Text style={styles.statsButtonText}>📊</Text>
-              </LinearGradient>
+              <Text style={[styles.statsButtonText, { color: colors.background }]}>📊</Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -261,19 +259,24 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: CARTOON_COLORS.ui.background,
   },
   loadingContainer: {
     flex: 1,
   },
-  loadingGradient: {
+  loadingContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 24,
   },
-  loadingContent: {
+  loadingCard: {
+    ...RetroBorders.bold,
+    borderRadius: RetroRadius.xxl,
+    padding: 32,
     alignItems: 'center',
-    justifyContent: 'center',
+    ...RetroShadows.soft,
+    maxWidth: 320,
+    width: '100%',
   },
   loadingEmoji: {
     fontSize: 48,
@@ -283,24 +286,13 @@ const styles = StyleSheet.create({
     textShadowRadius: 4,
   },
   loadingText: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: CARTOON_COLORS.ui.background,
+    ...RetroText.heading,
     textAlign: 'center',
-    textShadowColor: 'rgba(0,0,0,0.4)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   loadingSubtext: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: CARTOON_COLORS.ui.background,
+    ...RetroText.body,
     textAlign: 'center',
-    textShadowColor: 'rgba(0,0,0,0.3)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-    opacity: 0.9,
   },
   map: {
     flex: 1,
@@ -334,43 +326,30 @@ const styles = StyleSheet.create({
   statsButton: {
     width: 56,
     height: 56,
-    borderRadius: 28,
-    elevation: 8,
-    shadowColor: CARTOON_COLORS.ui.shadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-  },
-  cartoonButton: {
-    borderWidth: 3,
-    borderColor: CARTOON_COLORS.ui.background,
-  },
-  statsButtonGradient: {
-    flex: 1,
-    borderRadius: 25,
+    borderRadius: RetroRadius.lg,
+    ...RetroBorders.sticker,
     justifyContent: 'center',
     alignItems: 'center',
+    ...RetroShadows.soft,
   },
   statsButtonText: {
     fontSize: 22,
-    textShadowColor: 'rgba(0,0,0,0.2)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+    fontWeight: 'bold',
   },
   errorContainer: {
     position: 'absolute',
     top: 100,
     left: 16,
     right: 16,
-    backgroundColor: CARTOON_COLORS.ui.error,
-    padding: 12,
-    borderRadius: 8,
+    padding: 16,
+    borderRadius: RetroRadius.lg,
+    ...RetroBorders.sticker,
     zIndex: 1001,
+    ...RetroShadows.soft,
   },
   errorText: {
-    color: CARTOON_COLORS.ui.background,
-    fontSize: 14,
-    fontWeight: '600',
+    ...RetroText.body,
     textAlign: 'center',
+    fontWeight: 'bold',
   },
 });

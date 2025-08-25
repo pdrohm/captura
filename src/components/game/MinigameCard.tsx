@@ -1,11 +1,12 @@
+import { Colors, RetroColors } from '@/src/config/Colors';
+import { RetroBorders, RetroRadius, RetroShadows, RetroSpacing, RetroText } from '@/src/config/retroStyles';
 import React from 'react';
-import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import Animated, { 
-  useAnimatedStyle, 
-  useSharedValue, 
-  withSpring,
-  interpolate,
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, {
+    interpolate,
+    useAnimatedStyle,
+    useSharedValue,
+    withSpring,
 } from 'react-native-reanimated';
 import type { Minigame } from '../../types/game';
 
@@ -20,6 +21,9 @@ export const MinigameCard: React.FC<MinigameCardProps> = ({
   minigame,
   onPress,
 }) => {
+  // Always use light theme
+  const colors = Colors.light;
+  
   const pressed = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -40,11 +44,15 @@ export const MinigameCard: React.FC<MinigameCardProps> = ({
   };
 
   const getDifficultyColor = (difficulty: string) => {
+    if (!minigame.isUnlocked) {
+      return colors.borderMuted;
+    }
+    
     switch (difficulty) {
-      case 'easy': return ['#4ECDC4', '#44A08D'];
-      case 'medium': return ['#FFB347', '#FFAA5C'];
-      case 'hard': return ['#FF6B6B', '#EE5A52'];
-      default: return ['#4ECDC4', '#44A08D'];
+      case 'easy': return colors.success;
+      case 'medium': return colors.warning;
+      case 'hard': return colors.error;
+      default: return colors.info;
     }
   };
 
@@ -58,48 +66,92 @@ export const MinigameCard: React.FC<MinigameCardProps> = ({
 
   return (
     <AnimatedTouchableOpacity
-      style={[styles.container, animatedStyle, !minigame.isUnlocked && styles.locked]}
+      style={[
+        styles.container, 
+        animatedStyle, 
+        { 
+          borderColor: getDifficultyColor(minigame.difficulty),
+          backgroundColor: minigame.isUnlocked ? colors.surface : colors.borderMuted,
+        },
+        !minigame.isUnlocked && styles.locked
+      ]}
       onPress={minigame.isUnlocked ? onPress : undefined}
       onPressIn={minigame.isUnlocked ? handlePressIn : undefined}
       onPressOut={minigame.isUnlocked ? handlePressOut : undefined}
       activeOpacity={1}
     >
-      <LinearGradient
-        colors={minigame.isUnlocked ? getDifficultyColor(minigame.difficulty) : ['#CCCCCC', '#999999']}
-        style={styles.gradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
+      <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.emoji}>{minigame.icon}</Text>
-          <View style={styles.difficultyBadge}>
-            <Text style={styles.difficultyText}>
+          <View style={[
+            styles.difficultyBadge, 
+            { 
+              backgroundColor: getDifficultyColor(minigame.difficulty),
+              borderColor: colors.border 
+            }
+          ]}>
+            <Text style={[
+              styles.difficultyText,
+              { color: minigame.isUnlocked ? colors.buttonText : colors.textMuted }
+            ]}>
               {minigame.difficulty.toUpperCase()}
             </Text>
           </View>
         </View>
 
-        <Text style={[styles.title, !minigame.isUnlocked && styles.lockedText]}>
+        <Text 
+          style={[
+            styles.title, 
+            { color: minigame.isUnlocked ? colors.text : colors.textMuted },
+            !minigame.isUnlocked && styles.lockedText
+          ]}
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
           {minigame.name}
         </Text>
         
-        <Text style={[styles.description, !minigame.isUnlocked && styles.lockedText]}>
+        <Text 
+          style={[
+            styles.description, 
+            { color: minigame.isUnlocked ? colors.textSecondary : colors.textMuted },
+            !minigame.isUnlocked && styles.lockedText
+          ]}
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
           {minigame.description}
         </Text>
 
-        <View style={styles.rewardContainer}>
-          <Text style={[styles.rewardText, !minigame.isUnlocked && styles.lockedText]}>
+        <View style={[
+          styles.rewardContainer, 
+          { 
+            backgroundColor: colors.card,
+            borderColor: colors.border 
+          }
+        ]}>
+          <Text style={[
+            styles.rewardText, 
+            { color: minigame.isUnlocked ? colors.text : colors.textMuted },
+            !minigame.isUnlocked && styles.lockedText
+          ]}>
             🎁 {getRewardText(minigame.reward)}
           </Text>
         </View>
 
         {!minigame.isUnlocked && (
-          <View style={styles.lockOverlay}>
+          <View style={[
+            styles.lockOverlay, 
+            { backgroundColor: colors.background }
+          ]}>
             <Text style={styles.lockEmoji}>🔒</Text>
-            <Text style={styles.lockText}>LOCKED</Text>
+            <Text style={[
+              styles.lockText, 
+              { color: colors.textMuted }
+            ]}>LOCKED</Text>
           </View>
         )}
-      </LinearGradient>
+      </View>
     </AnimatedTouchableOpacity>
   );
 };
@@ -107,22 +159,18 @@ export const MinigameCard: React.FC<MinigameCardProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '47%',
-    aspectRatio: 1,
-    marginBottom: 16,
-    borderRadius: 20,
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
+    aspectRatio: 0.8, // Make it taller (was 1, now 0.8 = 20% taller)
+    marginBottom: RetroSpacing.lg,
+    ...RetroBorders.sticker, // Sticker-like border
+    borderRadius: RetroRadius.xxl,
+    ...RetroShadows.soft,
   },
   locked: {
     opacity: 0.7,
   },
-  gradient: {
+  content: {
     flex: 1,
-    borderRadius: 20,
-    padding: 16,
+    padding: RetroSpacing.xl,
     justifyContent: 'space-between',
   },
   header: {
@@ -131,47 +179,53 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   emoji: {
-    fontSize: 32,
+    fontSize: 44, // Even larger for game feel
   },
   difficultyBadge: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    ...RetroBorders.sticker, // Sticker border for badges
+    paddingHorizontal: RetroSpacing.md,
+    paddingVertical: RetroSpacing.sm,
+    borderRadius: RetroRadius.pill,
+    borderColor: RetroColors.outlineBlack,
+    ...RetroShadows.subtle,
   },
   difficultyText: {
-    color: '#FFFFFF',
-    fontSize: 8,
-    fontWeight: '800',
-    letterSpacing: 0.5,
+    ...RetroText.label,
+    fontSize: 10,
+    color: '#FFFFFF', // Always white text on colored badges
   },
   title: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
+    ...RetroText.heading,
     textAlign: 'center',
-    marginVertical: 4,
+    marginVertical: RetroSpacing.sm,
+    fontSize: 16, // Smaller font
+    textTransform: 'uppercase' as const,
+    letterSpacing: 0.6,
+    numberOfLines: 2, // Allow 2 lines
   },
   description: {
-    color: '#FFFFFF',
-    fontSize: 12,
+    ...RetroText.caption,
     textAlign: 'center',
-    opacity: 0.9,
-    lineHeight: 16,
-    marginBottom: 8,
+    marginBottom: RetroSpacing.md,
+    fontSize: 12, // Smaller font
+    lineHeight: 16, // Better line spacing
+    numberOfLines: 2, // Allow 2 lines max
   },
   rewardContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    borderRadius: 12,
+    ...RetroBorders.thin, // Subtle sticker border
+    paddingVertical: RetroSpacing.md,
+    paddingHorizontal: RetroSpacing.lg,
     alignSelf: 'center',
+    borderRadius: RetroRadius.xl,
+    borderColor: RetroColors.outlineLight,
+    ...RetroShadows.subtle,
   },
   rewardText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: '600',
+    ...RetroText.caption,
+    fontWeight: '800',
     textAlign: 'center',
+    letterSpacing: 0.4,
+    fontSize: 11, // Smaller font for reward
   },
   lockOverlay: {
     position: 'absolute',
@@ -179,20 +233,21 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 20,
+    ...RetroBorders.thick, // Bold border for lock overlay
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: RetroRadius.xxl,
+    borderColor: RetroColors.outlineBrown,
+    backgroundColor: 'rgba(254, 249, 239, 0.95)', // Paper background overlay
   },
   lockEmoji: {
-    fontSize: 24,
-    marginBottom: 4,
+    fontSize: 36,
+    marginBottom: RetroSpacing.sm,
   },
   lockText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 1,
+    ...RetroText.label,
+    fontSize: 14,
+    color: RetroColors.warmBrown,
   },
   lockedText: {
     opacity: 0.6,

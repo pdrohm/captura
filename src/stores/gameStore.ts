@@ -24,24 +24,24 @@ const INITIAL_MINIGAMES: Minigame[] = [
     reward: { type: 'urinations', amount: 1 },
     isUnlocked: true,
   },
-  {
-    id: 'tap-game',
-    name: 'Speed Tapper',
-    icon: '👆',
-    description: 'Tap as fast as you can!',
-    difficulty: 'medium',
-    reward: { type: 'radius', amount: 5 },
-    isUnlocked: true,
-  },
-  {
-    id: 'puzzle',
-    name: 'Territory Puzzle',
-    icon: '🧩',
-    description: 'Solve puzzles to unlock rewards',
-    difficulty: 'hard',
-    reward: { type: 'coins', amount: 50 },
-    isUnlocked: false,
-  },
+  // {
+  //   id: 'tap-game',
+  //   name: 'Speed Tapper',
+  //   icon: '👆',
+  //   description: 'Tap as fast as you can!',
+  //   difficulty: 'medium',
+  //   reward: { type: 'radius', amount: 5 },
+  //   isUnlocked: true,
+  // },
+  // {
+  //   id: 'puzzle',
+  //   name: 'Territory Puzzle',
+  //   icon: '🧩',
+  //   description: 'Solve puzzles to unlock rewards',
+  //   difficulty: 'hard',
+  //   reward: { type: 'coins', amount: 50 },
+  //   isUnlocked: false,
+  // },
 ];
 
 const INITIAL_ACHIEVEMENTS: Achievement[] = [
