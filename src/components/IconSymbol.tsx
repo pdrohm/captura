@@ -35,6 +35,8 @@ const MAPPING = {
   'level': 'trending-up',
   'crown': 'emoji-events',
   'diamond': 'diamond',
+  'puzzlepiece': 'extension',
+  'puzzlepiece.fill': 'extension',
 } as const;
 
 type IconSymbolName = keyof typeof MAPPING;

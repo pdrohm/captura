@@ -18,10 +18,10 @@ export default function MinigamesScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     
     if (minigameId === 'roulette') {
-      
       router.push('/minigames/roulette');
+    } else if (minigameId === 'sliding-puzzle') {
+      router.push('/minigames/sliding-puzzle');
     } else {
-      
       completeMinigame(minigameId);
 
       setTimeout(() => {

@@ -10,11 +10,11 @@ import { useAppPreferences, useGameSettings, usePrivacySettings, useSettingsStor
 import { router } from 'expo-router';
 import React from 'react';
 import {
-    Alert,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -141,7 +141,7 @@ export default function SettingsScreen() {
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {}
         <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <ThemedText style={[RetroText.gameTitle, { color: colors.text }]}>⚙️ DOG SETTINGS ⚙️</ThemedText>
+          <ThemedText style={[RetroText.gameTitle, { color: colors.text }]}>DOG SETTINGS</ThemedText>
           <ThemedText style={[RetroText.body, { color: colors.textSecondary, textAlign: 'center' }]}>Customize your pup&apos;s experience!</ThemedText>
         </View>
 

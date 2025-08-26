@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { FirebaseProvider } from '@/src/contexts/FirebaseContext';
 import { useAuthListener } from '@/src/hooks/useAuthListener';
 import { useDailyReset } from '@/src/hooks/useDailyReset';
+import { useMinigameSync } from '@/src/hooks/useMinigameSync';
 import { analyticsService, authService, firestoreService, storageService } from '@/src/services/firebase';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import AuthNavigator from './(auth)/AuthNavigator';
@@ -32,6 +33,7 @@ export default function RootLayout() {
 
 function AuthListener() {
   useAuthListener();
-  useDailyReset(); 
+  useDailyReset();
+  useMinigameSync();
   return null;
 }

@@ -24,6 +24,15 @@ const INITIAL_MINIGAMES: Minigame[] = [
     reward: { type: 'urinations', amount: 1 },
     isUnlocked: true,
   },
+  {
+    id: 'sliding-puzzle',
+    name: 'Territory Puzzle',
+    icon: '🧩',
+    description: 'Solve sliding puzzles of your territories!',
+    difficulty: 'medium',
+    reward: { type: 'coins', amount: 5 },
+    isUnlocked: true,
+  },
 ];
 
 const INITIAL_ACHIEVEMENTS: Achievement[] = [
@@ -74,6 +83,7 @@ interface GameStore extends GameState {
   updateSettings: (settings: Partial<GameState['settings']>) => void;
   clearAllData: () => void;
   checkAchievements: () => void;
+  syncMinigames: () => void;
 }
 
 export const useGameStore = create<GameStore>()(
@@ -273,6 +283,15 @@ export const useGameStore = create<GameStore>()(
         }));
       },
 
+      syncMinigames: () => {
+        set((state) => ({
+          minigames: INITIAL_MINIGAMES.map(initialGame => {
+            const existingGame = state.minigames.find(game => game.id === initialGame.id);
+            return existingGame ? { ...initialGame, isUnlocked: existingGame.isUnlocked } : initialGame;
+          }),
+        }));
+      },
+
       clearAllData: () => {
         set(INITIAL_STATE);
       },
@@ -280,7 +299,17 @@ export const useGameStore = create<GameStore>()(
     {
       name: 'dogeatdog-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      version: 1,
+      version: 2,
+      migrate: (persistedState: any, version: number) => {
+        if (version < 2) {
+          // Force sync minigames for version 2
+          return {
+            ...persistedState,
+            minigames: INITIAL_MINIGAMES,
+          };
+        }
+        return persistedState;
+      },
     }
   )
 );
