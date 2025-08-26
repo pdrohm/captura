@@ -18,7 +18,6 @@ export const PlayerStatsCard: React.FC<PlayerStatsCardProps> = ({
   stats,
 }) => {
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
   const colors = Colors[colorScheme ?? 'light'];
   
   const xpProgress = useSharedValue(0);
@@ -29,14 +28,14 @@ export const PlayerStatsCard: React.FC<PlayerStatsCardProps> = ({
       damping: 15,
       stiffness: 100,
     });
-  }, [stats.experience, stats.experienceToNextLevel]);
+  }, [stats.experience, stats.experienceToNextLevel, xpProgress]);
 
   useEffect(() => {
     dailyProgress.value = withSpring(stats.dailyUrinations / stats.maxDailyUrinations, {
       damping: 15,
       stiffness: 100,
     });
-  }, [stats.dailyUrinations, stats.maxDailyUrinations]);
+  }, [stats.dailyUrinations, stats.maxDailyUrinations, dailyProgress]);
 
   const xpProgressStyle = useAnimatedStyle(() => ({
     width: `${xpProgress.value * 100}%`,

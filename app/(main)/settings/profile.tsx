@@ -30,7 +30,7 @@ export default function ProfileSettingsScreen() {
         setColorPickerVisible(false);
         Alert.alert('Success', 'Your territory color has been updated!');
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to update color. Please try again.');
     }
   };
@@ -42,7 +42,7 @@ export default function ProfileSettingsScreen() {
         setUserColorPickerVisible(false);
         Alert.alert('Success', 'Your player color has been updated!');
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to update player color. Please try again.');
     }
   };

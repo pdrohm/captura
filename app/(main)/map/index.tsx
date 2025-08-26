@@ -1,23 +1,22 @@
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Region } from 'react-native-maps';
 import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSequence,
-  withSpring,
+    useAnimatedStyle,
+    useSharedValue,
+    withSequence,
+    withSpring,
 } from 'react-native-reanimated';
 import { ParticleEffect } from '../../../src/components/game/ParticleEffect';
 import { PlayerStatsCard } from '../../../src/components/game/PlayerStatsCard';
 import { TerritoryCircle } from '../../../src/components/game/TerritoryCircle';
 import { UrinateButton } from '../../../src/components/game/UrinateButton';
-import { CARTOON_COLORS, SIMPLE_GAME_MAP_STYLE } from '../../../src/config/mapStyles';
-import { useColorScheme } from '../../../src/hooks/useColorScheme';
 import { Colors, RetroColors } from '../../../src/config/Colors';
-import { RetroText, RetroBorders, RetroRadius, RetroShadows } from '../../../src/config/retroStyles';
+import { SIMPLE_GAME_MAP_STYLE } from '../../../src/config/mapStyles';
+import { RetroBorders, RetroRadius, RetroShadows, RetroText } from '../../../src/config/retroStyles';
+import { useColorScheme } from '../../../src/hooks/useColorScheme';
 import { useFirestoreGame } from '../../../src/hooks/useFirestoreGame';
 import { useGameStore } from '../../../src/stores/gameStore';
 

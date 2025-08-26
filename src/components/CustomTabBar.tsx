@@ -14,7 +14,29 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 
   const getTabIcon = (routeName: string, focused: boolean) => {
     const size = focused ? 28 : 24;
-    const color = focused ? colors.tabIconSelected : colors.tabIconDefault;
+    
+    // Use the icon's natural color for active state, muted brown for inactive
+    let color;
+    if (focused) {
+      switch (routeName) {
+        case 'minigames':
+          color = RetroColors.softPurple; // Purple for games
+          break;
+        case 'map':
+          color = RetroColors.mintGreen; // Mint green for map/territory
+          break;
+        case 'profile':
+          color = RetroColors.orangeAccent; // Orange for profile
+          break;
+        case 'settings':
+          color = RetroColors.yellowAccent; // Yellow for settings
+          break;
+        default:
+          color = RetroColors.softPurple;
+      }
+    } else {
+      color = colors.tabIconDefault; // Muted brown for inactive
+    }
 
     switch (routeName) {
       case 'minigames':
@@ -69,6 +91,42 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
     }
   };
 
+  const getTabLabelColor = (routeName: string, isFocused: boolean) => {
+    if (!isFocused) return Colors.light.tabIconDefault; // Muted brown for inactive
+    
+    // Use the same color as the icon for active state
+    switch (routeName) {
+      case 'minigames':
+        return RetroColors.softPurple; // Purple for games
+      case 'map':
+        return RetroColors.mintGreen; // Mint green for map/territory
+      case 'profile':
+        return RetroColors.orangeAccent; // Orange for profile
+      case 'settings':
+        return RetroColors.yellowAccent; // Yellow for settings
+      default:
+        return RetroColors.softPurple;
+    }
+  };
+
+  const getTabButtonBackground = (routeName: string, isFocused: boolean) => {
+    if (!isFocused) return 'transparent';
+    
+    // Use a subtle version of the icon's color for the background
+    switch (routeName) {
+      case 'minigames':
+        return 'rgba(191, 162, 219, 0.15)'; // Subtle purple
+      case 'map':
+        return 'rgba(168, 218, 220, 0.15)'; // Subtle mint green
+      case 'profile':
+        return 'rgba(244, 162, 97, 0.15)'; // Subtle orange
+      case 'settings':
+        return 'rgba(246, 189, 96, 0.15)'; // Subtle yellow
+      default:
+        return 'rgba(191, 162, 219, 0.15)'; // Subtle purple
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Paper-like background with gradient */}
@@ -105,11 +163,11 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               accessibilityRole="button"
               accessibilityState={isFocused ? { selected: true } : {}}
               accessibilityLabel={options.tabBarAccessibilityLabel}
-              testID={options.tabBarTestID}
               onPress={onPress}
               style={[
                 styles.tabButton,
-                isFocused && styles.tabButtonFocused
+                isFocused && styles.tabButtonFocused,
+                { backgroundColor: getTabButtonBackground(route.name, isFocused) }
               ]}
               activeOpacity={0.7}
             >
@@ -124,7 +182,7 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               {/* Label */}
               <Text style={[
                 styles.tabLabel,
-                isFocused ? styles.tabLabelFocused : styles.tabLabelInactive
+                { color: getTabLabelColor(route.name, isFocused) }
               ]}>
                 {getTabLabel(route.name)}
               </Text>
@@ -180,7 +238,7 @@ const styles = StyleSheet.create({
   },
   
   tabButtonFocused: {
-    backgroundColor: 'rgba(191, 162, 219, 0.1)', // Very subtle purple background
+    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Light white background instead of purple
   },
   
   iconContainer: {
@@ -205,7 +263,7 @@ const styles = StyleSheet.create({
   },
   
   tabLabelFocused: {
-    color: Colors.light.tabIconSelected, // Purple
+    color: '#FFFFFF', // White for active tab instead of purple
   },
   
   tabLabelInactive: {

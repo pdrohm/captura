@@ -45,13 +45,10 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     setConquestStatus,
     addTrackedPoint,
     clearTrackedPoints,
-    setTotalDistance,
-    setTotalArea,
     setLoading,
     setError,
     setSelectedLocation,
     setSelectedTerritory,
-    centerOnUserLocation,
     clearError,
   } = useMapStore();
 
@@ -329,7 +326,7 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
       setConquestStatus('idle');
       clearTrackedPoints();
     }
-  }, [setConquestStatus, trackedPoints, locationService, clearTrackedPoints, addTerritory, user]);
+  }, [setConquestStatus, trackedPoints, locationService, clearTrackedPoints, addTerritory, user, cancelConquest]);
 
   const cancelConquest = useCallback(() => {
     setConquestStatus('idle');
@@ -409,7 +406,7 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
   useEffect(() => {
     loadInitialData();
     checkLocationPermission();
-  }, []);
+  }, [loadInitialData, checkLocationPermission]);
 
   useEffect(() => {
     if (locationPermissionGranted) {

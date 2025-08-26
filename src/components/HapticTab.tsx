@@ -1,15 +1,11 @@
+import { RetroColors } from '@/src/config/Colors';
+import { RetroBorders, RetroRadius, RetroShadows } from '@/src/config/retroStyles';
 import { BottomTabBarButtonProps } from '@react-navigation/bottom-tabs';
 import { PlatformPressable } from '@react-navigation/elements';
 import * as Haptics from 'expo-haptics';
-import { View, StyleSheet } from 'react-native';
-import { useColorScheme } from '@/src/hooks/useColorScheme';
-import { Colors, RetroColors } from '@/src/config/Colors';
-import { RetroBorders, RetroRadius, RetroShadows } from '@/src/config/retroStyles';
+import { StyleSheet, View } from 'react-native';
 
 export function HapticTab(props: BottomTabBarButtonProps) {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
-  
   // Check if this tab is active by looking at the accessibilityState
   const isActive = props.accessibilityState?.selected;
 

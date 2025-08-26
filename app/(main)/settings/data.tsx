@@ -55,11 +55,11 @@ export default function DataManagementScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { clearAllData } = useGameStore();
-  const { resetToDefaults, exportSettings, importSettings } = useSettingsStore();
+  const { resetToDefaults, exportSettings } = useSettingsStore();
 
   const handleExportSettings = async () => {
     try {
-      const settingsJson = await exportSettings();
+      await exportSettings();
       Alert.alert(
         'Export Settings', 
         'Settings exported successfully!',
@@ -71,7 +71,7 @@ export default function DataManagementScreen() {
           { text: 'OK', style: 'default' }
         ]
       );
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to export settings.');
     }
   };

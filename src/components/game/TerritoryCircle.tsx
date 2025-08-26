@@ -14,8 +14,8 @@ export const TerritoryCircle: React.FC<TerritoryCircleProps> = React.memo(({
 }) => {
   // Enhanced game-style colors and styling
   const { fillColor, strokeColor } = useMemo(() => {
-    // Use owner's color if available, otherwise fall back to territory color
-    const baseColor = territory.owner?.color || territory.color || CARTOON_COLORS.territory.neutral;
+    // Use territory color or fall back to neutral color
+    const baseColor = territory.color || CARTOON_COLORS.territory.neutral;
     
     // Convert hex to rgba for better opacity control
     const hexToRgba = (hex: string, alpha: number) => {
@@ -32,7 +32,7 @@ export const TerritoryCircle: React.FC<TerritoryCircleProps> = React.memo(({
       fillColor: hexToRgba(baseColor, opacity),
       strokeColor: hexToRgba(baseColor, 1.0), // Full opacity stroke for game effect
     };
-  }, [territory.owner?.color, territory.color, opacity]);
+  }, [territory.color, opacity]);
 
   const center = useMemo(() => ({
     latitude: territory.latitude,
@@ -50,3 +50,5 @@ export const TerritoryCircle: React.FC<TerritoryCircleProps> = React.memo(({
     />
   );
 });
+
+TerritoryCircle.displayName = 'TerritoryCircle';

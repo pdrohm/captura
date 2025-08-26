@@ -34,7 +34,7 @@ export default function ForgotPasswordForm({
     try {
       await resetPassword(auth, email.trim());
       setSent(true);
-    } catch (error) {
+    } catch {
       // Error is already handled in the store
     }
   };

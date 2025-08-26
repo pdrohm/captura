@@ -10,14 +10,9 @@ export class UserUseCases implements IUserUseCases {
   ) {}
 
   async getCurrentUser(): Promise<User | null> {
-    try {
-      // TODO: Get current user from auth context
-      // For now, return null as this needs to be integrated with auth
-      return null;
-    } catch (error) {
-      this.errorHandler.handle(error);
-      throw error;
-    }
+    // TODO: Get current user from auth context
+    // For now, return null as this needs to be integrated with auth
+    return null;
   }
 
   async updateProfile(uid: string, profile: Partial<Pick<User, 'displayName' | 'photoURL'>>): Promise<User> {

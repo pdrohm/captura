@@ -51,7 +51,7 @@ export class LocationService implements ILocationService {
             longitude: coords.longitude,
           };
         }
-      } catch (fallbackError) {
+      } catch {
         // Fallback failed, throw original error
       }
       
@@ -131,7 +131,7 @@ export class LocationService implements ILocationService {
         permissionStatus: permission ? 'GRANTED' : 'DENIED',
         accuracy: 'HIGH',
       };
-    } catch (error) {
+    } catch {
       return {
         locationServicesEnabled: false,
         permissionStatus: 'UNKNOWN',

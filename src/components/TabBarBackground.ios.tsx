@@ -1,8 +1,7 @@
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { BlurView } from 'expo-blur';
-import { StyleSheet, View } from 'react-native';
-import { useColorScheme } from '@/src/hooks/useColorScheme';
 import { Colors, RetroColors } from '@/src/config/Colors';
+import { useColorScheme } from '@/src/hooks/useColorScheme';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { StyleSheet, View } from 'react-native';
 
 export default function BlurTabBarBackground() {
   const colorScheme = useColorScheme();

@@ -48,7 +48,6 @@ const MAPPING = {
 } as const;
 
 // Define types based on the actual mapping
-type IconMapping = typeof MAPPING;
 type IconSymbolName = keyof typeof MAPPING;
 
 /**

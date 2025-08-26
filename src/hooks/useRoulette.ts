@@ -29,7 +29,7 @@ export const useRoulette = () => {
       loadHistory(currentUser.uid);
       checkDailyReset(currentUser.uid);
     }
-  }, []);
+  }, [initializeStats, loadHistory, checkDailyReset]);
 
   // Check daily reset when date changes
   useEffect(() => {
@@ -37,7 +37,7 @@ export const useRoulette = () => {
     if (currentUser?.uid) {
       checkDailyReset(currentUser.uid);
     }
-  }, [new Date().toDateString()]);
+  }, [checkDailyReset]);
 
   const handleSpin = useCallback(async () => {
     if (isSpinning || !canSpin) {

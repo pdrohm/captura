@@ -4,17 +4,17 @@ import { useFirebase } from '@/src/contexts/FirebaseContext';
 import { useAuthStore } from '@/src/stores/authStore';
 import React, { useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
+    ActivityIndicator,
+    Alert,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
 } from 'react-native';
 
 interface RegisterFormProps {
@@ -53,7 +53,7 @@ export default function RegisterForm({
       
       // Update profile with display name after signup
       await auth.updateProfile(displayName.trim());
-    } catch (error) {
+    } catch {
       // Error is already handled in the store
     }
   };

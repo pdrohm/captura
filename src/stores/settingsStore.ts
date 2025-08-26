@@ -94,7 +94,7 @@ export const useSettingsStore = create<SettingsStore>()(
           const importedSettings = JSON.parse(settingsJson) as Partial<AppSettings>;
           
           // Validate imported settings
-          const validKeys = Object.keys(DEFAULT_SETTINGS) as Array<keyof AppSettings>;
+          const validKeys = Object.keys(DEFAULT_SETTINGS) as (keyof AppSettings)[];
           const filteredSettings: Partial<AppSettings> = {};
           
           for (const key of validKeys) {

@@ -13,8 +13,6 @@ import { rouletteService } from '../../../services/rouletteService';
 
 const { width } = Dimensions.get('window');
 const WHEEL_SIZE = Math.min(width * 0.8, 300);
-const CENTER = WHEEL_SIZE / 2;
-const RADIUS = (WHEEL_SIZE - 40) / 2;
 
 interface RouletteWheelProps {
   isSpinning: boolean;
@@ -71,7 +69,7 @@ export const RouletteWheel: React.FC<RouletteWheelProps> = ({
         stiffness: 100,
       });
     }
-  }, [isSpinning, finalAngle, spinDuration]);
+  }, [isSpinning, finalAngle, spinDuration, rotation, onSpinComplete]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -109,7 +107,6 @@ export const RouletteWheel: React.FC<RouletteWheelProps> = ({
         <Animated.View style={[styles.wheel, animatedStyle]}>
           {segments.map((segment, index) => {
             const startAngle = index * segmentAngle;
-            const endAngle = (index + 1) * segmentAngle;
             
             return (
               <View

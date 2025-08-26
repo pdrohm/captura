@@ -4,17 +4,17 @@ import { useFirebase } from '@/src/contexts/FirebaseContext';
 import { useAuthStore } from '@/src/stores/authStore';
 import React, { useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View
+    ActivityIndicator,
+    Alert,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
 } from 'react-native';
 
 interface LoginFormProps {
@@ -39,7 +39,7 @@ export default function LoginForm({
 
     try {
       await signIn(auth, email.trim(), password);
-    } catch (error) {
+    } catch {
       // Error is already handled in the store
     }
   };

@@ -1,7 +1,7 @@
 import { RetroButton } from '@/src/components/RetroButton';
 import { ThemedText } from '@/src/components/ThemedText';
 import { Colors, RetroColors } from '@/src/config/Colors';
-import { RetroText, RetroBorders, RetroRadius, RetroShadows } from '@/src/config/retroStyles';
+import { RetroBorders, RetroRadius, RetroShadows, RetroText } from '@/src/config/retroStyles';
 import { useFirebase } from '@/src/contexts/FirebaseContext';
 import { useColorScheme } from '@/src/hooks/useColorScheme';
 import { useAuthStore } from '@/src/stores/authStore';
@@ -36,7 +36,6 @@ const SettingsCard: React.FC<SettingsCardProps> = ({
   badge 
 }) => {
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
   const colors = Colors[colorScheme ?? 'light'];
   
   return (
@@ -86,14 +85,14 @@ export default function SettingsScreen() {
   const gameSettings = useGameSettings();
   const appPreferences = useAppPreferences();
   const privacySettings = usePrivacySettings();
-  const { resetToDefaults, exportSettings } = useSettingsStore();
+  const { resetToDefaults } = useSettingsStore();
 
   const handleLogout = async () => {
     try {
       if (auth) {
         await auth.signOut();
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to logout. Please try again.');
     }
   };
@@ -113,14 +112,7 @@ export default function SettingsScreen() {
     );
   };
 
-  const handleExportSettings = async () => {
-    try {
-      const settingsJson = await exportSettings();
-      Alert.alert('Export Settings', `Settings exported:\n${settingsJson.substring(0, 100)}...`);
-    } catch (error) {
-      Alert.alert('Error', 'Failed to export settings.');
-    }
-  };
+
 
   const getActiveSettingsCount = (settings: Record<string, boolean>) => {
     return Object.values(settings).filter(Boolean).length;
@@ -153,7 +145,7 @@ export default function SettingsScreen() {
         {/* Header */}
         <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <ThemedText style={[RetroText.gameTitle, { color: colors.text }]}>⚙️ DOG SETTINGS ⚙️</ThemedText>
-          <ThemedText style={[RetroText.body, { color: colors.textSecondary, textAlign: 'center' }]}>Customize your pup's experience!</ThemedText>
+          <ThemedText style={[RetroText.body, { color: colors.textSecondary, textAlign: 'center' }]}>Customize your pup&apos;s experience!</ThemedText>
         </View>
 
         {/* User Profile Section */}

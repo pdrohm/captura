@@ -17,7 +17,6 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
   achievement,
 }) => {
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
   const colors = Colors[colorScheme ?? 'light'];
   
   const progress = useSharedValue(0);
@@ -27,7 +26,7 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
       damping: 15,
       stiffness: 100,
     });
-  }, [achievement.progress, achievement.maxProgress]);
+  }, [achievement.progress, achievement.maxProgress, progress]);
 
   const progressStyle = useAnimatedStyle(() => ({
     width: `${progress.value * 100}%`,

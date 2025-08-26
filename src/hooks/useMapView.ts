@@ -34,7 +34,6 @@ export const useMapView = ({
     selectedLocation,
     selectedTerritory,
     
-    setFilters,
     setSelectedLocation,
     setSelectedTerritory,
     handleRegionChangeComplete,

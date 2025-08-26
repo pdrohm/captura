@@ -40,7 +40,7 @@ export const useFirestoreGame = () => {
       }
 
       setIsInitialized(true);
-    } catch (err) {
+    } catch {
       setError('Failed to initialize player');
     } finally {
       setIsLoading(false);
@@ -74,7 +74,7 @@ export const useFirestoreGame = () => {
         },
       }));
       
-    } catch (err) {
+    } catch {
       setError('Failed to load territories');
     } finally {
       setIsLoading(false);
@@ -123,13 +123,13 @@ export const useFirestoreGame = () => {
       localCheckAchievements();
 
       return true;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to mark territory');
+    } catch {
+      setError('Failed to mark territory');
       return false;
     } finally {
       setIsLoading(false);
     }
-  }, [user?.uid, player.dailyUrinations, player.maxDailyUrinations, player.territoryRadius, localCheckAchievements]);
+  }, [user?.uid, player.dailyUrinations, player.maxDailyUrinations, player.territoryRadius, localCheckAchievements, user?.color, user?.displayName]);
 
   // Manual sync player stats with Firestore (only when explicitly called)
   const syncPlayerStats = useCallback(async () => {
@@ -138,7 +138,7 @@ export const useFirestoreGame = () => {
     try {
       isSyncingRef.current = true;
       await gameService.updatePlayerStats(user.uid, player);
-    } catch (err) {
+    } catch {
       setError('Failed to sync player stats');
     } finally {
       isSyncingRef.current = false;
@@ -221,7 +221,7 @@ export const useFirestoreGame = () => {
     try {
       await gameService.resetDailyUrinations(user.uid);
       localResetDailyUrinations();
-    } catch (err) {
+    } catch {
       setError('Failed to reset daily urinations');
     }
   }, [user?.uid, localResetDailyUrinations]);
@@ -233,7 +233,7 @@ export const useFirestoreGame = () => {
     try {
       await gameService.updateGameSettings(user.uid, settings);
       localUpdateSettings(settings);
-    } catch (err) {
+    } catch {
       setError('Failed to update settings');
     }
   }, [user?.uid, localUpdateSettings]);
@@ -242,7 +242,7 @@ export const useFirestoreGame = () => {
   const getLeaderboard = useCallback(async (type: 'territories' | 'level' | 'coins') => {
     try {
       return await gameService.getLeaderboard(type);
-    } catch (err) {
+    } catch {
       setError('Failed to get leaderboard');
       return [];
     }
@@ -252,7 +252,7 @@ export const useFirestoreGame = () => {
   const getTerritoriesInRadius = useCallback(async (latitude: number, longitude: number, radius: number) => {
     try {
       return await gameService.getTerritoriesInRadius(latitude, longitude, radius);
-    } catch (err) {
+    } catch {
       setError('Failed to get territories in radius');
       return [];
     }

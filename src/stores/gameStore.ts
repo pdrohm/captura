@@ -240,8 +240,6 @@ export const useGameStore = create<GameStore>()(
       },
 
       checkAchievements: () => {
-        const state = get();
-        
         set((currentState) => ({
           achievements: currentState.achievements.map(achievement => {
             if (achievement.isUnlocked) return achievement;
@@ -262,7 +260,6 @@ export const useGameStore = create<GameStore>()(
             if (isUnlocked) {
               // Apply achievement reward
               setTimeout(() => {
-                const state = get();
                 set((currentState) => ({
                   player: {
                     ...currentState.player,

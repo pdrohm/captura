@@ -20,8 +20,6 @@ export const RouletteSegment: React.FC<RouletteSegmentProps> = ({
   center,
 }) => {
   const startAngle = index * angle;
-  const endAngle = (index + 1) * angle;
-  const midAngle = (startAngle + endAngle) / 2;
 
   // Function to determine if text should be black or white based on background color
   const getTextColor = (backgroundColor: string): string => {
@@ -38,30 +36,7 @@ export const RouletteSegment: React.FC<RouletteSegmentProps> = ({
     return luminance > 0.5 ? '#000000' : '#FFFFFF';
   };
 
-  // Convert angles to radians
-  const startRad = (startAngle - 90) * (Math.PI / 180);
-  const endRad = (endAngle - 90) * (Math.PI / 180);
-  const midRad = (midAngle - 90) * (Math.PI / 180);
 
-  // Calculate path for the segment
-  const x1 = center + radius * Math.cos(startRad);
-  const y1 = center + radius * Math.sin(startRad);
-  const x2 = center + radius * Math.cos(endRad);
-  const y2 = center + radius * Math.sin(endRad);
-
-  // Calculate text position
-  const textRadius = radius * 0.7;
-  const textX = center + textRadius * Math.cos(midRad);
-  const textY = center + textRadius * Math.sin(midRad);
-
-  // Create SVG path for the segment
-  const largeArcFlag = angle > 180 ? 1 : 0;
-  const path = [
-    `M ${center} ${center}`,
-    `L ${x1} ${y1}`,
-    `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
-    'Z',
-  ].join(' ');
 
   return (
     <View style={styles.segmentContainer}>

@@ -2,15 +2,14 @@ import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AchievementCard } from '../../../src/components/game/AchievementCard';
 import { PlayerStatsCard } from '../../../src/components/game/PlayerStatsCard';
-import { useGameStore } from '../../../src/stores/gameStore';
-import { useColorScheme } from '../../../src/hooks/useColorScheme';
 import { Colors } from '../../../src/config/Colors';
-import { RetroComponents, RetroText, RetroLayout, RetroSpacingStyles, RetroBorders, RetroRadius, RetroShadows } from '../../../src/config/retroStyles';
+import { RetroBorders, RetroRadius, RetroShadows, RetroText } from '../../../src/config/retroStyles';
+import { useColorScheme } from '../../../src/hooks/useColorScheme';
+import { useGameStore } from '../../../src/stores/gameStore';
 
 export default function ProfileScreen() {
   const { player, achievements } = useGameStore();
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
   const colors = Colors[colorScheme ?? 'light'];
 
   return (
