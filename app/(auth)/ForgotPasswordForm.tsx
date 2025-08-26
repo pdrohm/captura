@@ -35,11 +35,10 @@ export default function ForgotPasswordForm({
       await resetPassword(auth, email.trim());
       setSent(true);
     } catch {
-      // Error is already handled in the store
+      
     }
   };
 
-  // Show error alert when error state changes
   React.useEffect(() => {
     if (error) {
       Alert.alert('Reset Password Error', error);

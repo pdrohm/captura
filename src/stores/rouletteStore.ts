@@ -24,7 +24,6 @@ const INITIAL_ROULETTE_STATE: RouletteState = {
 };
 
 interface RouletteStore extends RouletteState {
-  // Actions
   initializeStats: (userId: string) => Promise<void>;
   spinWheel: () => Promise<RouletteResult | null>;
   resetSpinning: () => void;
@@ -41,7 +40,6 @@ export const useRouletteStore = create<RouletteStore>((set, get) => ({
       if (stats) {
         set({ stats });
       } else {
-        // Initialize new user stats
         const config = rouletteService.getConfig();
         const newStats: RouletteStats = {
           userId,
@@ -69,7 +67,6 @@ export const useRouletteStore = create<RouletteStore>((set, get) => ({
       return null;
     }
 
-    // Check if user can afford the spin
     const config = rouletteService.getConfig();
     const hasFreeSpin = state.stats.freeSpinsRemaining > 0;
     const cost = hasFreeSpin ? 0 : config.spinCost;
@@ -81,10 +78,8 @@ export const useRouletteStore = create<RouletteStore>((set, get) => ({
     set({ isSpinning: true });
 
     try {
-      // Perform the spin
       const result = await rouletteService.spinWheel(state.stats.userId, cost);
       
-      // Calculate winnings
       let winnings = 0;
       let rewardType = result.reward.type;
       let rewardAmount = result.reward.amount;
@@ -97,7 +92,6 @@ export const useRouletteStore = create<RouletteStore>((set, get) => ({
         winnings = result.reward.amount;
       }
 
-      // Create game record
       const game: RouletteGame = {
         id: `roulette_${Date.now()}`,
         userId: state.stats.userId,
@@ -108,10 +102,8 @@ export const useRouletteStore = create<RouletteStore>((set, get) => ({
         totalWinnings: winnings,
       };
 
-      // Save to Firestore
       await rouletteService.saveGame(game);
 
-      // Update local stats
       const newStats: RouletteStats = {
         ...state.stats,
         totalSpins: state.stats.totalSpins + 1,
@@ -123,22 +115,19 @@ export const useRouletteStore = create<RouletteStore>((set, get) => ({
         averageWin: (state.stats.totalWinnings + winnings) / (state.stats.totalSpins + 1),
       };
 
-      // Deduct cost from player's coins (if not a free spin)
       if (cost > 0) {
         try {
           await gameService.updatePlayerStats(state.stats.userId, {
             coins: gameStore.player.coins - cost
           });
-          gameStore.addCoins(-cost); // Negative amount to subtract
+          gameStore.addCoins(-cost);
         } catch (error) {
           console.error('Error deducting cost from Firebase:', error);
         }
       }
 
-      // Update Firestore stats
       await rouletteService.updateStats(state.stats.userId, newStats);
 
-      // Update Firebase directly with rewards
       try {
         if (rewardType === 'coins') {
           await gameService.updatePlayerStats(state.stats.userId, {
@@ -163,11 +152,10 @@ export const useRouletteStore = create<RouletteStore>((set, get) => ({
         console.error('Error updating Firebase with rewards:', error);
       }
 
-      // Update local state
       set({
         lastResult: result,
         stats: newStats,
-        history: [game, ...state.history.slice(0, 9)], // Keep last 10 games
+        history: [game, ...state.history.slice(0, 9)],
         canSpin: newStats.freeSpinsRemaining > 0 || gameStore.player.coins >= config.spinCost,
       });
 

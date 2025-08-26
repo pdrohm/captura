@@ -5,7 +5,6 @@ export class UserValidator implements IValidator<User> {
   validate(data: User): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    // Required fields
     if (!data.uid || data.uid.trim() === '') {
       errors.push('User ID is required');
     }
@@ -16,7 +15,6 @@ export class UserValidator implements IValidator<User> {
       errors.push('Invalid email format');
     }
 
-    // Optional fields validation
     if (data.displayName && data.displayName.trim().length < 2) {
       errors.push('Display name must be at least 2 characters long');
     }
@@ -25,7 +23,6 @@ export class UserValidator implements IValidator<User> {
       errors.push('Invalid photo URL format');
     }
 
-    // Date validation
     if (!this.isValidDate(data.createdAt)) {
       errors.push('Invalid creation date');
     }
@@ -34,19 +31,16 @@ export class UserValidator implements IValidator<User> {
       errors.push('Invalid last active date');
     }
 
-    // Preferences validation
     if (data.preferences) {
       const preferenceErrors = this.validateUserPreferences(data.preferences);
       errors.push(...preferenceErrors);
     }
 
-    // Notification settings validation
     if (data.notificationSettings) {
       const notificationErrors = this.validateNotificationSettings(data.notificationSettings);
       errors.push(...notificationErrors);
     }
 
-    // Privacy settings validation
     if (data.privacySettings) {
       const privacyErrors = this.validatePrivacySettings(data.privacySettings);
       errors.push(...privacyErrors);
@@ -61,7 +55,6 @@ export class UserValidator implements IValidator<User> {
   validatePartial(data: Partial<User>): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    // Validate only provided fields
     if (data.email !== undefined) {
       if (!data.email || data.email.trim() === '') {
         errors.push('Email is required');
@@ -188,17 +181,14 @@ export class TerritoryValidator implements IValidator<Territory> {
   validate(data: Territory): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    // Name validation
     if (!data.name || data.name.trim().length < 2) {
       errors.push('Territory name must be at least 2 characters long');
     }
 
-    // Description validation (optional)
     if (data.description && data.description.trim().length < 5) {
       errors.push('Description must be at least 5 characters long if provided');
     }
 
-    // Boundaries validation
     if (!data.boundaries || data.boundaries.length === 0) {
       errors.push('At least one boundary point is required');
     } else {
@@ -206,7 +196,6 @@ export class TerritoryValidator implements IValidator<Territory> {
       errors.push(...boundaryErrors);
     }
 
-    // Center validation
     if (!data.center || typeof data.center.latitude !== 'number' || typeof data.center.longitude !== 'number') {
       errors.push('Valid center coordinates are required');
     } else {
@@ -218,17 +207,14 @@ export class TerritoryValidator implements IValidator<Territory> {
       }
     }
 
-    // Area validation
     if (typeof data.area !== 'number' || data.area <= 0) {
       errors.push('Area must be a positive number');
     }
 
-    // Status validation
     if (!['active', 'inactive', 'pending'].includes(data.status)) {
       errors.push('Invalid territory status');
     }
 
-    // Date validation
     if (!this.isValidDate(data.createdAt)) {
       errors.push('Invalid creation date');
     }
@@ -246,7 +232,6 @@ export class TerritoryValidator implements IValidator<Territory> {
   validatePartial(data: Partial<Territory>): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    // Validate only provided fields
     if (data.name !== undefined && data.name) {
       if (data.name.trim().length < 2) {
         errors.push('Territory name must be at least 2 characters long');
@@ -324,7 +309,6 @@ export class TerritoryValidator implements IValidator<Territory> {
   }
 }
 
-// Helper functions for common validations
 export const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -343,6 +327,5 @@ export const isValidDate = (date: Date): boolean => {
   return date instanceof Date && !isNaN(date.getTime());
 };
 
-// Export validator instances
 export const userValidator = new UserValidator();
 export const territoryValidator = new TerritoryValidator();

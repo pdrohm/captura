@@ -62,7 +62,7 @@ export default function GameSettingsScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Header */}
+      {}
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton} 
@@ -75,7 +75,7 @@ export default function GameSettingsScreen() {
       </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Audio Settings */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>🔊 Audio</ThemedText>
           
@@ -89,7 +89,7 @@ export default function GameSettingsScreen() {
           />
         </View>
 
-        {/* Feedback Settings */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>📱 Feedback</ThemedText>
           
@@ -112,7 +112,7 @@ export default function GameSettingsScreen() {
           />
         </View>
 
-        {/* Visual Effects */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>✨ Visual Effects</ThemedText>
           
@@ -135,7 +135,7 @@ export default function GameSettingsScreen() {
           />
         </View>
 
-        {/* Info Card */}
+        {}
         <View style={styles.section}>
           <View style={styles.infoCard}>
             <ThemedText style={styles.infoTitle}>💡 Tips</ThemedText>
@@ -147,7 +147,7 @@ export default function GameSettingsScreen() {
           </View>
         </View>
 
-        {/* Bottom Spacing */}
+        {}
         <View style={styles.bottomSpacing} />
       </ScrollView>
     </SafeAreaView>

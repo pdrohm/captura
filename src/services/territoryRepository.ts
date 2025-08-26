@@ -18,8 +18,7 @@ export class FirestoreTerritoryRepository implements ITerritoryRepository {
 
   async createTerritory(territoryData: Omit<Territory, 'id' | 'createdAt' | 'updatedAt'>): Promise<Territory> {
     const now = firestore.Timestamp.now();
-    
-    // Convert any undefined values to null to prevent Firestore errors
+
     const sanitizedData = JSON.parse(JSON.stringify(territoryData));
     
     const territory: Territory = {
@@ -53,8 +52,7 @@ export class FirestoreTerritoryRepository implements ITerritoryRepository {
 
     if (docSnap.exists()) {
       const territory = docSnap.data() as Territory;
-      
-      // If territory has an assignedTo field, fetch the owner information
+
       if (territory.assignedTo) {
         try {
           const userDoc = await this.firestore().collection('users').doc(territory.assignedTo).get();

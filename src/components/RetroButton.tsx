@@ -24,7 +24,7 @@ export function RetroButton({
   textStyle,
   children,
 }: RetroButtonProps) {
-  // ALWAYS use light paper theme
+  
   const colors = Colors.light;
 
   const getButtonStyle = (): ViewStyle => {
@@ -34,15 +34,15 @@ export function RetroButton({
       case 'secondary':
         return {
           ...baseStyle,
-          backgroundColor: colors.buttonSecondary, // Mint green
-          borderColor: colors.border, // Strong black border
+          backgroundColor: colors.buttonSecondary, 
+          borderColor: colors.border, 
         };
       case 'outline':
         return {
           ...baseStyle,
           backgroundColor: 'transparent',
           borderWidth: 3,
-          borderColor: colors.primary, // Purple outline
+          borderColor: colors.primary, 
           ...RetroShadows.subtle,
         };
       case 'ghost':
@@ -53,25 +53,25 @@ export function RetroButton({
           ...RetroShadows.none,
         };
       default:
-        return baseStyle; // Purple button with black border
+        return baseStyle; 
     }
   };
 
   const getTextStyle = (): TextStyle => {
     const baseTextStyle = RetroText.button;
     
-    let textColor = colors.buttonText; // White text on colored buttons
+    let textColor = colors.buttonText; 
     
     if (variant === 'outline') {
-      textColor = colors.text; // Black text on transparent background
+      textColor = colors.text; 
     } else if (variant === 'ghost') {
-      textColor = colors.text; // Black text on transparent
+      textColor = colors.text; 
     } else if (variant === 'secondary') {
-      textColor = colors.buttonSecondaryText; // Dark text on mint green
+      textColor = colors.buttonSecondaryText; 
     }
     
     if (disabled) {
-      textColor = colors.textMuted; // Muted brown when disabled
+      textColor = colors.textMuted; 
     }
     
     return {

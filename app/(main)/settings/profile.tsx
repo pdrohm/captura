@@ -90,7 +90,7 @@ export default function ProfileSettingsScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Header */}
+      {}
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton} 
@@ -103,7 +103,7 @@ export default function ProfileSettingsScreen() {
       </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Profile Card */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Profile Information</ThemedText>
           
@@ -123,7 +123,7 @@ export default function ProfileSettingsScreen() {
           </View>
         </View>
 
-        {/* Account Settings */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Account Settings</ThemedText>
           
@@ -156,7 +156,7 @@ export default function ProfileSettingsScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Game Settings */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Game Settings</ThemedText>
           
@@ -211,7 +211,7 @@ export default function ProfileSettingsScreen() {
           )}
         </View>
 
-        {/* Account Actions */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Account Actions</ThemedText>
           
@@ -235,7 +235,7 @@ export default function ProfileSettingsScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Account Info */}
+        {}
         <View style={styles.section}>
           <View style={styles.infoCard}>
             <ThemedText style={styles.infoTitle}>📋 Account Information</ThemedText>
@@ -266,7 +266,7 @@ export default function ProfileSettingsScreen() {
           </View>
         </View>
 
-        {/* Bottom Spacing */}
+        {}
         <View style={styles.bottomSpacing} />
       </ScrollView>
     </SafeAreaView>

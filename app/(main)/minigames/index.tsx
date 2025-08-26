@@ -11,20 +11,19 @@ import { useGameStore } from '../../../src/stores/gameStore';
 
 export default function MinigamesScreen() {
   const { minigames, player, completeMinigame } = useGameStore();
-  // Always use light theme
+  
   const colors = Colors.light;
 
   const handleMinigamePress = (minigameId: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     
     if (minigameId === 'roulette') {
-      // Navigate to roulette game
+      
       router.push('/minigames/roulette');
     } else {
-      // Simulate minigame completion for other games
-      completeMinigame(minigameId);
       
-      // Show success feedback
+      completeMinigame(minigameId);
+
       setTimeout(() => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }, 200);
@@ -83,7 +82,7 @@ export default function MinigamesScreen() {
             </View>
           </View>
 
-          {/* Bottom spacing for tab bar */}
+          {}
           <View style={styles.bottomSpacing} />
         </ScrollView>
       </SafeAreaView>
@@ -109,7 +108,7 @@ const styles = StyleSheet.create({
     paddingVertical: 28,
     paddingHorizontal: 24,
     margin: 20,
-    ...RetroBorders.bold, // Sticker-like border
+    ...RetroBorders.bold, 
     borderRadius: RetroRadius.xxl,
     ...RetroShadows.soft,
   },
@@ -139,7 +138,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   infoCard: {
-    ...RetroBorders.sticker, // Sticker-like border for info
+    ...RetroBorders.sticker, 
     padding: 28,
     borderRadius: RetroRadius.xxl,
     ...RetroShadows.soft,

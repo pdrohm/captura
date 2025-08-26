@@ -8,17 +8,14 @@ import type {
 import { firestoreService } from './firebase';
 
 export interface IRouletteService {
-  // Game logic
   spinWheel: (userId: string, cost: number) => Promise<RouletteResult>;
   getRandomSegment: (segments: RouletteSegment[]) => RouletteSegment;
   
-  // Firestore operations
   saveGame: (game: RouletteGame) => Promise<void>;
   getStats: (userId: string) => Promise<RouletteStats | null>;
   updateStats: (userId: string, stats: Partial<RouletteStats>) => Promise<void>;
   getHistory: (userId: string, limit?: number) => Promise<RouletteGame[]>;
   
-  // Configuration
   getConfig: () => RouletteConfig;
   resetDailySpins: (userId: string) => Promise<void>;
 }
@@ -99,7 +96,7 @@ export class RouletteService implements IRouletteService {
 
   async spinWheel(userId: string, cost: number): Promise<RouletteResult> {
     const segment = this.getRandomSegment(this.config.segments);
-    const spinDuration = 3000 + Math.random() * 2000; // 3-5 seconds
+    const spinDuration = 3000 + Math.random() * 2000;
     const finalAngle = Math.random() * 360;
 
     return {
@@ -121,7 +118,6 @@ export class RouletteService implements IRouletteService {
       }
     }
     
-    // Fallback to first segment
     return segments[0];
   }
 
@@ -177,7 +173,6 @@ export class RouletteService implements IRouletteService {
 
   async getHistory(userId: string, limit: number = 10): Promise<RouletteGame[]> {
     try {
-      // Simplified query to avoid index requirements
       const snapshot = await firestoreService.collection('roulette_games').get();
       const games = snapshot.docs
         .map(doc => ({
@@ -212,5 +207,4 @@ export class RouletteService implements IRouletteService {
   }
 }
 
-// Export service instance
 export const rouletteService = new RouletteService();

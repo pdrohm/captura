@@ -71,7 +71,7 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          {/* Bottom spacing for tab bar */}
+          {}
           <View style={styles.bottomSpacing} />
         </ScrollView>
       </SafeAreaView>

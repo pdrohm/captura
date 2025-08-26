@@ -20,9 +20,6 @@ import { useColorScheme } from '../../../src/hooks/useColorScheme';
 import { useFirestoreGame } from '../../../src/hooks/useFirestoreGame';
 import { useGameStore } from '../../../src/stores/gameStore';
 
-// Dimensions available if needed for responsive design
-// const { width, height } = Dimensions.get('window');
-
 export default function MapScreen() {
   const { territories, player } = useGameStore();
   const { 
@@ -37,16 +34,12 @@ export default function MapScreen() {
   const [userLocation, setUserLocation] = useState<Location.LocationObject | null>(null);
   const [showStats, setShowStats] = useState(false);
   const [showParticles, setShowParticles] = useState(false);
-  
-  // Animation values
+
   const statsOpacity = useSharedValue(0);
   const buttonScale = useSharedValue(1);
 
-  // Game-inspired map style
   const customMapStyle = SIMPLE_GAME_MAP_STYLE;
-  
 
-  // Get user location on component mount
   useEffect(() => {
     getCurrentLocation();
   }, []);
@@ -87,7 +80,7 @@ export default function MapScreen() {
     );
 
     if (success) {
-      // Success animation
+      
       buttonScale.value = withSequence(
         withSpring(1.2, { duration: 200 }),
         withSpring(0.8, { duration: 200 }),
@@ -95,11 +88,9 @@ export default function MapScreen() {
       );
       
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      
-      // Show particle effect
+
       setShowParticles(true);
-      
-      // Show brief success message
+
       setTimeout(() => {
         Alert.alert('🎉 Territory Marked!', 'You successfully marked your territory!', [
           { text: 'Woof!', style: 'default' }
@@ -127,9 +118,8 @@ export default function MapScreen() {
 
   const remainingUrinations = player.maxDailyUrinations - player.dailyUrinations;
 
-  // Memoize territory circles to prevent unnecessary re-renders
   const territoryCircles = useMemo(() => {
-    // Deduplicate territories by ID to prevent duplicate keys
+    
     const uniqueTerritories = territories.reduce((acc, territory) => {
       if (!acc.find(t => t.id === territory.id)) {
         acc.push(territory);
@@ -138,13 +128,13 @@ export default function MapScreen() {
     }, [] as typeof territories);
 
     return uniqueTerritories.map((territory) => {
-      // Handle createdAt which might be a Date or Firestore timestamp
+      
       let createdAtTime: number;
       if (territory.createdAt) {
         if (territory.createdAt instanceof Date) {
           createdAtTime = territory.createdAt.getTime();
         } else if (typeof territory.createdAt === 'object' && 'toDate' in territory.createdAt) {
-          // Firestore timestamp
+          
           createdAtTime = (territory.createdAt as any).toDate().getTime();
         } else {
           createdAtTime = Date.now();
@@ -157,7 +147,7 @@ export default function MapScreen() {
         <TerritoryCircle
           key={`territory-${territory.id}-${createdAtTime}`}
           territory={territory}
-          opacity={0.8} // Very visible for maximum game impact
+          opacity={0.8} 
         />
       );
     });
@@ -184,7 +174,6 @@ export default function MapScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Game-style background overlay */}
       <View style={styles.mapOverlay} pointerEvents="none" />
       <MapView
         style={styles.map}
@@ -205,32 +194,27 @@ export default function MapScreen() {
         toolbarEnabled={false}
         
       >
-        {/* Render all territories */}
         {territoryCircles}
       </MapView>
 
-      {/* Stats overlay */}
       {showStats && (
         <Animated.View style={[styles.statsOverlay, animatedStatsStyle]} pointerEvents="box-none">
           <PlayerStatsCard stats={player} />
         </Animated.View>
       )}
 
-      {/* Error Display */}
       {error && (
         <View style={[styles.errorContainer, { backgroundColor: RetroColors.collarRed, borderColor: colors.border }]}>
           <Text style={[styles.errorText, { color: colors.background }]}>⚠️ {error}</Text>
         </View>
       )}
 
-      {/* Urinate Button */}
       <UrinateButton
         onPress={handleMarkTerritory}
         disabled={remainingUrinations <= 0 || isLoading}
         remainingUrinations={remainingUrinations}
       />
 
-      {/* Stats Toggle Button - Retro Dog Game Style */}
       <View style={styles.topButtons} pointerEvents="box-none">
         <SafeAreaView pointerEvents="box-none">
           <View style={styles.buttonContainer} pointerEvents="box-none">
@@ -245,7 +229,6 @@ export default function MapScreen() {
         </SafeAreaView>
       </View>
 
-      {/* Particle Effect */}
       <ParticleEffect
         visible={showParticles}
         type="success"
@@ -302,7 +285,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(74, 144, 226, 0.1)', // Subtle blue tint like Pokémon GO
+    backgroundColor: 'rgba(74, 144, 226, 0.1)', 
     zIndex: 1,
     pointerEvents: 'none',
   },

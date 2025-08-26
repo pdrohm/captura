@@ -1,12 +1,10 @@
-// Retro-cartoon map styling - soft pastels and paper-like feel
-// Inspired by vintage handheld games and sticker aesthetics
 export const RETRO_CARTOON_MAP_STYLE = [
-  // Water bodies - soft mint green like our secondary color
+  
   {
     featureType: 'water',
     elementType: 'geometry',
     stylers: [
-      { color: '#A8DADC' }, // Mint green from our palette
+      { color: '#A8DADC' }, 
       { saturation: 60 },
       { lightness: 10 }
     ],
@@ -15,7 +13,7 @@ export const RETRO_CARTOON_MAP_STYLE = [
     featureType: 'water',
     elementType: 'labels.text.fill',
     stylers: [
-      { color: '#2D2D2D' }, // Soft black text
+      { color: '#2D2D2D' }, 
       { weight: 'bold' }
     ],
   },
@@ -23,17 +21,16 @@ export const RETRO_CARTOON_MAP_STYLE = [
     featureType: 'water',
     elementType: 'labels.text.stroke',
     stylers: [
-      { color: '#FFFFFF' }, // White stroke for readability
+      { color: '#FFFFFF' }, 
       { weight: 3 }
     ],
   },
-  
-  // Landscape - warm beige like paper background
+
   {
     featureType: 'landscape',
     elementType: 'geometry',
     stylers: [
-      { color: '#F6E7CB' }, // Warm beige from our palette
+      { color: '#F6E7CB' }, 
       { saturation: 40 },
       { lightness: 20 }
     ],
@@ -42,17 +39,16 @@ export const RETRO_CARTOON_MAP_STYLE = [
     featureType: 'landscape.natural',
     elementType: 'geometry',
     stylers: [
-      { color: '#A8DADC' }, // Mint green for natural areas
+      { color: '#A8DADC' }, 
       { saturation: 50 }
     ],
   },
-  
-  // Parks - soft mint green for friendly feel
+
   {
     featureType: 'poi.park',
     elementType: 'geometry',
     stylers: [
-      { color: '#A8DADC' }, // Mint green from our palette
+      { color: '#A8DADC' }, 
       { saturation: 60 }
     ],
   },
@@ -72,13 +68,12 @@ export const RETRO_CARTOON_MAP_STYLE = [
       { weight: 3 }
     ],
   },
-  
-  // Roads - warm orange accent color
+
   {
     featureType: 'road',
     elementType: 'geometry',
     stylers: [
-      { color: '#F4A261' }, // Orange accent from our palette
+      { color: '#F4A261' }, 
       { saturation: 70 },
       { lightness: 15 }
     ],
@@ -87,7 +82,7 @@ export const RETRO_CARTOON_MAP_STYLE = [
     featureType: 'road.highway',
     elementType: 'geometry',
     stylers: [
-      { color: '#F4A261' }, // Orange accent
+      { color: '#F4A261' }, 
       { saturation: 80 },
       { weight: 4 }
     ],
@@ -96,7 +91,7 @@ export const RETRO_CARTOON_MAP_STYLE = [
     featureType: 'road.arterial',
     elementType: 'geometry',
     stylers: [
-      { color: '#F6BD60' }, // Yellow accent for variety
+      { color: '#F6BD60' }, 
       { saturation: 70 },
       { weight: 3 }
     ],
@@ -105,13 +100,12 @@ export const RETRO_CARTOON_MAP_STYLE = [
     featureType: 'road.local',
     elementType: 'geometry',
     stylers: [
-      { color: '#F6BD60' }, // Yellow accent
+      { color: '#F6BD60' }, 
       { saturation: 60 },
       { weight: 2 }
     ],
   },
-  
-  // Road labels - high contrast for readability
+
   {
     featureType: 'road',
     elementType: 'labels.text.fill',
@@ -128,13 +122,12 @@ export const RETRO_CARTOON_MAP_STYLE = [
       { weight: 4 }
     ],
   },
-  
-  // Buildings - colorful like game structures
+
   {
     featureType: 'poi.business',
     elementType: 'geometry',
     stylers: [
-      { color: '#D63031' }, // Bright red
+      { color: '#D63031' }, 
       { saturation: 80 }
     ],
   },
@@ -142,7 +135,7 @@ export const RETRO_CARTOON_MAP_STYLE = [
     featureType: 'poi.school',
     elementType: 'geometry',
     stylers: [
-      { color: '#A29BFE' }, // Purple
+      { color: '#A29BFE' }, 
       { saturation: 70 }
     ],
   },
@@ -150,7 +143,7 @@ export const RETRO_CARTOON_MAP_STYLE = [
     featureType: 'poi.medical',
     elementType: 'geometry',
     stylers: [
-      { color: '#00B894' }, // Teal
+      { color: '#00B894' }, 
       { saturation: 90 }
     ],
   },
@@ -158,12 +151,11 @@ export const RETRO_CARTOON_MAP_STYLE = [
     featureType: 'poi.government',
     elementType: 'geometry',
     stylers: [
-      { color: '#FDCB6E' }, // Yellow
+      { color: '#FDCB6E' }, 
       { saturation: 80 }
     ],
   },
-  
-  // Enhanced POI visibility for game feel
+
   {
     featureType: 'poi',
     elementType: 'labels.text.fill',
@@ -180,13 +172,12 @@ export const RETRO_CARTOON_MAP_STYLE = [
       { weight: 3 }
     ],
   },
-  
-  // Transit - vibrant colors
+
   {
     featureType: 'transit.station',
     elementType: 'geometry',
     stylers: [
-      { color: '#6C5CE7' }, // Purple
+      { color: '#6C5CE7' }, 
       { saturation: 100 }
     ],
   },
@@ -194,12 +185,11 @@ export const RETRO_CARTOON_MAP_STYLE = [
     featureType: 'transit.line',
     elementType: 'geometry',
     stylers: [
-      { color: '#00CEC9' }, // Cyan
+      { color: '#00CEC9' }, 
       { weight: 3 }
     ],
   },
-  
-  // Administrative boundaries - more visible
+
   {
     featureType: 'administrative',
     elementType: 'geometry.stroke',
@@ -225,19 +215,17 @@ export const RETRO_CARTOON_MAP_STYLE = [
       { weight: 3 }
     ],
   },
-  
-  // Man-made structures - game-like colors
+
   {
     featureType: 'landscape.man_made',
     elementType: 'geometry',
     stylers: [
-      { color: '#DDA0DD' }, // Plum
+      { color: '#DDA0DD' }, 
       { saturation: 60 }
     ],
   },
 ];
 
-// Simple styling that might work better
 export const SIMPLE_GAME_MAP_STYLE = [
   {
     featureType: 'water',
@@ -262,51 +250,46 @@ export const SIMPLE_GAME_MAP_STYLE = [
   },
 ];
 
-// Keep the original as an alternative
 export const CARTOON_MAP_STYLE = SIMPLE_GAME_MAP_STYLE;
 
-// Retro-cartoon inspired color palette
 export const CARTOON_COLORS = {
-  // Soft pastel colors for territories - retro-cartoon style
+  
   territory: {
-    player: '#BFA2DB',     // Soft purple (primary)
-    opponent1: '#A8DADC',   // Mint green (secondary)
-    opponent2: '#F4A261',   // Orange accent
-    opponent3: '#F6BD60',   // Yellow accent
-    opponent4: '#E76F51',   // Soft coral
-    opponent5: '#8B7355',   // Muted brown
-    opponent6: '#5C3D2E',   // Warm brown
-    opponent7: '#F6E7CB',   // Warm beige
-    neutral: '#A68B5B',     // Light brown neutral
+    player: '#BFA2DB',     
+    opponent1: '#A8DADC',   
+    opponent2: '#F4A261',   
+    opponent3: '#F6BD60',   
+    opponent4: '#E76F51',   
+    opponent5: '#8B7355',   
+    opponent6: '#5C3D2E',   
+    opponent7: '#F6E7CB',   
+    neutral: '#A68B5B',     
   },
-  
-  // Retro-cartoon UI colors
+
   ui: {
-    primary: '#BFA2DB',     // Soft purple
-    secondary: '#A8DADC',   // Mint green
-    success: '#A8DADC',     // Mint green for success
-    warning: '#F6BD60',     // Yellow for warnings
-    error: '#E76F51',       // Soft coral for errors
-    info: '#BFA2DB',        // Purple for info
-    background: '#FEF9EF',  // Paper background
-    surface: '#F6E7CB',     // Warm beige surface
-    text: '#2D2D2D',        // Soft black text
-    textLight: '#5C3D2E',   // Warm brown text
-    border: '#2D2D2D',      // Strong borders for sticker effect
-    shadow: 'rgba(45, 45, 45, 0.15)', // Soft shadow
+    primary: '#BFA2DB',     
+    secondary: '#A8DADC',   
+    success: '#A8DADC',     
+    warning: '#F6BD60',     
+    error: '#E76F51',       
+    info: '#BFA2DB',        
+    background: '#FEF9EF',  
+    surface: '#F6E7CB',     
+    text: '#2D2D2D',        
+    textLight: '#5C3D2E',   
+    border: '#2D2D2D',      
+    shadow: 'rgba(45, 45, 45, 0.15)', 
   },
-  
-  // Map-specific retro colors
+
   map: {
-    userLocation: '#BFA2DB',  // Purple player marker
-    conquestPath: '#F4A261',  // Orange path
-    startMarker: '#A8DADC',   // Mint green start
-    endMarker: '#E76F51',     // Coral end
-    trackingPoint: '#F6BD60', // Yellow tracking
+    userLocation: '#BFA2DB',  
+    conquestPath: '#F4A261',  
+    startMarker: '#A8DADC',   
+    endMarker: '#E76F51',     
+    trackingPoint: '#F6BD60', 
   }
 } as const;
 
-// Animation and visual effects
 export const MAP_ANIMATIONS = {
   territory: {
     pulseScale: 1.1,

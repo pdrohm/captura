@@ -27,7 +27,7 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
   remainingUrinations,
 }) => {
   const { haptics } = useGameSettings();
-  // ALWAYS use light paper theme
+  
   const colors = Colors.light;
   
   const scale = useSharedValue(1);
@@ -49,12 +49,10 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
   const handlePress = () => {
     if (disabled) return;
 
-    // Haptic feedback
     if (haptics) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     }
 
-    // Enhanced animations - more playful and bouncy
     scale.value = withSequence(
       withSpring(0.85, { duration: 150 }),
       withSpring(1.15, { duration: 250 }),
@@ -68,7 +66,6 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
       withSpring(0, { duration: 200 })
     );
 
-    // Glow effect
     glow.value = withSequence(
       withTiming(1, { duration: 200 }),
       withTiming(0, { duration: 600 })
@@ -79,7 +76,6 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Glow effect background */}
       <Animated.View style={[styles.glowBackground, glowStyle]} />
       
       <AnimatedTouchableOpacity
@@ -88,7 +84,6 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
         disabled={disabled}
         activeOpacity={0.8}
       >
-        {/* Sticker-like button with gradient background */}
         <View style={[
           styles.stickerButton,
           {
@@ -96,7 +91,6 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
             opacity: disabled ? 0.6 : 1,
           }
         ]}>
-          {/* Beautiful gradient background */}
           <LinearGradient
             colors={disabled 
               ? [colors.textMuted, colors.textSecondary]
@@ -106,9 +100,7 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
             style={styles.gradientBackground}
           />
           
-          {/* Content container */}
           <View style={styles.buttonContent}>
-            {/* Water drop icon */}
             <View style={styles.iconContainer}>
               <IconSymbol
                 name="drop.fill"
@@ -118,7 +110,6 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
               />
             </View>
             
-            {/* Counter badge */}
             <View style={[
               styles.counterBadge,
               {
@@ -135,7 +126,6 @@ export const UrinateButton: React.FC<UrinateButtonProps> = ({
             </View>
           </View>
           
-          {/* Action text */}
           <Text style={[
             styles.actionText,
             { color: disabled ? colors.textMuted : colors.text }
@@ -152,8 +142,8 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     bottom: Platform.select({
-      ios: 110, // Custom tab bar height (85) + padding (25)
-      android: 90, // Custom tab bar height (75) + padding (15)
+      ios: 110, 
+      android: 90, 
     }),
     right: 20,
     zIndex: 1000,
@@ -171,8 +161,8 @@ const styles = StyleSheet.create({
   stickerButton: {
     width: 100,
     height: 100,
-    borderRadius: 32, // Very rounded like sticker
-    borderWidth: 4, // Thick sticker border
+    borderRadius: 32, 
+    borderWidth: 4, 
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
@@ -189,7 +179,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    borderRadius: 28, // Match button radius minus border
+    borderRadius: 28, 
   },
   
   buttonContent: {
@@ -203,7 +193,7 @@ const styles = StyleSheet.create({
   },
   
   waterDropIcon: {
-    // Icon styling handled by IconSymbol component
+    
   },
   
   counterBadge: {

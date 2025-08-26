@@ -40,11 +40,10 @@ export default function LoginForm({
     try {
       await signIn(auth, email.trim(), password);
     } catch {
-      // Error is already handled in the store
+      
     }
   };
 
-  // Show error alert when error state changes
   React.useEffect(() => {
     if (error) {
       Alert.alert('Login Error', error);

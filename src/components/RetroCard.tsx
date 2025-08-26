@@ -16,28 +16,28 @@ export function RetroCard({
   size = 'medium',
   style,
 }: RetroCardProps) {
-  // ALWAYS use light paper theme
+  
   const colors = Colors.light;
 
   const getCardStyle = (): ViewStyle => {
-    const baseStyle = RetroComponents.card; // Always light paper card
+    const baseStyle = RetroComponents.card; 
     
     switch (variant) {
       case 'floating':
-        return RetroCartoonComponents.stickerCard; // Floating sticker card
+        return RetroCartoonComponents.stickerCard; 
       case 'accent':
         return {
           ...baseStyle,
-          backgroundColor: colors.primary, // Purple accent background
+          backgroundColor: colors.primary, 
           borderColor: colors.border,
         };
       case 'outlined':
         return {
           ...baseStyle,
-          backgroundColor: 'transparent', // Transparent with border only
+          backgroundColor: 'transparent', 
         };
       default:
-        return baseStyle; // Standard paper card
+        return baseStyle; 
     }
   };
 

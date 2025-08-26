@@ -68,7 +68,7 @@ export class MockMapRepository implements MapRepository {
         latitude: 37.7845,
         longitude: -122.4050,
       },
-      area: 2500000, // 2.5 km²
+      area: 2500000, 
       status: 'active',
       createdAt: new Date('2024-01-01'),
       updatedAt: new Date('2024-01-01'),
@@ -92,7 +92,7 @@ export class MockMapRepository implements MapRepository {
         latitude: 37.8000,
         longitude: -122.4100,
       },
-      area: 800000, // 0.8 km²
+      area: 800000, 
       status: 'active',
       createdAt: new Date('2024-01-01'),
       updatedAt: new Date('2024-01-01'),
@@ -102,7 +102,7 @@ export class MockMapRepository implements MapRepository {
   private currentViewport: MapViewport = MAP_CONSTANTS.DEFAULT_VIEWPORT;
 
   async getMapLocations(filters: MapFilters): Promise<MapLocation[]> {
-    // Simulate network delay
+    
     await new Promise(resolve => setTimeout(resolve, 100));
     
     return this.mockLocations.filter(location => {
@@ -114,7 +114,7 @@ export class MockMapRepository implements MapRepository {
   }
 
   async getTerritories(filters: MapFilters): Promise<Territory[]> {
-    // Simulate network delay
+    
     await new Promise(resolve => setTimeout(resolve, 100));
     
     return this.mockTerritories.filter(territory => {
@@ -127,7 +127,7 @@ export class MockMapRepository implements MapRepository {
   }
 
   async saveMapLocation(location: Omit<MapLocation, 'id' | 'createdAt' | 'updatedAt'>): Promise<MapLocation> {
-    // Simulate network delay
+    
     await new Promise(resolve => setTimeout(resolve, 200));
     
     const newLocation: MapLocation = {
@@ -142,7 +142,7 @@ export class MockMapRepository implements MapRepository {
   }
 
   async updateMapLocation(id: string, updates: Partial<MapLocation>): Promise<MapLocation> {
-    // Simulate network delay
+    
     await new Promise(resolve => setTimeout(resolve, 200));
     
     const index = this.mockLocations.findIndex(loc => loc.id === id);
@@ -161,7 +161,7 @@ export class MockMapRepository implements MapRepository {
   }
 
   async deleteMapLocation(id: string): Promise<void> {
-    // Simulate network delay
+    
     await new Promise(resolve => setTimeout(resolve, 200));
     
     const index = this.mockLocations.findIndex(loc => loc.id === id);
@@ -173,14 +173,14 @@ export class MockMapRepository implements MapRepository {
   }
 
   async getMapViewport(): Promise<MapViewport> {
-    // Simulate network delay
+    
     await new Promise(resolve => setTimeout(resolve, 50));
     
     return this.currentViewport;
   }
 
   async saveMapViewport(viewport: MapViewport): Promise<void> {
-    // Simulate network delay
+    
     await new Promise(resolve => setTimeout(resolve, 100));
     
     this.currentViewport = viewport;

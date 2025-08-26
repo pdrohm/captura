@@ -1,4 +1,3 @@
-
 import { ThemedText } from '@/src/components/ThemedText';
 import { useAuthStore } from '@/src/stores/authStore';
 import { StyleSheet, View } from 'react-native';

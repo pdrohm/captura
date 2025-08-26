@@ -5,37 +5,32 @@ import React from 'react';
 import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IconSymbol } from './IconSymbol';
 
-/**
- * Custom Retro-Cartoon Tab Bar
- * Beautiful paper-like floating sticker design
- */
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const colors = Colors.light;
 
   const getTabIcon = (routeName: string, focused: boolean) => {
     const size = focused ? 28 : 24;
     
-    // Use the icon's natural color for active state, muted brown for inactive
     let color;
     if (focused) {
       switch (routeName) {
         case 'minigames':
-          color = RetroColors.softPurple; // Purple for games
+          color = RetroColors.softPurple;
           break;
         case 'map':
-          color = RetroColors.mintGreen; // Mint green for map/territory
+          color = RetroColors.mintGreen;
           break;
         case 'profile':
-          color = RetroColors.orangeAccent; // Orange for profile
+          color = RetroColors.orangeAccent;
           break;
         case 'settings':
-          color = RetroColors.yellowAccent; // Yellow for settings
+          color = RetroColors.yellowAccent;
           break;
         default:
           color = RetroColors.softPurple;
       }
     } else {
-      color = colors.tabIconDefault; // Muted brown for inactive
+      color = colors.tabIconDefault;
     }
 
     switch (routeName) {
@@ -92,18 +87,17 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   };
 
   const getTabLabelColor = (routeName: string, isFocused: boolean) => {
-    if (!isFocused) return Colors.light.tabIconDefault; // Muted brown for inactive
+    if (!isFocused) return Colors.light.tabIconDefault;
     
-    // Use the same color as the icon for active state
     switch (routeName) {
       case 'minigames':
-        return RetroColors.softPurple; // Purple for games
+        return RetroColors.softPurple;
       case 'map':
-        return RetroColors.mintGreen; // Mint green for map/territory
+        return RetroColors.mintGreen;
       case 'profile':
-        return RetroColors.orangeAccent; // Orange for profile
+        return RetroColors.orangeAccent;
       case 'settings':
-        return RetroColors.yellowAccent; // Yellow for settings
+        return RetroColors.yellowAccent;
       default:
         return RetroColors.softPurple;
     }
@@ -112,34 +106,30 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
   const getTabButtonBackground = (routeName: string, isFocused: boolean) => {
     if (!isFocused) return 'transparent';
     
-    // Use a subtle version of the icon's color for the background
     switch (routeName) {
       case 'minigames':
-        return 'rgba(191, 162, 219, 0.15)'; // Subtle purple
+        return 'rgba(191, 162, 219, 0.15)';
       case 'map':
-        return 'rgba(168, 218, 220, 0.15)'; // Subtle mint green
+        return 'rgba(168, 218, 220, 0.15)';
       case 'profile':
-        return 'rgba(244, 162, 97, 0.15)'; // Subtle orange
+        return 'rgba(244, 162, 97, 0.15)';
       case 'settings':
-        return 'rgba(246, 189, 96, 0.15)'; // Subtle yellow
+        return 'rgba(246, 189, 96, 0.15)';
       default:
-        return 'rgba(191, 162, 219, 0.15)'; // Subtle purple
+        return 'rgba(191, 162, 219, 0.15)';
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Paper-like background with gradient */}
       <LinearGradient
         colors={[colors.card, RetroColors.warmBeige, colors.card]}
         locations={[0, 0.5, 1]}
         style={StyleSheet.absoluteFill}
       />
       
-      {/* Subtle paper texture */}
       <View style={[StyleSheet.absoluteFill, styles.paperTexture]} />
       
-      {/* Tab buttons */}
       <View style={styles.tabContainer}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
@@ -171,7 +161,6 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               ]}
               activeOpacity={0.7}
             >
-              {/* Icon */}
               <View style={[
                 styles.iconContainer,
                 isFocused && styles.iconContainerFocused
@@ -179,7 +168,6 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
                 {getTabIcon(route.name, isFocused)}
               </View>
               
-              {/* Label */}
               <Text style={[
                 styles.tabLabel,
                 { color: getTabLabelColor(route.name, isFocused) }
@@ -238,7 +226,7 @@ const styles = StyleSheet.create({
   },
   
   tabButtonFocused: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Light white background instead of purple
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   
   iconContainer: {
@@ -263,10 +251,10 @@ const styles = StyleSheet.create({
   },
   
   tabLabelFocused: {
-    color: '#FFFFFF', // White for active tab instead of purple
+    color: '#FFFFFF',
   },
   
   tabLabelInactive: {
-    color: Colors.light.tabIconDefault, // Muted brown
+    color: Colors.light.tabIconDefault,
   },
 });

@@ -21,7 +21,7 @@ export const MinigameCard: React.FC<MinigameCardProps> = ({
   minigame,
   onPress,
 }) => {
-  // Always use light theme
+  
   const colors = Colors.light;
   
   const pressed = useSharedValue(0);
@@ -159,9 +159,9 @@ export const MinigameCard: React.FC<MinigameCardProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '47%',
-    aspectRatio: 0.8, // Make it taller (was 1, now 0.8 = 20% taller)
+    aspectRatio: 0.8, 
     marginBottom: RetroSpacing.lg,
-    ...RetroBorders.sticker, // Sticker-like border
+    ...RetroBorders.sticker, 
     borderRadius: RetroRadius.xxl,
     ...RetroShadows.soft,
   },
@@ -179,10 +179,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   emoji: {
-    fontSize: 44, // Even larger for game feel
+    fontSize: 44, 
   },
   difficultyBadge: {
-    ...RetroBorders.sticker, // Sticker border for badges
+    ...RetroBorders.sticker, 
     paddingHorizontal: RetroSpacing.md,
     paddingVertical: RetroSpacing.sm,
     borderRadius: RetroRadius.pill,
@@ -192,27 +192,27 @@ const styles = StyleSheet.create({
   difficultyText: {
     ...RetroText.label,
     fontSize: 10,
-    color: '#FFFFFF', // Always white text on colored badges
+    color: '#FFFFFF', 
   },
   title: {
     ...RetroText.heading,
     textAlign: 'center',
     marginVertical: RetroSpacing.sm,
-    fontSize: 16, // Smaller font
+    fontSize: 16, 
     textTransform: 'uppercase' as const,
     letterSpacing: 0.6,
-    numberOfLines: 2, // Allow 2 lines
+    numberOfLines: 2, 
   },
   description: {
     ...RetroText.caption,
     textAlign: 'center',
     marginBottom: RetroSpacing.md,
-    fontSize: 12, // Smaller font
-    lineHeight: 16, // Better line spacing
-    numberOfLines: 2, // Allow 2 lines max
+    fontSize: 12, 
+    lineHeight: 16, 
+    numberOfLines: 2, 
   },
   rewardContainer: {
-    ...RetroBorders.thin, // Subtle sticker border
+    ...RetroBorders.thin, 
     paddingVertical: RetroSpacing.md,
     paddingHorizontal: RetroSpacing.lg,
     alignSelf: 'center',
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     textAlign: 'center',
     letterSpacing: 0.4,
-    fontSize: 11, // Smaller font for reward
+    fontSize: 11, 
   },
   lockOverlay: {
     position: 'absolute',
@@ -233,12 +233,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    ...RetroBorders.thick, // Bold border for lock overlay
+    ...RetroBorders.thick, 
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: RetroRadius.xxl,
     borderColor: RetroColors.outlineBrown,
-    backgroundColor: 'rgba(254, 249, 239, 0.95)', // Paper background overlay
+    backgroundColor: 'rgba(254, 249, 239, 0.95)', 
   },
   lockEmoji: {
     fontSize: 36,

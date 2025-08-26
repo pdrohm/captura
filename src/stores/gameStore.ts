@@ -24,24 +24,6 @@ const INITIAL_MINIGAMES: Minigame[] = [
     reward: { type: 'urinations', amount: 1 },
     isUnlocked: true,
   },
-  // {
-  //   id: 'tap-game',
-  //   name: 'Speed Tapper',
-  //   icon: '👆',
-  //   description: 'Tap as fast as you can!',
-  //   difficulty: 'medium',
-  //   reward: { type: 'radius', amount: 5 },
-  //   isUnlocked: true,
-  // },
-  // {
-  //   id: 'puzzle',
-  //   name: 'Territory Puzzle',
-  //   icon: '🧩',
-  //   description: 'Solve puzzles to unlock rewards',
-  //   difficulty: 'hard',
-  //   reward: { type: 'coins', amount: 50 },
-  //   isUnlocked: false,
-  // },
 ];
 
 const INITIAL_ACHIEVEMENTS: Achievement[] = [
@@ -81,7 +63,6 @@ const INITIAL_STATE: GameState = {
 };
 
 interface GameStore extends GameState {
-  // Actions
   markTerritory: (latitude: number, longitude: number) => boolean;
   completeMinigame: (minigameId: string) => void;
   purchaseSkin: (skinId: string) => boolean;
@@ -258,7 +239,6 @@ export const useGameStore = create<GameStore>()(
             const isUnlocked = newProgress >= achievement.maxProgress && !achievement.isUnlocked;
 
             if (isUnlocked) {
-              // Apply achievement reward
               setTimeout(() => {
                 set((currentState) => ({
                   player: {
@@ -305,7 +285,6 @@ export const useGameStore = create<GameStore>()(
   )
 );
 
-// Helper functions
 function getRandomTerritoryColor(): string {
   const colors = [
     '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
@@ -320,7 +299,6 @@ function getTerritoryType(radius: number): 'small' | 'medium' | 'large' {
   return 'large';
 }
 
-// Hook para reset diário (pode ser chamado no useEffect do App)
 export const useDailyReset = () => {
   const resetDailyUrinations = useGameStore(state => state.resetDailyUrinations);
   

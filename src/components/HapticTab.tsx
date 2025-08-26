@@ -6,7 +6,7 @@ import * as Haptics from 'expo-haptics';
 import { StyleSheet, View } from 'react-native';
 
 export function HapticTab(props: BottomTabBarButtonProps) {
-  // Check if this tab is active by looking at the accessibilityState
+  
   const isActive = props.accessibilityState?.selected;
 
   return (
@@ -30,7 +30,7 @@ export function HapticTab(props: BottomTabBarButtonProps) {
         ]}
         onPressIn={(ev) => {
           if (process.env.EXPO_OS === 'ios') {
-            // Add a soft haptic feedback when pressing down on the tabs.
+            
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }
           props.onPressIn?.(ev);

@@ -1,11 +1,9 @@
-// Core domain types for the Dogeatdog app
-
 export interface User {
   uid: string;
   email: string;
   displayName?: string;
   photoURL?: string;
-  color?: string; // User's chosen color for territories
+  color?: string;
   createdAt: Date;
   lastActiveAt: Date;
   preferences: UserPreferences;
@@ -35,7 +33,6 @@ export interface PrivacySettings {
   activityVisibility: 'public' | 'friends' | 'private';
 }
 
-// Map Domain Types
 export interface MapLocation {
   id: string;
   latitude: number;
@@ -57,15 +54,15 @@ export interface Territory {
     latitude: number;
     longitude: number;
   };
-  area: number; // in square meters
+  area: number;
   status: 'active' | 'inactive' | 'pending';
-  assignedTo?: string; // user ID
+  assignedTo?: string;
   owner?: {
     uid: string;
     displayName: string | null;
     photoURL: string | null;
     email: string;
-    color: string | null; // User's territory color
+    color: string | null;
   } | null;
   createdAt: Date;
   updatedAt: Date;
@@ -92,14 +89,17 @@ export interface GeoCoordinates {
 
 export interface GeoBoundary {
   center: GeoCoordinates;
-  radius: number; // in meters
+  radius: number;
   polygon: GeoCoordinates[];
 }
 
 export type TerritoryStatus = 'active' | 'inactive' | 'contested' | 'locked';
 
-export interface TerritoryMetadata {
-  area: number; // in square meters
+export interface TerritoryInfo {
+  id: string;
+  name: string;
+  status: TerritoryStatus;
+  area: number;
   population?: number;
   points: number;
   level: number;
@@ -166,7 +166,6 @@ export interface TerritoryEvent {
   metadata: Record<string, any>;
 }
 
-// Conquest Mode Types
 export interface ConquestSession {
   id: string;
   userId: string;
@@ -174,8 +173,8 @@ export interface ConquestSession {
   startTime: Date;
   endTime?: Date;
   points: ConquestPoint[];
-  totalDistance: number; // in meters
-  totalArea: number; // in square meters
+  totalDistance: number;
+  totalArea: number;
   metadata: Record<string, any>;
 }
 
@@ -194,7 +193,7 @@ export type ConquestStatus = 'idle' | 'tracking' | 'paused' | 'completed' | 'can
 
 export interface ConquestSettings {
   autoSave: boolean;
-  minDistanceThreshold: number; // minimum distance between points in meters
-  minTimeThreshold: number; // minimum time between points in milliseconds
-  accuracyThreshold: number; // minimum accuracy required in meters
+  minDistanceThreshold: number;
+  minTimeThreshold: number;
+  accuracyThreshold: number;
 }

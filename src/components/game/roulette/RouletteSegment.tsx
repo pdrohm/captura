@@ -21,22 +21,16 @@ export const RouletteSegment: React.FC<RouletteSegmentProps> = ({
 }) => {
   const startAngle = index * angle;
 
-  // Function to determine if text should be black or white based on background color
   const getTextColor = (backgroundColor: string): string => {
-    // Convert hex to RGB
     const hex = backgroundColor.replace('#', '');
     const r = parseInt(hex.substr(0, 2), 16);
     const g = parseInt(hex.substr(2, 2), 16);
     const b = parseInt(hex.substr(4, 2), 16);
     
-    // Calculate luminance using the formula: 0.299*R + 0.587*G + 0.114*B
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     
-    // Use black text on light backgrounds, white text on dark backgrounds
     return luminance > 0.5 ? '#000000' : '#FFFFFF';
   };
-
-
 
   return (
     <View style={styles.segmentContainer}>

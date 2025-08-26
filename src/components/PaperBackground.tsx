@@ -9,22 +9,15 @@ interface PaperBackgroundProps {
   intensity?: 'subtle' | 'normal' | 'strong';
 }
 
-/**
- * Paper Background Component
- * Creates a vintage paper-like background with subtle texture
- * Provides the base for the retro-cartoon aesthetic
- */
 export function PaperBackground({ 
   children, 
   style,
   intensity = 'normal'
 }: PaperBackgroundProps) {
-  // ALWAYS use light paper theme
   const colors = Colors.light;
 
-  // Create paper texture gradient colors - always light paper
   const getPaperGradient = () => {
-    const baseColor = colors.background; // #FEF9EF
+    const baseColor = colors.background;
     
     switch (intensity) {
       case 'subtle':
@@ -40,7 +33,6 @@ export function PaperBackground({
 
   return (
     <View style={[{ flex: 1, backgroundColor: colors.background }, style]}>
-      {/* Base paper background */}
       <LinearGradient
         colors={paperGradient}
         locations={[0, 0.25, 0.5, 0.75, 1]}
@@ -53,7 +45,6 @@ export function PaperBackground({
         }}
       />
       
-      {/* Very subtle grain texture overlay - always light paper */}
       <View
         style={{
           position: 'absolute',
@@ -66,16 +57,11 @@ export function PaperBackground({
         }}
       />
       
-      {/* Content */}
       {children}
     </View>
   );
 }
 
-/**
- * Paper Card Component
- * A card that sits on the paper background with sticker-like styling
- */
 interface PaperCardProps {
   children: React.ReactNode;
   style?: ViewStyle;
@@ -87,13 +73,12 @@ export function PaperCard({
   style,
   variant = 'default'
 }: PaperCardProps) {
-  // ALWAYS use light paper theme
   const colors = Colors.light;
 
   const getCardStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
       backgroundColor: colors.card,
-      borderRadius: 32, // Very rounded like stickers
+      borderRadius: 32,
       padding: 24,
       margin: 12,
       borderWidth: 3,
@@ -109,7 +94,7 @@ export function PaperCard({
           shadowOpacity: 0.15,
           shadowRadius: 12,
           elevation: 6,
-          borderWidth: 4, // Thicker border for floating effect
+          borderWidth: 4,
         };
       case 'pressed':
         return {
@@ -119,7 +104,7 @@ export function PaperCard({
           shadowOpacity: 0.08,
           shadowRadius: 4,
           elevation: 2,
-          borderWidth: 2, // Thinner border for pressed effect
+          borderWidth: 2,
         };
       default:
         return {

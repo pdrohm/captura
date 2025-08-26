@@ -72,8 +72,7 @@ export class MapUseCasesImpl implements MapUseCases {
       return await this.mapRepository.getMapViewport();
     } catch (error) {
       console.error('Failed to get viewport:', error);
-      // Return reasonable fallback viewport if repository fails
-      // This will be overridden by user location when available
+
       return MAP_CONSTANTS.DEFAULT_VIEWPORT;
     }
   }
@@ -83,19 +82,18 @@ export class MapUseCasesImpl implements MapUseCases {
       await this.mapRepository.saveMapViewport(viewport);
     } catch (error) {
       console.error('Failed to save viewport:', error);
-      // Don't throw error for viewport save failures
+      
     }
   }
 
   async clearViewport(): Promise<void> {
     try {
-      // Since the repository doesn't have a clear method, we'll save a special "cleared" state
-      // This will be detected by the hook and treated as a cleared viewport
+
       const clearedViewport: MapViewport = MAP_CONSTANTS.DEFAULT_VIEWPORT;
       await this.mapRepository.saveMapViewport(clearedViewport);
     } catch (error) {
       console.warn('Failed to clear viewport:', error);
-      // Don't throw error for viewport clear failures
+      
     }
   }
 
@@ -125,7 +123,6 @@ export class MapUseCasesImpl implements MapUseCases {
         showBoundaries: true,
       });
 
-      // Simple distance calculation (in a real app, you'd use a proper geospatial library)
       return locations.filter(location => {
         const distance = this.calculateDistance(
           center.latitude,
@@ -147,7 +144,7 @@ export class MapUseCasesImpl implements MapUseCases {
     lat2: number,
     lon2: number
   ): number {
-    const R = 6371; // Earth's radius in kilometers
+    const R = 6371; 
     const dLat = this.deg2rad(lat2 - lat1);
     const dLon = this.deg2rad(lon2 - lon1);
     const a =

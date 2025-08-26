@@ -13,13 +13,11 @@ interface AuthState {
   user: User | null;
   loading: boolean;
   error: string | null;
-  
-  // Actions
+
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  
-  // Auth operations
+
   signIn: (authService: IAuthService, email: string, password: string) => Promise<void>;
   signUp: (authService: IAuthService, email: string, password: string) => Promise<void>;
   signOut: (authService: IAuthService) => Promise<void>;
@@ -27,14 +25,13 @@ interface AuthState {
   updateProfile: (authService: IAuthService, displayName: string, photoURL?: string) => Promise<void>;
   updateUserColor: (authService: IAuthService, color: string) => Promise<void>;
   loadUserData: (authService: IAuthService, uid: string) => Promise<void>;
-  
-  // Reset state
+
   reset: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
-  loading: true, // Start with loading true until auth state is determined
+  loading: true, 
   error: null,
 
   setUser: (user) => {
@@ -51,7 +48,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ loading: true, error: null });
       await authService.signInWithEmail(email, password);
-      // User will be set via onAuthStateChanged listener
+      
     } catch (error: any) {
       const message = getAuthErrorMessage(error.code);
       set({ error: message, loading: false });
@@ -63,8 +60,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ loading: true, error: null });
       const userCredential = await authService.signUpWithEmail(email, password);
-      // User will be set via onAuthStateChanged listener, but we need to ensure
-      // the user object is properly updated with any profile changes
+
       if (userCredential.user) {
         const updatedUser = {
           uid: userCredential.user.uid,
@@ -109,7 +105,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ loading: true, error: null });
       await authService.updateProfile(displayName, photoURL);
-      // Update local user state
+      
       const currentUser = get().user;
       if (currentUser) {
         set({ 
@@ -158,7 +154,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   reset: () => set({ user: null, loading: false, error: null }),
 }));
 
-// Helper function to get user-friendly error messages
 function getAuthErrorMessage(code: string): string {
   switch (code) {
     case 'auth/user-not-found':

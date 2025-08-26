@@ -80,8 +80,7 @@ export default function SettingsScreen() {
   const { auth } = useFirebase();
   const { user } = useAuthStore();
   const { clearAllData } = useGameStore();
-  
-  // Settings hooks
+
   const gameSettings = useGameSettings();
   const appPreferences = useAppPreferences();
   const privacySettings = usePrivacySettings();
@@ -112,8 +111,6 @@ export default function SettingsScreen() {
     );
   };
 
-
-
   const getActiveSettingsCount = (settings: Record<string, boolean>) => {
     return Object.values(settings).filter(Boolean).length;
   };
@@ -142,13 +139,13 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Header */}
+        {}
         <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <ThemedText style={[RetroText.gameTitle, { color: colors.text }]}>⚙️ DOG SETTINGS ⚙️</ThemedText>
           <ThemedText style={[RetroText.body, { color: colors.textSecondary, textAlign: 'center' }]}>Customize your pup&apos;s experience!</ThemedText>
         </View>
 
-        {/* User Profile Section */}
+        {}
         {user && (
           <View style={styles.section}>
             <ThemedText style={[RetroText.title, { color: colors.text, textAlign: 'center', marginBottom: 16 }]}>🐕 MY DOG PROFILE</ThemedText>
@@ -181,7 +178,7 @@ export default function SettingsScreen() {
           </View>
         )}
 
-        {/* Settings Categories */}
+        {}
         <View style={styles.section}>
           <ThemedText style={[RetroText.title, { color: colors.text, textAlign: 'center', marginBottom: 16 }]}>🎮 GAME SETTINGS</ThemedText>
           
@@ -213,7 +210,7 @@ export default function SettingsScreen() {
           />
         </View>
 
-        {/* Data Management */}
+        {}
         <View style={styles.section}>
           <ThemedText style={[RetroText.title, { color: colors.text, textAlign: 'center', marginBottom: 16 }]}>💾 DATA KENNEL</ThemedText>
           
@@ -245,7 +242,7 @@ export default function SettingsScreen() {
           />
         </View>
 
-        {/* Account Actions */}
+        {}
         <View style={styles.section}>
           <ThemedText style={[RetroText.title, { color: colors.text, textAlign: 'center', marginBottom: 16 }]}>🚨 DANGER ZONE</ThemedText>
           
@@ -302,7 +299,7 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* App Info */}
+        {}
         <View style={styles.section}>
           <ThemedText style={[RetroText.title, { color: colors.text, textAlign: 'center', marginBottom: 16 }]}>ℹ️ DOG TAG INFO</ThemedText>
           
@@ -328,7 +325,7 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        {/* Bottom Spacing */}
+        {}
         <View style={styles.bottomSpacing} />
       </ScrollView>
     </SafeAreaView>

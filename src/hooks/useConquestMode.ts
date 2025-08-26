@@ -20,9 +20,9 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
   const lastPoint = useRef<ConquestPoint | null>(null);
   const settings: ConquestSettings = useMemo(() => ({
     autoSave: true,
-    minDistanceThreshold: 5, // 5 meters
-    minTimeThreshold: 3000, // 3 seconds
-    accuracyThreshold: 20, // 20 meters
+    minDistanceThreshold: 5, 
+    minTimeThreshold: 3000, 
+    accuracyThreshold: 20, 
   }), []);
 
   useEffect(() => {
@@ -41,13 +41,12 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
     heading?: number;
     timestamp: Date;
   }) => {
-    // Check accuracy threshold
+    
     if (location.accuracy && location.accuracy > settings.accuracyThreshold) {
       console.log('Location accuracy too low, skipping point');
       return;
     }
 
-    // Check time threshold
     if (lastPoint.current) {
       const timeDiff = location.timestamp.getTime() - lastPoint.current.timestamp.getTime();
       if (timeDiff < settings.minTimeThreshold) {
@@ -56,7 +55,6 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
       }
     }
 
-    // Check distance threshold
     if (lastPoint.current) {
       const distance = locationService.calculateDistance(
         lastPoint.current.latitude,
@@ -84,8 +82,7 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
 
     setTrackedPoints(prev => {
       const updated = [...prev, newPoint];
-      
-      // Calculate total distance
+
       let distance = 0;
       for (let i = 1; i < updated.length; i++) {
         distance += locationService.calculateDistance(
@@ -97,7 +94,6 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
       }
       setTotalDistance(distance);
 
-      // Calculate area if we have enough points
       if (updated.length >= 3) {
         const coordinates = updated.map(point => ({
           latitude: point.latitude,
@@ -132,15 +128,13 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
     }
 
     try {
-      // Calculate center point
+      
       const centerLat = trackedPoints.reduce((sum, point) => sum + point.latitude, 0) / trackedPoints.length;
       const centerLng = trackedPoints.reduce((sum, point) => sum + point.longitude, 0) / trackedPoints.length;
 
-      // Get user data from auth store
       const { useAuthStore } = await import('@/src/stores/authStore');
       const { user: currentUser } = useAuthStore.getState();
 
-      // Convert null values to undefined for Territory type compatibility
       const owner = currentUser ? {
         uid: currentUser.uid,
         displayName: currentUser.displayName || null,
@@ -149,7 +143,6 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
         color: currentUser.color || null,
       } : null;
 
-      // Create territory data
       const territoryData = {
         name: `Territory ${new Date().toLocaleDateString()}`,
         description: `Conquered territory with ${trackedPoints.length} points`,
@@ -172,13 +165,10 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
         owner,
       };
 
-      // Import territory repository
       const { territoryRepository } = await import('@/src/services/territoryRepository');
-      
-      // Save to Firestore
+
       const savedTerritory = await territoryRepository.createTerritory(territoryData);
 
-      // Notify parent component if callback provided
       if (onTerritoryCreated && savedTerritory) {
         onTerritoryCreated(savedTerritory);
       }
@@ -322,9 +312,6 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
     }
   }, [status, locationService, resetConquest]);
 
-
-
-  // Debug function to manually add points by tapping
   const addManualPoint = useCallback((latitude: number, longitude: number) => {
     if (status !== 'tracking') {
       console.log('Cannot add manual point: conquest not in tracking mode');
@@ -357,6 +344,6 @@ export const useConquestMode = ({ locationService, userId }: UseConquestModeProp
     cancelConquest,
     resetConquest,
     saveTerritory,
-    addManualPoint, // Add this for debugging
+    addManualPoint, 
   };
 };

@@ -12,15 +12,14 @@ export const TerritoryCircle: React.FC<TerritoryCircleProps> = React.memo(({
   territory, 
   opacity = 0.6 
 }) => {
-  // Enhanced game-style colors and styling
+  
   const { fillColor, strokeColor } = useMemo(() => {
-    // Use territory color or fall back to neutral color
-    const baseColor = territory.color || CARTOON_COLORS.territory.neutral;
     
-    // Convert hex to rgba for better opacity control
+    const baseColor = territory.color || CARTOON_COLORS.territory.neutral;
+
     const hexToRgba = (hex: string, alpha: number) => {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      if (!result) return `rgba(255, 107, 107, ${alpha})`; // fallback to coral
+      if (!result) return `rgba(255, 107, 107, ${alpha})`; 
       
       const r = parseInt(result[1], 16);
       const g = parseInt(result[2], 16);
@@ -30,7 +29,7 @@ export const TerritoryCircle: React.FC<TerritoryCircleProps> = React.memo(({
 
     return {
       fillColor: hexToRgba(baseColor, opacity),
-      strokeColor: hexToRgba(baseColor, 1.0), // Full opacity stroke for game effect
+      strokeColor: hexToRgba(baseColor, 1.0), 
     };
   }, [territory.color, opacity]);
 
@@ -45,7 +44,7 @@ export const TerritoryCircle: React.FC<TerritoryCircleProps> = React.memo(({
       radius={territory.radius}
       fillColor={fillColor}
       strokeColor={strokeColor}
-      strokeWidth={5} // Much thicker stroke for game effect
+      strokeWidth={5} 
       zIndex={10}
     />
   );

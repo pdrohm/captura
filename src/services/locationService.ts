@@ -52,7 +52,6 @@ export class LocationService implements ILocationService {
           };
         }
       } catch {
-        // Fallback failed, throw original error
       }
       
       throw new Error(`Failed to get current location: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -114,7 +113,6 @@ export class LocationService implements ILocationService {
   }
 
   cleanup(): void {
-    // Cleanup is handled by the return function from watchLocation
   }
 
   async getLocationProviderStatus(): Promise<{
@@ -140,7 +138,6 @@ export class LocationService implements ILocationService {
     }
   }
 
-  // Conquest Mode Tracking Methods
   private trackingSubscription: Location.LocationSubscription | null = null;
   private isTracking = false;
   private trackingCallback?: (location: { 
@@ -188,8 +185,8 @@ export class LocationService implements ILocationService {
         this.trackingSubscription = await Location.watchPositionAsync(
           {
             accuracy: options.accuracy || Location.Accuracy.Balanced,
-            timeInterval: options.timeInterval || 5000, // 5 seconds default
-            distanceInterval: options.distanceInterval || 5, // 5 meters default
+            timeInterval: options.timeInterval || 5000,
+            distanceInterval: options.distanceInterval || 5,
           },
           (location) => {
             if (this.isTracking && this.trackingCallback) {
@@ -228,14 +225,13 @@ export class LocationService implements ILocationService {
     return this.isTracking;
   }
 
-  // Utility method to calculate distance between two points
   calculateDistance(
     lat1: number,
     lon1: number,
     lat2: number,
     lon2: number
   ): number {
-    const R = 6371e3; // Earth's radius in meters
+    const R = 6371e3;
     const φ1 = (lat1 * Math.PI) / 180;
     const φ2 = (lat2 * Math.PI) / 180;
     const Δφ = ((lat2 - lat1) * Math.PI) / 180;
@@ -249,7 +245,6 @@ export class LocationService implements ILocationService {
     return R * c;
   }
 
-  // Utility method to calculate area of a polygon (using shoelace formula)
   calculatePolygonArea(coordinates: { latitude: number; longitude: number }[]): number {
     if (coordinates.length < 3) return 0;
 
@@ -261,8 +256,7 @@ export class LocationService implements ILocationService {
     }
     area = Math.abs(area) / 2;
 
-    // Convert to square meters (approximate)
-    const R = 6371e3; // Earth's radius in meters
+    const R = 6371e3;
     const lat1 = coordinates[0].latitude * (Math.PI / 180);
     const lat2 = coordinates[Math.floor(coordinates.length / 2)].latitude * (Math.PI / 180);
     const cosLat = Math.cos((lat1 + lat2) / 2);

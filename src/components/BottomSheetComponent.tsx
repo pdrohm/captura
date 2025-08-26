@@ -16,28 +16,28 @@ export const BottomSheetComponent: React.FC<BottomSheetComponentProps> = ({
   height = '60%',
   backgroundColor = '#fff',
 }) => {
-  // Pan gesture handling for modal
+  
   const panY = useRef(new Animated.Value(0)).current;
   
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: (_, gestureState) => {
-        // Only respond to downward gestures (dy > 0 means moving down)
+        
         return gestureState.dy > 0;
       },
       onPanResponderMove: (_, gestureState) => {
-        // Only allow downward movement, prevent upward dragging
+        
         if (gestureState.dy > 0) {
           panY.setValue(gestureState.dy);
         } else {
-          // Ensure panY never goes below 0 (no upward movement)
+          
           panY.setValue(0);
         }
       },
       onPanResponderRelease: (_, gestureState) => {
         if (gestureState.dy > 100 || gestureState.vy > 0.5) {
-          // Swipe down threshold met, close modal
+          
           Animated.timing(panY, {
             toValue: 500,
             duration: 200,
@@ -46,7 +46,7 @@ export const BottomSheetComponent: React.FC<BottomSheetComponentProps> = ({
             onClose();
           });
         } else {
-          // Snap back to original position
+          
           Animated.spring(panY, {
             toValue: 0,
             useNativeDriver: true,
@@ -56,7 +56,6 @@ export const BottomSheetComponent: React.FC<BottomSheetComponentProps> = ({
     })
   ).current;
 
-  // Reset animation when modal opens/closes
   useEffect(() => {
     if (visible) {
       panY.setValue(0);
@@ -87,12 +86,12 @@ export const BottomSheetComponent: React.FC<BottomSheetComponentProps> = ({
           ]}
           {...panResponder.panHandlers}
         >
-          {/* Drag Handle */}
+          {}
           <View style={styles.dragHandle}>
             <View style={styles.dragIndicator} />
           </View>
           
-          {/* Content */}
+          {}
           <View style={styles.content}>
             {children}
           </View>

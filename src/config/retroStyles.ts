@@ -1,87 +1,69 @@
 import { StyleSheet } from 'react-native';
 import { Colors } from './Colors';
 
-/**
- * Retro-Cartoon Design System Styles
- * Paper-like vintage aesthetic with sticker-like elements
- * Inspired by retro handheld games and vintage illustrations
- */
-
-// Retro-cartoon spacing system - generous and playful
 export const RetroSpacing = {
-  xs: 4,    // Tiny gaps
-  sm: 8,    // Small spacing
-  md: 12,   // Standard spacing
-  lg: 16,   // Large spacing
-  xl: 24,   // Extra large
-  xxl: 32,  // Double extra large
-  xxxl: 48, // Triple extra large for major sections
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 24,
+  xxl: 32,
+  xxxl: 48,
 } as const;
 
-// Retro-cartoon border radius - smooth and rounded like stickers
 export const RetroRadius = {
   none: 0,
-  xs: 6,    // Subtle rounding
-  sm: 10,   // Small rounded corners
-  md: 16,   // Standard rounded corners
-  lg: 20,   // Large rounded corners
-  xl: 24,   // Extra large rounding
-  xxl: 32,  // Double extra large - very rounded like stickers
-  pill: 999, // Fully rounded pills
+  xs: 6,
+  sm: 10,
+  md: 16,
+  lg: 20,
+  xl: 24,
+  xxl: 32,
+  pill: 999,
 } as const;
 
-// Sticker-like borders for retro-cartoon aesthetic
 export const RetroBorders = {
-  // Subtle sticker outline
   subtle: {
     borderWidth: 2,
     borderStyle: 'solid' as const,
   },
   
-  // Standard sticker borders - most common
   sticker: {
     borderWidth: 3,
     borderStyle: 'solid' as const,
   },
   
-  // Bold borders for emphasis (like thick sticker outlines)
   bold: {
     borderWidth: 4,
     borderStyle: 'solid' as const,
   },
   
-  // Extra thick borders for hero elements
   thick: {
     borderWidth: 5,
     borderStyle: 'solid' as const,
   },
   
-  // Super thick for special elements
   extraThick: {
     borderWidth: 6,
     borderStyle: 'solid' as const,
   },
   
-  // No border for flat elements
   none: {
     borderWidth: 0,
   },
 } as const;
 
-// Retro-cartoon shadow effects - soft and paper-like
 export const RetroShadows = {
   none: {},
   
-  // Very subtle shadow for paper texture
   paper: {
-    shadowColor: '#5C3D2E', // Warm brown shadow
+    shadowColor: '#5C3D2E',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 2,
     elevation: 1,
   },
   
-  // Subtle sticker shadow
   subtle: {
     shadowColor: '#2D2D2D',
     shadowOffset: { width: 0, height: 2 },
@@ -90,7 +72,6 @@ export const RetroShadows = {
     elevation: 2,
   },
   
-  // Soft sticker shadow - most common
   soft: {
     shadowColor: '#2D2D2D',
     shadowOffset: { width: 0, height: 3 },
@@ -99,7 +80,6 @@ export const RetroShadows = {
     elevation: 3,
   },
   
-  // Medium shadow for floating elements
   medium: {
     shadowColor: '#2D2D2D',
     shadowOffset: { width: 0, height: 4 },
@@ -108,7 +88,6 @@ export const RetroShadows = {
     elevation: 4,
   },
   
-  // Strong shadow for floating stickers
   floating: {
     shadowColor: '#2D2D2D',
     shadowOffset: { width: 0, height: 6 },
@@ -117,7 +96,6 @@ export const RetroShadows = {
     elevation: 6,
   },
   
-  // Hero shadow for main elements
   hero: {
     shadowColor: '#2D2D2D',
     shadowOffset: { width: 0, height: 8 },
@@ -127,31 +105,28 @@ export const RetroShadows = {
   },
 } as const;
 
-// Common retro-cartoon component styles - sticker-like paper elements
 export const RetroComponents = StyleSheet.create({
-  // Paper-like card with sticker border - ALWAYS light theme
   card: {
-    backgroundColor: Colors.light.card, // Always paper background
+    backgroundColor: Colors.light.card,
     ...RetroBorders.sticker,
     borderColor: Colors.light.border,
-    borderRadius: RetroRadius.xxl, // Very rounded like stickers
+    borderRadius: RetroRadius.xxl,
     padding: RetroSpacing.xl,
     margin: RetroSpacing.md,
-    ...RetroShadows.soft, // Soft shadow for sticker effect
+    ...RetroShadows.soft,
   },
   
-  // Sticker-like button styles - ALWAYS light theme
   button: {
     backgroundColor: Colors.light.button,
-    ...RetroBorders.bold, // Bold border for sticker effect
-    borderColor: Colors.light.border, // Strong outline
-    borderRadius: RetroRadius.xxl, // Very rounded
+    ...RetroBorders.bold,
+    borderColor: Colors.light.border,
+    borderRadius: RetroRadius.xxl,
     paddingVertical: RetroSpacing.lg,
     paddingHorizontal: RetroSpacing.xl,
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
     minHeight: 56,
-    ...RetroShadows.medium, // More shadow for button press feel
+    ...RetroShadows.medium,
   },
   
   buttonSecondary: {
@@ -167,12 +142,11 @@ export const RetroComponents = StyleSheet.create({
     ...RetroShadows.medium,
   },
   
-  // Paper-like input with sticker border
   input: {
-    backgroundColor: Colors.light.surface, // Warm beige background
+    backgroundColor: Colors.light.surface,
     ...RetroBorders.sticker,
     borderColor: Colors.light.borderMuted,
-    borderRadius: RetroRadius.xl, // Rounded like sticker
+    borderRadius: RetroRadius.xl,
     padding: RetroSpacing.xl,
     fontSize: 16,
     minHeight: 56,
@@ -204,20 +178,18 @@ export const RetroComponents = StyleSheet.create({
     ...RetroShadows.soft,
   },
   
-  // Paper-like container styles
   container: {
-    backgroundColor: Colors.light.background, // Paper background
+    backgroundColor: Colors.light.background,
     flex: 1,
     padding: RetroSpacing.lg,
   },
   
   containerDark: {
-    backgroundColor: Colors.dark.background, // Dark paper
+    backgroundColor: Colors.dark.background,
     flex: 1,
     padding: RetroSpacing.lg,
   },
   
-  // Section styles
   section: {
     marginVertical: RetroSpacing.md,
     padding: RetroSpacing.lg,
@@ -238,7 +210,6 @@ export const RetroComponents = StyleSheet.create({
     ...RetroShadows.subtle,
   },
   
-  // Header styles
   header: {
     fontSize: 28,
     fontWeight: '700' as const,
@@ -257,7 +228,6 @@ export const RetroComponents = StyleSheet.create({
     letterSpacing: 0.5,
   },
   
-  // Divider styles
   divider: {
     height: 3,
     backgroundColor: Colors.light.borderMuted,
@@ -273,19 +243,16 @@ export const RetroComponents = StyleSheet.create({
   },
 });
 
-// Retro-cartoon typography - playful and readable
 export const RetroText = StyleSheet.create({
-  // Game title - bold and chunky like retro handheld games
   gameTitle: {
     fontSize: 36,
     fontWeight: '900' as const,
     lineHeight: 40,
     textAlign: 'center' as const,
-    letterSpacing: 1.5, // More spacing for retro feel
+    letterSpacing: 1.5,
     textTransform: 'uppercase' as const,
   },
   
-  // Section titles - friendly and bold
   title: {
     fontSize: 28,
     fontWeight: '800' as const,
@@ -300,21 +267,21 @@ export const RetroText = StyleSheet.create({
     fontWeight: '700' as const,
     lineHeight: 28,
     textAlign: 'center' as const,
-    letterSpacing: 0.8, // Slightly more spacing
+    letterSpacing: 0.8,
   },
   
   heading: {
     fontSize: 20,
     fontWeight: '700' as const,
     lineHeight: 26,
-    letterSpacing: 0.6, // More spacing for playful feel
+    letterSpacing: 0.6,
   },
   
   body: {
     fontSize: 16,
     fontWeight: '600' as const,
     lineHeight: 24,
-    letterSpacing: 0.3, // Slightly more readable
+    letterSpacing: 0.3,
   },
   
   bodyLarge: {
@@ -331,7 +298,6 @@ export const RetroText = StyleSheet.create({
     letterSpacing: 0.2,
   },
   
-  // Button text - bold and playful
   button: {
     fontSize: 18,
     fontWeight: '800' as const,
@@ -355,7 +321,6 @@ export const RetroText = StyleSheet.create({
     letterSpacing: 0.2,
   },
   
-  // Label - small caps style
   label: {
     fontSize: 12,
     fontWeight: '800' as const,
@@ -364,7 +329,6 @@ export const RetroText = StyleSheet.create({
     textTransform: 'uppercase' as const,
   },
   
-  // Score/stats display
   score: {
     fontSize: 24,
     fontWeight: '900' as const,
@@ -373,7 +337,6 @@ export const RetroText = StyleSheet.create({
   },
 });
 
-// Retro layout utilities
 export const RetroLayout = StyleSheet.create({
   row: {
     flexDirection: 'row' as const,
@@ -410,7 +373,6 @@ export const RetroLayout = StyleSheet.create({
   },
 });
 
-// Retro spacing utilities
 export const RetroSpacingStyles = StyleSheet.create({
   marginXs: { margin: RetroSpacing.xs },
   marginSm: { margin: RetroSpacing.sm },
@@ -449,17 +411,15 @@ export const RetroSpacingStyles = StyleSheet.create({
   paddingHorizontalXl: { paddingHorizontal: RetroSpacing.xl },
 });
 
-// Special retro-cartoon component styles - enhanced sticker aesthetic
 export const RetroCartoonComponents = StyleSheet.create({
-  // Hero sticker card with extra thick borders
   stickerCard: {
-    backgroundColor: Colors.light.card, // Paper background
+    backgroundColor: Colors.light.card,
     borderRadius: RetroRadius.xxl,
     padding: RetroSpacing.xxl,
     margin: RetroSpacing.lg,
-    ...RetroBorders.thick, // Thick border for sticker effect
+    ...RetroBorders.thick,
     borderColor: Colors.light.border,
-    ...RetroShadows.floating, // More shadow for floating effect
+    ...RetroShadows.floating,
   },
   
   stickerCardDark: {
@@ -472,7 +432,6 @@ export const RetroCartoonComponents = StyleSheet.create({
     ...RetroShadows.floating,
   },
   
-  // Paper texture overlay for backgrounds
   paperTexture: {
     backgroundColor: Colors.light.background,
     position: 'absolute' as const,
@@ -480,7 +439,7 @@ export const RetroCartoonComponents = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    opacity: 0.03, // Very subtle texture
+    opacity: 0.03,
   },
   
   paperTextureDark: {
@@ -493,7 +452,6 @@ export const RetroCartoonComponents = StyleSheet.create({
     opacity: 0.05,
   },
   
-  // Dog paw button with sticker styling
   pawButton: {
     backgroundColor: Colors.light.accent,
     borderRadius: RetroRadius.pill,
@@ -514,7 +472,6 @@ export const RetroCartoonComponents = StyleSheet.create({
     ...RetroShadows.soft,
   },
   
-  // Badge sticker with thick outline
   stickerBadge: {
     backgroundColor: Colors.light.primary,
     borderRadius: RetroRadius.pill,
@@ -537,7 +494,6 @@ export const RetroCartoonComponents = StyleSheet.create({
     ...RetroShadows.subtle,
   },
   
-  // Game section with sticker styling
   gameSection: {
     backgroundColor: Colors.light.surface,
     borderRadius: RetroRadius.xxl,

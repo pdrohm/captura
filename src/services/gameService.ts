@@ -2,7 +2,6 @@ import { Achievement, Clan, GameState, Minigame, PlayerStats, Skin, Territory } 
 import { gameRepository } from './gameRepository';
 
 export interface IGameService {
-  // Player management
   initializePlayer: (userId: string, initialStats?: Partial<PlayerStats>) => Promise<void>;
   getPlayerStats: (userId: string) => Promise<PlayerStats | null>;
   updatePlayerStats: (userId: string, updates: Partial<PlayerStats>) => Promise<void>;
@@ -10,45 +9,37 @@ export interface IGameService {
   levelUp: (userId: string) => Promise<void>;
   resetDailyUrinations: (userId: string) => Promise<void>;
 
-  // Territory management
   markTerritory: (userId: string, latitude: number, longitude: number, radius: number, color: string) => Promise<Territory>;
   getPlayerTerritories: (userId: string) => Promise<Territory[]>;
   getAllTerritories: () => Promise<Territory[]>;
   deleteTerritory: (territoryId: string) => Promise<void>;
   getTerritoriesInRadius: (latitude: number, longitude: number, radius: number) => Promise<Territory[]>;
 
-  // Minigame management
   getMinigames: (userId: string) => Promise<Minigame[]>;
   completeMinigame: (userId: string, minigameId: string) => Promise<void>;
   unlockMinigame: (userId: string, minigameId: string) => Promise<void>;
 
-  // Achievement management
   getAchievements: (userId: string) => Promise<Achievement[]>;
   checkAndUpdateAchievements: (userId: string, playerStats: PlayerStats, territories: Territory[]) => Promise<void>;
   unlockAchievement: (userId: string, achievementId: string) => Promise<void>;
 
-  // Skin management
   getSkins: (userId: string) => Promise<Skin[]>;
   purchaseSkin: (userId: string, skinId: string, price: number) => Promise<boolean>;
   equipSkin: (userId: string, skinId: string) => Promise<void>;
 
-  // Clan management
   createClan: (userId: string, clanData: Omit<Clan, 'id'>) => Promise<Clan>;
   joinClan: (userId: string, clanId: string) => Promise<void>;
   leaveClan: (userId: string) => Promise<void>;
   getPublicClans: () => Promise<Clan[]>;
   getClanInfo: (clanId: string) => Promise<Clan | null>;
 
-  // Game state management
   getGameState: (userId: string) => Promise<GameState | null>;
   saveGameState: (userId: string, gameState: GameState) => Promise<void>;
   updateGameSettings: (userId: string, settings: GameState['settings']) => Promise<void>;
 
-  // Leaderboards
   getLeaderboard: (type: 'territories' | 'level' | 'coins') => Promise<{ userId: string; value: number; displayName: string }[]>;
   updateLeaderboardScore: (userId: string, type: 'territories' | 'level' | 'coins', value: number) => Promise<void>;
 
-  // Real-time subscriptions
   subscribeToPlayerStats: (userId: string, callback: (stats: PlayerStats | null) => void) => () => void;
   subscribeToTerritories: (callback: (territories: Territory[]) => void) => () => void;
   subscribeToPlayerTerritories: (userId: string, callback: (territories: Territory[]) => void) => () => void;
@@ -56,7 +47,6 @@ export interface IGameService {
 }
 
 export class GameService implements IGameService {
-  // Player management
   async initializePlayer(userId: string, initialStats?: Partial<PlayerStats>): Promise<void> {
     const defaultStats: PlayerStats = {
       level: 1,
@@ -90,11 +80,10 @@ export class GameService implements IGameService {
     let experienceToNextLevel = currentStats.experienceToNextLevel;
     let maxDailyUrinations = currentStats.maxDailyUrinations;
 
-    // Check for level up
     if (newExperience >= experienceToNextLevel) {
       newLevel++;
       experienceToNextLevel = newLevel * 100;
-      maxDailyUrinations += 1; // Increase daily urinations on level up
+      maxDailyUrinations += 1;
     }
 
     await this.updatePlayerStats(userId, {
@@ -104,7 +93,6 @@ export class GameService implements IGameService {
       maxDailyUrinations,
     });
 
-    // Update leaderboard
     await this.updateLeaderboardScore(userId, 'level', newLevel);
   }
 
@@ -129,7 +117,6 @@ export class GameService implements IGameService {
     await this.updatePlayerStats(userId, { dailyUrinations: 0 });
   }
 
-  // Territory management
   async markTerritory(userId: string, latitude: number, longitude: number, radius: number, color: string, userDisplayName?: string, userColor?: string): Promise<Territory> {
     const currentStats = await this.getPlayerStats(userId);
     if (!currentStats) {
@@ -140,10 +127,8 @@ export class GameService implements IGameService {
       throw new Error('Daily urination limit reached');
     }
 
-    // Get user data for territory owner info
     const userData = await this.getUserData(userId);
 
-    // Create territory with owner information
     const territory = await gameRepository.createTerritory({
       playerId: userId,
       latitude,
@@ -156,20 +141,17 @@ export class GameService implements IGameService {
         displayName: userDisplayName || userData.displayName || 'Unknown Player',
         photoURL: userData.photoURL,
         email: userData.email || '',
-        color: userColor || userData.color || color, // Use provided color, user's color, or territory color as fallback
+        color: userColor || userData.color || color,
       } : null,
     });
 
-    // Update player stats
     await this.updatePlayerStats(userId, {
       dailyUrinations: currentStats.dailyUrinations + 1,
       totalTerritory: currentStats.totalTerritory + 1,
     });
 
-    // Add experience
     await this.addExperience(userId, 10);
 
-    // Update leaderboards
     await this.updateLeaderboardScore(userId, 'territories', currentStats.totalTerritory + 1);
 
     return territory;
@@ -203,7 +185,6 @@ export class GameService implements IGameService {
     });
   }
 
-  // Minigame management
   async getMinigames(userId: string): Promise<Minigame[]> {
     return await gameRepository.getMinigames(userId);
   }
@@ -219,7 +200,6 @@ export class GameService implements IGameService {
     const currentStats = await this.getPlayerStats(userId);
     if (!currentStats) return;
 
-    // Apply reward
     const updates: Partial<PlayerStats> = {};
     
     switch (minigame.reward.type) {
@@ -243,7 +223,6 @@ export class GameService implements IGameService {
     await gameRepository.unlockMinigame(userId, minigameId);
   }
 
-  // Achievement management
   async getAchievements(userId: string): Promise<Achievement[]> {
     return await gameRepository.getAchievements(userId);
   }
@@ -279,7 +258,6 @@ export class GameService implements IGameService {
       if (shouldUnlock) {
         await this.unlockAchievement(userId, achievement.id);
         
-        // Apply achievement reward
         const updates: Partial<PlayerStats> = {};
         switch (achievement.reward.type) {
           case 'coins':
@@ -305,7 +283,6 @@ export class GameService implements IGameService {
     await gameRepository.unlockAchievement(userId, achievementId);
   }
 
-  // Skin management
   async getSkins(userId: string): Promise<Skin[]> {
     return await gameRepository.getSkins(userId);
   }
@@ -327,7 +304,6 @@ export class GameService implements IGameService {
     await gameRepository.updateSkin(userId, skinId, { isEquipped: true });
   }
 
-  // Clan management
   async createClan(userId: string, clanData: Omit<Clan, 'id'>): Promise<Clan> {
     const clan = await gameRepository.createClan(clanData);
     await this.joinClan(userId, clan.id);
@@ -350,7 +326,6 @@ export class GameService implements IGameService {
     return await gameRepository.getClan(clanId);
   }
 
-  // Game state management
   async getGameState(userId: string): Promise<GameState | null> {
     return await gameRepository.getGameState(userId);
   }
@@ -363,7 +338,6 @@ export class GameService implements IGameService {
     await gameRepository.updateGameState(userId, { settings });
   }
 
-  // Leaderboards
   async getLeaderboard(type: 'territories' | 'level' | 'coins'): Promise<{ userId: string; value: number; displayName: string }[]> {
     return await gameRepository.getLeaderboard(type);
   }
@@ -372,7 +346,6 @@ export class GameService implements IGameService {
     await gameRepository.updateLeaderboardScore(userId, type, value);
   }
 
-  // Real-time subscriptions
   subscribeToPlayerStats(userId: string, callback: (stats: PlayerStats | null) => void) {
     return gameRepository.subscribeToPlayer(userId, callback);
   }
@@ -389,7 +362,6 @@ export class GameService implements IGameService {
     return gameRepository.subscribeToGameState(userId, callback);
   }
 
-  // Helper methods
   private getTerritoryType(radius: number): 'small' | 'medium' | 'large' {
     if (radius < 40) return 'small';
     if (radius < 80) return 'medium';
@@ -397,7 +369,7 @@ export class GameService implements IGameService {
   }
 
   private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371e3; // Earth's radius in meters
+    const R = 6371e3;
     const φ1 = lat1 * Math.PI / 180;
     const φ2 = lat2 * Math.PI / 180;
     const Δφ = (lat2 - lat1) * Math.PI / 180;
@@ -412,5 +384,4 @@ export class GameService implements IGameService {
   }
 }
 
-// Export singleton instance
 export const gameService = new GameService();

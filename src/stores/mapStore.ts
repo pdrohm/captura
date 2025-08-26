@@ -3,7 +3,6 @@ import { ConquestPoint, MapFilters, MapLocation, MapViewport, Territory } from '
 import { create } from 'zustand';
 
 interface MapState {
-  // Viewport state
   viewport: MapViewport;
   currentRegion: {
     latitude: number;
@@ -13,28 +12,23 @@ interface MapState {
   } | null;
   hasUserInteracted: boolean;
   
-  // Map data
   locations: MapLocation[];
   territories: Territory[];
   filters: MapFilters;
   
-  // User location
   userLocation: { latitude: number; longitude: number } | null;
   locationPermissionGranted: boolean;
   
-  // Conquest mode
   conquestStatus: 'idle' | 'tracking' | 'paused' | 'completed';
   trackedPoints: ConquestPoint[];
   totalDistance: number;
   totalArea: number;
   
-  // UI state
   loading: boolean;
   error: string | null;
   selectedLocation: MapLocation | null;
   selectedTerritory: Territory | null;
   
-  // Actions
   setViewport: (viewport: MapViewport) => void;
   setCurrentRegion: (region: { latitude: number; longitude: number; latitudeDelta: number; longitudeDelta: number }) => void;
   setUserInteracted: (interacted: boolean) => void;
@@ -62,12 +56,10 @@ interface MapState {
   setSelectedLocation: (location: MapLocation | null) => void;
   setSelectedTerritory: (territory: Territory | null) => void;
   
-  // Complex actions
   centerOnUserLocation: () => void;
   resetViewport: () => void;
   clearError: () => void;
   
-  // Reset state
   reset: () => void;
 }
 

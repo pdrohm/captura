@@ -4,13 +4,13 @@ export interface RouletteSegment {
   icon: string;
   color: string;
   reward: RouletteReward;
-  probability: number; // 0-1, relative probability
+  probability: number; 
 }
 
 export interface RouletteReward {
   type: 'coins' | 'experience' | 'urinations' | 'radius' | 'jackpot';
   amount: number;
-  multiplier?: number; // For jackpot scenarios
+  multiplier?: number; 
 }
 
 export interface RouletteResult {

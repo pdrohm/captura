@@ -58,7 +58,7 @@ export default function PrivacySettingsScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Header */}
+      {}
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton} 
@@ -71,7 +71,7 @@ export default function PrivacySettingsScreen() {
       </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Location Sharing */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>🗺️ Location</ThemedText>
           
@@ -85,7 +85,7 @@ export default function PrivacySettingsScreen() {
           />
         </View>
 
-        {/* Stats Sharing */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>📊 Statistics</ThemedText>
           
@@ -99,7 +99,7 @@ export default function PrivacySettingsScreen() {
           />
         </View>
 
-        {/* Analytics */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>📈 Analytics</ThemedText>
           
@@ -113,7 +113,7 @@ export default function PrivacySettingsScreen() {
           />
         </View>
 
-        {/* Privacy Info Card */}
+        {}
         <View style={styles.section}>
           <View style={styles.infoCard}>
             <ThemedText style={styles.infoTitle}>🔒 Privacy Notice</ThemedText>
@@ -126,7 +126,7 @@ export default function PrivacySettingsScreen() {
           </View>
         </View>
 
-        {/* Data Rights Card */}
+        {}
         <View style={styles.section}>
           <View style={styles.infoCard}>
             <ThemedText style={styles.infoTitle}>📋 Your Rights</ThemedText>
@@ -139,7 +139,7 @@ export default function PrivacySettingsScreen() {
           </View>
         </View>
 
-        {/* Bottom Spacing */}
+        {}
         <View style={styles.bottomSpacing} />
       </ScrollView>
     </SafeAreaView>

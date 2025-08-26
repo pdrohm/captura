@@ -22,7 +22,7 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
   onComplete,
   type = 'success',
 }) => {
-  // Create shared values at the top level - one for each particle property
+  
   const particle0Scale = useSharedValue(0);
   const particle0Opacity = useSharedValue(0);
   const particle0TranslateX = useSharedValue(0);
@@ -71,7 +71,6 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
   const particle7TranslateY = useSharedValue(0);
   const particle7Rotation = useSharedValue(0);
 
-  // Create particles array with the shared values
   const particles = useMemo(() => [
     {
       id: 0,
@@ -150,13 +149,12 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
 
   useEffect(() => {
     if (visible) {
-      // Start particle animation
+      
       particles.forEach((particle, index) => {
         const delay = index * 50;
-        const angle = (index * 45) * Math.PI / 180; // 45 degrees apart
+        const angle = (index * 45) * Math.PI / 180; 
         const distance = 100 + Math.random() * 50;
-        
-        // Initial spawn
+
         particle.scale.value = withTiming(1, { 
           duration: 200,
           delay,
@@ -168,7 +166,6 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
           delay,
         });
 
-        // Movement
         particle.translateX.value = withSequence(
           withTiming(0, { duration: 100 }),
           withSpring(Math.cos(angle) * distance, { 
@@ -185,13 +182,11 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
           })
         );
 
-        // Rotation
         particle.rotation.value = withTiming(360 + Math.random() * 360, {
           duration: 1000,
           delay,
         });
 
-        // Fade out
         setTimeout(() => {
           particle.opacity.value = withTiming(0, { 
             duration: 500,
@@ -202,7 +197,7 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
             duration: 500,
             easing: Easing.in(Easing.quad)
           }, () => {
-            // Callback on last particle
+            
             if (index === particles.length - 1 && onComplete) {
               runOnJS(onComplete)();
             }
@@ -210,7 +205,7 @@ export const ParticleEffect: React.FC<ParticleEffectProps> = ({
         }, 800 + delay);
       });
     } else {
-      // Reset all particles
+      
       particles.forEach(particle => {
         particle.scale.value = 0;
         particle.opacity.value = 0;

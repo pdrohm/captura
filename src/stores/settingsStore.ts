@@ -3,22 +3,19 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 export interface AppSettings {
-  // Game Settings
+  
   sound: boolean;
   haptics: boolean;
   notifications: boolean;
-  
-  // App Preferences
+
   darkMode: boolean;
   locationServices: boolean;
   autoSave: boolean;
-  
-  // Game Preferences
+
   showTutorial: boolean;
   animationsEnabled: boolean;
   particleEffects: boolean;
-  
-  // Privacy Settings
+
   shareLocation: boolean;
   shareStats: boolean;
   allowAnalytics: boolean;
@@ -26,8 +23,7 @@ export interface AppSettings {
 
 interface SettingsStore {
   settings: AppSettings;
-  
-  // Actions
+
   updateSettings: (newSettings: Partial<AppSettings>) => void;
   toggleSetting: (setting: keyof AppSettings) => void;
   resetToDefaults: () => void;
@@ -36,22 +32,19 @@ interface SettingsStore {
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
-  // Game Settings
+  
   sound: true,
   haptics: true,
   notifications: true,
-  
-  // App Preferences
+
   darkMode: false,
   locationServices: true,
   autoSave: true,
-  
-  // Game Preferences
+
   showTutorial: true,
   animationsEnabled: true,
   particleEffects: true,
-  
-  // Privacy Settings
+
   shareLocation: false,
   shareStats: false,
   allowAnalytics: true,
@@ -92,8 +85,7 @@ export const useSettingsStore = create<SettingsStore>()(
       importSettings: async (settingsJson) => {
         try {
           const importedSettings = JSON.parse(settingsJson) as Partial<AppSettings>;
-          
-          // Validate imported settings
+
           const validKeys = Object.keys(DEFAULT_SETTINGS) as (keyof AppSettings)[];
           const filteredSettings: Partial<AppSettings> = {};
           
@@ -125,7 +117,6 @@ export const useSettingsStore = create<SettingsStore>()(
   )
 );
 
-// Convenience hooks for specific setting categories
 export const useGameSettings = () => {
   const settings = useSettingsStore((state) => state.settings);
   const updateSettings = useSettingsStore((state) => state.updateSettings);

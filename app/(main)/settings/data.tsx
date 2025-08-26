@@ -65,7 +65,7 @@ export default function DataManagementScreen() {
         'Settings exported successfully!',
         [
           { text: 'Copy to Clipboard', onPress: () => {
-            // In a real app, you'd copy to clipboard
+            
             Alert.alert('Copied!', 'Settings copied to clipboard');
           }},
           { text: 'OK', style: 'default' }
@@ -83,7 +83,7 @@ export default function DataManagementScreen() {
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Import', style: 'default', onPress: () => {
-          // In a real app, you'd show a file picker or input dialog
+          
           Alert.alert('Import', 'Import functionality would be implemented here');
         }}
       ]
@@ -134,7 +134,6 @@ export default function DataManagementScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton} 
@@ -147,7 +146,6 @@ export default function DataManagementScreen() {
       </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Export & Import */}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>📤 Export & Import</ThemedText>
           
@@ -168,7 +166,6 @@ export default function DataManagementScreen() {
           />
         </View>
 
-        {/* Data Management */}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>💾 Data Management</ThemedText>
           
@@ -189,7 +186,6 @@ export default function DataManagementScreen() {
           />
         </View>
 
-        {/* Dangerous Actions */}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>⚠️ Dangerous Actions</ThemedText>
           
@@ -203,7 +199,6 @@ export default function DataManagementScreen() {
           />
         </View>
 
-        {/* Info Card */}
         <View style={styles.section}>
           <View style={styles.infoCard}>
             <ThemedText style={styles.infoTitle}>💡 Data Management Tips</ThemedText>
@@ -216,7 +211,6 @@ export default function DataManagementScreen() {
           </View>
         </View>
 
-        {/* Storage Info */}
         <View style={styles.section}>
           <View style={styles.infoCard}>
             <ThemedText style={styles.infoTitle}>📊 Storage Information</ThemedText>
@@ -235,7 +229,6 @@ export default function DataManagementScreen() {
           </View>
         </View>
 
-        {/* Bottom Spacing */}
         <View style={styles.bottomSpacing} />
       </ScrollView>
     </SafeAreaView>

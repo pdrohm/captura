@@ -11,13 +11,11 @@ export class TerritoryUseCases implements ITerritoryUseCases {
 
   async createTerritory(data: Omit<Territory, 'id' | 'createdAt' | 'updatedAt' | 'lastActivityAt'>): Promise<Territory> {
     try {
-      // Validate territory data
       const validation = territoryValidator.validatePartial(data);
       if (!validation.isValid) {
         throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
       }
 
-      // If territory is assigned to a user, fetch owner information
       let territoryData = {
         ...data,
         createdAt: new Date(),
@@ -25,11 +23,8 @@ export class TerritoryUseCases implements ITerritoryUseCases {
         lastActivityAt: new Date()
       };
 
-      // If territory has an assignedTo field, try to fetch owner information
       if (data.assignedTo) {
         try {
-          // This would need access to a user repository or service
-          // For now, we'll create the territory without owner info and fetch it later
           console.log('Territory assigned to user:', data.assignedTo);
         } catch (error) {
           console.warn('Failed to fetch owner information during creation:', error);
@@ -46,18 +41,15 @@ export class TerritoryUseCases implements ITerritoryUseCases {
 
   async updateTerritory(id: string, data: Partial<Territory>): Promise<Territory> {
     try {
-      // Validate territory ID
       if (!id || id.trim() === '') {
         throw new Error('Territory ID is required');
       }
 
-      // Validate update data
       const validation = territoryValidator.validatePartial(data);
       if (!validation.isValid) {
         throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
       }
 
-      // Add update timestamp
       const updateData = {
         ...data,
         updatedAt: new Date()
@@ -73,12 +65,10 @@ export class TerritoryUseCases implements ITerritoryUseCases {
 
   async deleteTerritory(id: string): Promise<boolean> {
     try {
-      // Validate territory ID
       if (!id || id.trim() === '') {
         throw new Error('Territory ID is required');
       }
 
-      // Delete territory
       const result = await this.territoryRepository.delete(id);
       return result;
     } catch (error) {
@@ -89,7 +79,6 @@ export class TerritoryUseCases implements ITerritoryUseCases {
 
   async claimTerritory(territoryId: string, userId: string): Promise<Territory> {
     try {
-      // Validate inputs
       if (!territoryId || territoryId.trim() === '') {
         throw new Error('Territory ID is required');
       }
@@ -98,7 +87,6 @@ export class TerritoryUseCases implements ITerritoryUseCases {
         throw new Error('User ID is required');
       }
 
-      // Claim territory
       const territory = await this.territoryRepository.claimTerritory(territoryId, userId);
       return territory;
     } catch (error) {
@@ -109,7 +97,6 @@ export class TerritoryUseCases implements ITerritoryUseCases {
 
   async releaseTerritory(territoryId: string, userId: string): Promise<boolean> {
     try {
-      // Validate inputs
       if (!territoryId || territoryId.trim() === '') {
         throw new Error('Territory ID is required');
       }
@@ -118,7 +105,6 @@ export class TerritoryUseCases implements ITerritoryUseCases {
         throw new Error('User ID is required');
       }
 
-      // Release territory
       const result = await this.territoryRepository.releaseTerritory(territoryId, userId);
       return result;
     } catch (error) {
@@ -129,12 +115,10 @@ export class TerritoryUseCases implements ITerritoryUseCases {
 
   async getTerritoryById(id: string): Promise<Territory | null> {
     try {
-      // Validate territory ID
       if (!id || id.trim() === '') {
         throw new Error('Territory ID is required');
       }
 
-      // Get territory by ID
       const territory = await this.territoryRepository.findById(id);
       return territory;
     } catch (error) {
@@ -145,12 +129,10 @@ export class TerritoryUseCases implements ITerritoryUseCases {
 
   async getTerritoryWithOwner(id: string): Promise<Territory | null> {
     try {
-      // Validate territory ID
       if (!id || id.trim() === '') {
         throw new Error('Territory ID is required');
       }
 
-      // Get territory with owner information
       const territory = await this.territoryRepository.getTerritoryWithOwner(id);
       return territory;
     } catch (error) {
@@ -161,12 +143,10 @@ export class TerritoryUseCases implements ITerritoryUseCases {
 
   async getTerritoriesByOwner(ownerId: string): Promise<Territory[]> {
     try {
-      // Validate owner ID
       if (!ownerId || ownerId.trim() === '') {
         throw new Error('Owner ID is required');
       }
 
-      // Get territories by owner
       const territories = await this.territoryRepository.findByOwner(ownerId);
       return territories;
     } catch (error) {
@@ -177,7 +157,6 @@ export class TerritoryUseCases implements ITerritoryUseCases {
 
   async getTerritoriesByLocation(coordinates: GeoCoordinates, radius: number): Promise<Territory[]> {
     try {
-      // Validate coordinates
       if (!coordinates || typeof coordinates.latitude !== 'number' || typeof coordinates.longitude !== 'number') {
         throw new Error('Valid coordinates are required');
       }
@@ -190,12 +169,10 @@ export class TerritoryUseCases implements ITerritoryUseCases {
         throw new Error('Longitude must be between -180 and 180');
       }
 
-      // Validate radius
       if (typeof radius !== 'number' || radius <= 0) {
         throw new Error('Radius must be a positive number');
       }
 
-      // Get territories by location
       const territories = await this.territoryRepository.findByLocation(coordinates, radius);
       return territories;
     } catch (error) {
@@ -206,7 +183,6 @@ export class TerritoryUseCases implements ITerritoryUseCases {
 
   async searchTerritories(filters: SearchFilters, pagination: PaginationOptions): Promise<SearchResult<Territory>> {
     try {
-      // Validate pagination
       if (pagination.page < 1) {
         throw new Error('Page number must be at least 1');
       }
@@ -215,7 +191,6 @@ export class TerritoryUseCases implements ITerritoryUseCases {
         throw new Error('Limit must be between 1 and 100');
       }
 
-      // Validate filters if provided
       if (filters.location) {
         if (filters.location.latitude < -90 || filters.location.latitude > 90) {
           throw new Error('Filter latitude must be between -90 and 90');
@@ -242,7 +217,6 @@ export class TerritoryUseCases implements ITerritoryUseCases {
         throw new Error('Minimum points cannot be greater than maximum points');
       }
 
-      // Search territories
       const result = await this.territoryRepository.searchTerritories(filters, pagination);
       return result;
     } catch (error) {
@@ -253,7 +227,6 @@ export class TerritoryUseCases implements ITerritoryUseCases {
 
   async upgradeTerritory(territoryId: string, userId: string): Promise<Territory> {
     try {
-      // Validate inputs
       if (!territoryId || territoryId.trim() === '') {
         throw new Error('Territory ID is required');
       }
@@ -262,14 +235,6 @@ export class TerritoryUseCases implements ITerritoryUseCases {
         throw new Error('User ID is required');
       }
 
-      // TODO: Implement territory upgrade logic
-      // This would typically involve:
-      // 1. Checking if user has permission to upgrade
-      // 2. Validating upgrade requirements (points, level, etc.)
-      // 3. Updating territory metadata (level, points, etc.)
-      // 4. Recording the upgrade activity
-      
-      // For now, get the current territory and return it
       const territory = await this.territoryRepository.findById(territoryId);
       if (!territory) {
         throw new Error('Territory not found');
@@ -284,7 +249,6 @@ export class TerritoryUseCases implements ITerritoryUseCases {
 
   async challengeTerritory(territoryId: string, challengerId: string): Promise<boolean> {
     try {
-      // Validate inputs
       if (!territoryId || territoryId.trim() === '') {
         throw new Error('Territory ID is required');
       }
@@ -293,15 +257,7 @@ export class TerritoryUseCases implements ITerritoryUseCases {
         throw new Error('Challenger ID is required');
       }
 
-      // TODO: Implement territory challenge logic
-      // This would typically involve:
-      // 1. Checking if territory can be challenged
-      // 2. Validating challenger requirements
-      // 3. Creating challenge record
-      // 4. Notifying territory owner
-      // 5. Setting up challenge conditions
-      
-      return true; // Placeholder
+      return true;
     } catch (error) {
       this.errorHandler.handle(error);
       throw error;

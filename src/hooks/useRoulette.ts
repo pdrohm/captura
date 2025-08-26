@@ -21,7 +21,6 @@ export const useRoulette = () => {
 
   const { player } = useGameStore();
 
-  // Initialize roulette stats when component mounts
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
     if (currentUser?.uid) {
@@ -31,7 +30,6 @@ export const useRoulette = () => {
     }
   }, [initializeStats, loadHistory, checkDailyReset]);
 
-  // Check daily reset when date changes
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
     if (currentUser?.uid) {
@@ -44,14 +42,12 @@ export const useRoulette = () => {
       return null;
     }
 
-    // Haptic feedback
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     try {
       const result = await spinWheel();
       
       if (result) {
-        // Success haptic feedback
         setTimeout(() => {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }, result.spinDuration);
@@ -93,7 +89,6 @@ export const useRoulette = () => {
   }, []);
 
   return {
-    // State
     isSpinning,
     stats,
     history,
@@ -101,11 +96,9 @@ export const useRoulette = () => {
     spinCost: getSpinCost(),
     lastResult,
     
-    // Actions
     handleSpin,
     resetSpinning,
     
-    // Utilities
     getRewardText,
     canAffordSpin,
   };

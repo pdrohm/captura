@@ -31,25 +31,22 @@ export const RouletteWheel: React.FC<RouletteWheelProps> = ({
   const config = rouletteService.getConfig();
   const segments = config.segments;
 
-  // Function to determine if text should be black or white based on background color
   const getTextColor = (backgroundColor: string): string => {
-    // Convert hex to RGB
+    
     const hex = backgroundColor.replace('#', '');
     const r = parseInt(hex.substr(0, 2), 16);
     const g = parseInt(hex.substr(2, 2), 16);
     const b = parseInt(hex.substr(4, 2), 16);
-    
-    // Calculate luminance using the formula: 0.299*R + 0.587*G + 0.114*B
+
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    
-    // Use black text on light backgrounds, white text on dark backgrounds
+
     return luminance > 0.5 ? '#000000' : '#FFFFFF';
   };
 
   useEffect(() => {
     if (isSpinning && finalAngle !== undefined) {
-      // Calculate total rotation (multiple full spins + final angle)
-      const fullSpins = 5 + Math.random() * 3; // 5-8 full spins
+      
+      const fullSpins = 5 + Math.random() * 3; 
       const totalRotation = fullSpins * 360 + finalAngle;
       
       rotation.value = withTiming(
@@ -103,7 +100,6 @@ export const RouletteWheel: React.FC<RouletteWheelProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.wheelContainer}>
-        {/* Roulette Wheel */}
         <Animated.View style={[styles.wheel, animatedStyle]}>
           {segments.map((segment, index) => {
             const startAngle = index * segmentAngle;
@@ -151,12 +147,10 @@ export const RouletteWheel: React.FC<RouletteWheelProps> = ({
           })}
         </Animated.View>
 
-        {/* Center Circle */}
         <View style={styles.centerCircle}>
           <View style={styles.centerDot} />
         </View>
 
-        {/* Pointer */}
         <Animated.View style={[styles.pointer, pointerStyle]}>
           <View style={styles.pointerTriangle} />
         </Animated.View>

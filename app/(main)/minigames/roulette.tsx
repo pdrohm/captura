@@ -24,8 +24,7 @@ export default function RouletteScreen() {
   } = useRoulette();
 
   const { player } = useGameStore();
-  
-  // Always use light theme colors
+
   const colors = Colors.light;
 
   useEffect(() => {
@@ -69,15 +68,14 @@ export default function RouletteScreen() {
   return (
     <PaperBackground intensity="normal" style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
-      
 
-        {/* Scrollable Content */}
+        {}
         <ScrollView 
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Header with Retro Typography */}
+          {}
           <View style={styles.header}>
             <View style={styles.titleContainer}>
               <IconSymbol name="gamecontroller.fill" size={36} color={colors.primary} />
@@ -88,7 +86,7 @@ export default function RouletteScreen() {
             </Text>
           </View>
 
-          {/* Player Stats Card */}
+          {}
           <View style={styles.playerStatsCard}>
             <View style={styles.playerStatsContent}>
               <View style={styles.coinIcon}>
@@ -103,7 +101,7 @@ export default function RouletteScreen() {
             </View>
           </View>
 
-          {/* Roulette Wheel Container */}
+          {}
           <View style={styles.wheelContainer}>
             <RouletteWheel
               isSpinning={isSpinning}
@@ -113,7 +111,7 @@ export default function RouletteScreen() {
             />
           </View>
 
-          {/* Controls */}
+          {}
           <RouletteControls
             isSpinning={isSpinning}
             canSpin={canSpin}
@@ -122,7 +120,7 @@ export default function RouletteScreen() {
             onSpin={handleSpinPress}
           />
 
-          {/* History */}
+          {}
           <View style={styles.historyContainer}>
             <RouletteHistory
               history={history}
@@ -130,7 +128,7 @@ export default function RouletteScreen() {
             />
           </View>
           
-          {/* Bottom spacing for tab bar */}
+          {}
           <View style={styles.bottomSpacing} />
         </ScrollView>
       </SafeAreaView>
@@ -138,7 +136,6 @@ export default function RouletteScreen() {
   );
 }
 
-// Create styles function to access colors
 const createStyles = () => StyleSheet.create({
   container: {
     flex: 1,
@@ -154,16 +151,15 @@ const createStyles = () => StyleSheet.create({
   },
   
   scrollContent: {
-    paddingBottom: 20, // Extra padding at bottom
+    paddingBottom: 20, 
   },
-  
-  // Retro Sticker Back Button
+
   backButton: {
     position: 'absolute',
     top: 50,
     left: 20,
     zIndex: 10,
-    backgroundColor: Colors.light.primary, // Soft purple
+    backgroundColor: Colors.light.primary, 
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 24,
@@ -177,14 +173,13 @@ const createStyles = () => StyleSheet.create({
   },
   
   backButtonText: {
-    color: Colors.light.buttonText, // White text
+    color: Colors.light.buttonText, 
     fontSize: 16,
     fontWeight: '800',
     letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
-  
-  // Header Styling
+
   header: {
     alignItems: 'center',
     paddingVertical: 24,
@@ -202,7 +197,7 @@ const createStyles = () => StyleSheet.create({
   title: {
     fontSize: 36,
     fontWeight: '900',
-    color: Colors.light.text, // Soft black
+    color: Colors.light.text, 
     marginBottom: 12,
     textAlign: 'center',
     letterSpacing: 1.5,
@@ -214,21 +209,20 @@ const createStyles = () => StyleSheet.create({
   
   subtitle: {
     fontSize: 18,
-    color: Colors.light.textSecondary, // Warm brown
+    color: Colors.light.textSecondary, 
     fontWeight: '600',
     textAlign: 'center',
     lineHeight: 24,
     letterSpacing: 0.3,
   },
-  
-  // Player Stats Sticker Card
+
   playerStatsCard: {
-    backgroundColor: Colors.light.card, // Paper background
+    backgroundColor: Colors.light.card, 
     marginHorizontal: 4,
     marginBottom: 24,
     paddingVertical: 16,
     paddingHorizontal: 20,
-    borderRadius: 32, // Very rounded like sticker
+    borderRadius: 32, 
     borderWidth: 3,
     borderColor: Colors.light.border,
     alignItems: 'center',
@@ -268,7 +262,7 @@ const createStyles = () => StyleSheet.create({
   },
   
   levelBadge: {
-    backgroundColor: Colors.light.primary, // Purple badge
+    backgroundColor: Colors.light.primary, 
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
@@ -279,30 +273,26 @@ const createStyles = () => StyleSheet.create({
   levelText: {
     fontSize: 14,
     fontWeight: '800',
-    color: Colors.light.text, // Dark text for better visibility
+    color: Colors.light.text, 
     letterSpacing: 0.8,
     textTransform: 'uppercase',
   },
-  
-  // Wheel Container
+
   wheelContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 350, // Fixed height instead of flex
+    height: 350, 
     paddingVertical: 20,
   },
-  
-  // History Container
+
   historyContainer: {
-    height: 200, // Fixed height instead of flex
+    height: 200, 
     marginTop: 16,
   },
-  
-  // Bottom spacing for custom tab bar
+
   bottomSpacing: {
-    height: 100, // Account for custom tab bar height + margins
+    height: 100, 
   },
 });
 
-// Create styles instance
 const styles = createStyles();

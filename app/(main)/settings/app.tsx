@@ -58,7 +58,7 @@ export default function AppPreferencesScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Header */}
+      {}
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton} 
@@ -71,7 +71,7 @@ export default function AppPreferencesScreen() {
       </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Appearance */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>🎨 Appearance</ThemedText>
           
@@ -85,7 +85,7 @@ export default function AppPreferencesScreen() {
           />
         </View>
 
-        {/* Location Services */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>📍 Location</ThemedText>
           
@@ -99,7 +99,7 @@ export default function AppPreferencesScreen() {
           />
         </View>
 
-        {/* Data Management */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>💾 Data</ThemedText>
           
@@ -113,7 +113,7 @@ export default function AppPreferencesScreen() {
           />
         </View>
 
-        {/* Help & Tutorial */}
+        {}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>🎓 Help</ThemedText>
           
@@ -127,7 +127,7 @@ export default function AppPreferencesScreen() {
           />
         </View>
 
-        {/* Info Card */}
+        {}
         <View style={styles.section}>
           <View style={styles.infoCard}>
             <ThemedText style={styles.infoTitle}>💡 Tips</ThemedText>
@@ -139,7 +139,7 @@ export default function AppPreferencesScreen() {
           </View>
         </View>
 
-        {/* Bottom Spacing */}
+        {}
         <View style={styles.bottomSpacing} />
       </ScrollView>
     </SafeAreaView>

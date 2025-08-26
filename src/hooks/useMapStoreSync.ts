@@ -52,7 +52,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     clearError,
   } = useMapStore();
 
-  // Load initial data
   const loadInitialData = useCallback(async () => {
     try {
       setLoading(true);
@@ -68,7 +67,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     }
   }, [mapUseCases, filters, setLoading, setError, setLocations, setTerritories]);
 
-  // Load initial viewport
   const loadInitialViewport = useCallback(async () => {
     try {
       const hasPermission = await locationService.hasLocationPermission();
@@ -109,7 +107,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     }
   }, [locationService, mapUseCases, setViewport, setCurrentRegion]);
 
-  // Check location permission
   const checkLocationPermission = useCallback(async () => {
     try {
       const hasPermission = await locationService.hasLocationPermission();
@@ -131,7 +128,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     }
   }, [locationService, setLocationPermission, setError, loadInitialViewport]);
 
-  // Request location permission
   const requestLocationPermission = useCallback(async () => {
     try {
       const granted = await locationService.requestLocationPermission();
@@ -146,7 +142,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     }
   }, [locationService, setLocationPermission, setError, loadInitialViewport]);
 
-  // Enhanced center on user location
   const centerOnUserLocationPreservingZoom = useCallback(async () => {
     if (!userLocation) return;
     
@@ -171,7 +166,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     await mapUseCases.saveViewport(newViewport);
   }, [userLocation, currentRegion, setCurrentRegion, setUserInteracted, setViewport, mapUseCases]);
 
-  // Enhanced region change handler
   const handleRegionChangeComplete = useCallback(async (region: {
     latitude: number;
     longitude: number;
@@ -192,7 +186,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     await mapUseCases.saveViewport(newViewport);
   }, [setCurrentRegion, setUserInteracted, setViewport, mapUseCases]);
 
-  // Conquest mode actions
   const startConquest = useCallback(() => {
     setConquestStatus('tracking');
     clearTrackedPoints();
@@ -221,11 +214,10 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     setConquestStatus('completed');
     
     try {
-      // Calculate center point
+      
       const centerLat = trackedPoints.reduce((sum, point) => sum + (point.latitude || 0), 0) / trackedPoints.length;
       const centerLng = trackedPoints.reduce((sum, point) => sum + (point.longitude || 0), 0) / trackedPoints.length;
 
-      // Calculate total distance
       let totalDistance = 0;
       for (let i = 1; i < trackedPoints.length; i++) {
         const prevPoint = trackedPoints[i - 1];
@@ -241,7 +233,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
         }
       }
 
-      // Calculate area
       const coordinates = trackedPoints
         .filter(point => point.latitude && point.longitude)
         .map(point => ({
@@ -250,7 +241,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
         }));
       const totalArea = coordinates.length >= 3 ? locationService.calculatePolygonArea(coordinates) : 0;
 
-      // Filter valid points
       const validPoints = trackedPoints.filter(point => point.latitude && point.longitude);
       
       if (validPoints.length < 3) {
@@ -264,7 +254,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
         return;
       }
 
-      // Create territory data
       const territoryData = {
         name: `Territory ${new Date().toLocaleDateString()}`,
         description: `Conquered territory with ${validPoints.length} points`,
@@ -299,13 +288,10 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
         } : null,
       };
 
-      // Import territory repository
       const { territoryRepository } = await import('@/src/services/territoryRepository');
-      
-      // Save to Firestore
+
       const savedTerritory = await territoryRepository.createTerritory(territoryData);
 
-      // Add the new territory to the map store for immediate display
       if (savedTerritory) {
         addTerritory(savedTerritory);
       }
@@ -333,7 +319,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     clearTrackedPoints();
   }, [setConquestStatus, clearTrackedPoints]);
 
-  // Debug function to manually add points by tapping
   const addManualPoint = useCallback((latitude: number, longitude: number) => {
     if (conquestStatus !== 'tracking') {
       console.log('Cannot add manual point: conquest not in tracking mode');
@@ -352,7 +337,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     });
   }, [conquestStatus, addTrackedPoint]);
 
-  // Location actions
   const handleAddLocation = useCallback(async (location: Omit<MapLocation, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
       setError(null);
@@ -402,7 +386,6 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     );
   }, [mapUseCases, setError, deleteLocation, setSelectedLocation]);
 
-  // Effects
   useEffect(() => {
     loadInitialData();
     checkLocationPermission();
@@ -433,7 +416,7 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
   }, [conquestStatus, userLocation, addTrackedPoint]);
 
   return {
-    // State
+    
     viewport,
     currentRegion,
     hasUserInteracted,
@@ -448,8 +431,7 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     error,
     selectedLocation,
     selectedTerritory,
-    
-    // Actions
+
     setFilters,
     setSelectedLocation,
     setSelectedTerritory,
@@ -461,13 +443,12 @@ export const useMapStoreSync = ({ mapUseCases, locationService }: UseMapStoreSyn
     requestLocationPermission,
     loadInitialData,
     clearError,
-    
-    // Conquest actions
+
     startConquest,
     pauseConquest,
     resumeConquest,
     stopConquest,
     cancelConquest,
-    addManualPoint, // Add this for debugging
+    addManualPoint, 
   };
 };

@@ -2,13 +2,11 @@ import { Achievement, Clan, GameState, Minigame, PlayerStats, Skin, Territory } 
 import firestore from '@react-native-firebase/firestore';
 
 export interface IGameRepository {
-  // Player data
   createPlayer: (userId: string, playerData: PlayerStats) => Promise<void>;
   getPlayer: (userId: string) => Promise<PlayerStats | null>;
   updatePlayer: (userId: string, updates: Partial<PlayerStats>) => Promise<void>;
   subscribeToPlayer: (userId: string, callback: (player: PlayerStats | null) => void) => () => void;
 
-  // Territories
   createTerritory: (territory: Omit<Territory, 'id' | 'createdAt'>) => Promise<Territory>;
   getPlayerTerritories: (playerId: string) => Promise<Territory[]>;
   getAllTerritories: () => Promise<Territory[]>;
@@ -16,22 +14,18 @@ export interface IGameRepository {
   subscribeToTerritories: (callback: (territories: Territory[]) => void) => () => void;
   subscribeToPlayerTerritories: (playerId: string, callback: (territories: Territory[]) => void) => () => void;
 
-  // Minigames
   getMinigames: (userId: string) => Promise<Minigame[]>;
   updateMinigame: (userId: string, minigameId: string, updates: Partial<Minigame>) => Promise<void>;
   unlockMinigame: (userId: string, minigameId: string) => Promise<void>;
 
-  // Achievements
   getAchievements: (userId: string) => Promise<Achievement[]>;
   updateAchievement: (userId: string, achievementId: string, updates: Partial<Achievement>) => Promise<void>;
   unlockAchievement: (userId: string, achievementId: string) => Promise<void>;
 
-  // Skins
   getSkins: (userId: string) => Promise<Skin[]>;
   purchaseSkin: (userId: string, skinId: string) => Promise<void>;
   updateSkin: (userId: string, skinId: string, updates: Partial<Skin>) => Promise<void>;
 
-  // Clans
   createClan: (clan: Omit<Clan, 'id'>) => Promise<Clan>;
   getClan: (clanId: string) => Promise<Clan | null>;
   updateClan: (clanId: string, updates: Partial<Clan>) => Promise<void>;
@@ -39,12 +33,10 @@ export interface IGameRepository {
   leaveClan: (userId: string) => Promise<void>;
   getPublicClans: () => Promise<Clan[]>;
 
-  // Game state
   getGameState: (userId: string) => Promise<GameState | null>;
   updateGameState: (userId: string, updates: Partial<GameState>) => Promise<void>;
   subscribeToGameState: (userId: string, callback: (gameState: GameState | null) => void) => () => void;
 
-  // Leaderboards
   getLeaderboard: (type: 'territories' | 'level' | 'coins') => Promise<{ userId: string; value: number; displayName: string }[]>;
   updateLeaderboardScore: (userId: string, type: 'territories' | 'level' | 'coins', value: number) => Promise<void>;
 }
@@ -56,7 +48,6 @@ export class FirestoreGameRepository implements IGameRepository {
     this.firestore = firestore;
   }
 
-  // Player data methods
   async createPlayer(userId: string, playerData: PlayerStats): Promise<void> {
     try {
       await this.firestore()
@@ -116,7 +107,6 @@ export class FirestoreGameRepository implements IGameRepository {
       });
   }
 
-  // Territory methods
   async createTerritory(territoryData: Omit<Territory, 'id' | 'createdAt'>): Promise<Territory> {
     try {
       const territoryId = `territory_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -239,7 +229,6 @@ export class FirestoreGameRepository implements IGameRepository {
       });
   }
 
-  // Minigame methods
   async getMinigames(userId: string): Promise<Minigame[]> {
     try {
       const doc = await this.firestore()
@@ -250,7 +239,6 @@ export class FirestoreGameRepository implements IGameRepository {
         .get();
 
       if (!doc.exists) {
-        // Return default minigames if none exist
         return [];
       }
 
@@ -270,7 +258,7 @@ export class FirestoreGameRepository implements IGameRepository {
         .doc('progress');
 
       const docSnapshot = await docRef.get();
-      const currentMinigames = docSnapshot.exists() ? docSnapshot.data()?.minigames || [] : [];
+      const currentMinigames = docSnapshot.exists ? docSnapshot.data()?.minigames || [] : [];
       
       const updatedMinigames = currentMinigames.map((minigame: Minigame) =>
         minigame.id === minigameId ? { ...minigame, ...updates } : minigame
@@ -287,7 +275,6 @@ export class FirestoreGameRepository implements IGameRepository {
     await this.updateMinigame(userId, minigameId, { isUnlocked: true });
   }
 
-  // Achievement methods
   async getAchievements(userId: string): Promise<Achievement[]> {
     try {
       const docSnapshot = await this.firestore()
@@ -334,7 +321,6 @@ export class FirestoreGameRepository implements IGameRepository {
     await this.updateAchievement(userId, achievementId, { isUnlocked: true });
   }
 
-  // Skin methods
   async getSkins(userId: string): Promise<Skin[]> {
     try {
       const doc = await this.firestore()
@@ -399,7 +385,6 @@ export class FirestoreGameRepository implements IGameRepository {
     }
   }
 
-  // Clan methods
   async createClan(clanData: Omit<Clan, 'id'>): Promise<Clan> {
     try {
       const clanId = `clan_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -499,7 +484,6 @@ export class FirestoreGameRepository implements IGameRepository {
     }
   }
 
-  // Game state methods
   async getGameState(userId: string): Promise<GameState | null> {
     try {
       const doc = await this.firestore()
@@ -546,7 +530,6 @@ export class FirestoreGameRepository implements IGameRepository {
       });
   }
 
-  // Leaderboard methods
   async getLeaderboard(type: 'territories' | 'level' | 'coins'): Promise<{ userId: string; value: number; displayName: string }[]> {
     try {
       const snapshot = await this.firestore()
@@ -566,7 +549,6 @@ export class FirestoreGameRepository implements IGameRepository {
 
   async updateLeaderboardScore(userId: string, type: 'territories' | 'level' | 'coins', value: number): Promise<void> {
     try {
-      // Get user display name
       const userDoc = await this.firestore()
         .collection('players')
         .doc(userId)
@@ -592,5 +574,4 @@ export class FirestoreGameRepository implements IGameRepository {
   }
 }
 
-// Export singleton instance
 export const gameRepository = new FirestoreGameRepository();

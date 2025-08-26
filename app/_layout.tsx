@@ -1,8 +1,6 @@
-
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
-// Import themes
 import { FirebaseProvider } from '@/src/contexts/FirebaseContext';
 import { useAuthListener } from '@/src/hooks/useAuthListener';
 import { useDailyReset } from '@/src/hooks/useDailyReset';
@@ -34,6 +32,6 @@ export default function RootLayout() {
 
 function AuthListener() {
   useAuthListener();
-  useDailyReset(); // Reset daily game data
+  useDailyReset(); 
   return null;
 }

@@ -3,7 +3,6 @@ import { useColorScheme } from '@/src/hooks/useColorScheme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View } from 'react-native';
 
-// Retro-cartoon sticker-like tab bar background
 export default function TabBarBackground() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -11,7 +10,7 @@ export default function TabBarBackground() {
   
   return (
     <View style={StyleSheet.absoluteFill}>
-      {/* Paper-like gradient background */}
+      {}
       <LinearGradient
         colors={isDark 
           ? [colors.card, colors.surface, colors.card]
@@ -21,7 +20,7 @@ export default function TabBarBackground() {
         style={StyleSheet.absoluteFill}
       />
       
-      {/* Subtle paper texture overlay */}
+      {}
       <View
         style={[
           StyleSheet.absoluteFill,
@@ -32,13 +31,13 @@ export default function TabBarBackground() {
         ]}
       />
       
-      {/* Sticker-like border effect */}
+      {}
       <View
         style={[
           StyleSheet.absoluteFill,
           {
             borderWidth: 0,
-            borderRadius: 32, // Match the tab bar border radius
+            borderRadius: 32, 
             backgroundColor: 'transparent',
           }
         ]}

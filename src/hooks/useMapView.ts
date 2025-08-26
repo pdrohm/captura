@@ -50,10 +50,9 @@ export const useMapView = ({
     resumeConquest,
     stopConquest,
     cancelConquest,
-    addManualPoint, // Add this for debugging
+    addManualPoint, 
   } = useMapStoreSync({ mapUseCases, locationService });
 
-  // Compute initial region for map
   const initialRegion: Region = useMemo(() => {
     if (currentRegion) {
       return currentRegion;
@@ -76,7 +75,6 @@ export const useMapView = ({
     };
   }, [currentRegion, userLocation, viewport]);
 
-  // Filtered data computations
   const filteredLocations = useMemo(() => {
     return locations.filter(location => {
       if (location.type === 'territory' && !filters.showTerritories) return false;
@@ -93,7 +91,6 @@ export const useMapView = ({
     });
   }, [territories, filters]);
 
-  // Conquest mode button handlers
   const getConquestButtonIcon = useCallback((conquestStatus: string) => {
     switch (conquestStatus) {
       case 'idle':
@@ -126,27 +123,24 @@ export const useMapView = ({
     return '#fff';
   }, []);
 
-  // Enhanced location press handler
   const handleLocationPress = useCallback((location: MapLocation) => {
     setSelectedLocation(location);
     setSelectedTerritory(null);
     onLocationPress?.(location);
   }, [setSelectedLocation, setSelectedTerritory, onLocationPress]);
 
-  // Enhanced territory press handler
   const handleTerritoryPress = useCallback((territory: Territory) => {
     setSelectedTerritory(territory);
     setSelectedLocation(null);
     onTerritoryPress?.(territory);
   }, [setSelectedTerritory, setSelectedLocation, onTerritoryPress]);
 
-  // Enhanced region change handler that preserves zoom levels
   const handleRegionChangeCompleteEnhanced = useCallback((region: Region) => {
     handleRegionChangeComplete(region);
   }, [handleRegionChangeComplete]);
 
   return {
-    // State
+    
     filteredLocations,
     filteredTerritories,
     loading,
@@ -160,8 +154,7 @@ export const useMapView = ({
     trackedPoints,
     selectedLocation,
     selectedTerritory,
-    
-    // Actions
+
     handleLocationPress,
     handleTerritoryPress,
     handleRegionChangeComplete: handleRegionChangeCompleteEnhanced,
@@ -172,16 +165,14 @@ export const useMapView = ({
     requestLocationPermission,
     refreshData: loadInitialData,
     clearError,
-    
-    // Conquest actions
+
     startConquest,
     pauseConquest,
     resumeConquest,
     stopConquest,
     cancelConquest,
-    addManualPoint, // Add this for debugging
-    
-    // Conquest mode helpers
+    addManualPoint, 
+
     getConquestButtonIcon,
     getConquestButtonColor,
     getConquestButtonBackground,

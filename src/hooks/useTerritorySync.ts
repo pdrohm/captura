@@ -18,8 +18,7 @@ export const useTerritorySync = ({
 
   useEffect(() => {
     const previousTerritories = previousTerritoriesRef.current;
-    
-    // Check for added territories
+
     if (onTerritoryAdded) {
       const addedTerritories = territories.filter(
         territory => !previousTerritories.find(prev => prev.id === territory.id)
@@ -30,7 +29,6 @@ export const useTerritorySync = ({
       });
     }
 
-    // Check for updated territories
     if (onTerritoryUpdated) {
       territories.forEach(territory => {
         const previousTerritory = previousTerritories.find(prev => prev.id === territory.id);
@@ -42,7 +40,6 @@ export const useTerritorySync = ({
       });
     }
 
-    // Check for deleted territories
     if (onTerritoryDeleted) {
       const deletedTerritories = previousTerritories.filter(
         previousTerritory => !territories.find(territory => territory.id === previousTerritory.id)
@@ -53,13 +50,11 @@ export const useTerritorySync = ({
       });
     }
 
-    // Update the ref for next comparison
     previousTerritoriesRef.current = [...territories];
   }, [territories, onTerritoryAdded, onTerritoryUpdated, onTerritoryDeleted]);
 
   const refreshTerritories = useCallback(() => {
-    // This can be used to trigger a manual refresh if needed
-    // Implementation depends on specific requirements
+
   }, []);
 
   return {

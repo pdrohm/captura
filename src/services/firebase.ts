@@ -3,22 +3,16 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 
-// Initialize Firebase - this ensures Firebase is ready before services are used
-// Firebase is automatically initialized by the @react-native-firebase/app plugin in app.json
-
 export interface IAuthService {
-  // User state
   onAuthStateChanged: (callback: (user: any) => void) => () => void;
   getCurrentUser: () => any;
   
-  // Authentication methods
   signInWithEmail: (email: string, password: string) => Promise<any>;
   signUpWithEmail: (email: string, password: string) => Promise<any>;
   signInAnonymously: () => Promise<any>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   
-  // User profile
   updateProfile: (displayName: string, photoURL?: string) => Promise<void>;
   updateUserColor: (color: string) => Promise<void>;
   getUserData: (uid: string) => Promise<any>;
@@ -28,18 +22,15 @@ export interface IAuthService {
 }
 
 export interface IFirestoreService {
-  // Collections
   collection: (path: string) => any;
   doc: (path: string, id?: string) => any;
   
-  // CRUD operations
   add: (collection: string, data: any) => Promise<any>;
   set: (doc: string, data: any) => Promise<void>;
   update: (doc: string, data: any) => Promise<void>;
   delete: (doc: string) => Promise<void>;
   get: (doc: string) => Promise<any>;
   
-  // Queries
   where: (field: string, operator: '==' | '!=' | '<' | '<=' | '>' | '>=' | 'array-contains' | 'array-contains-any' | 'in' | 'not-in', value: any) => any;
   orderBy: (field: string, direction?: 'asc' | 'desc') => any;
   limit: (count: number) => any;
@@ -98,7 +89,11 @@ export class FirebaseAuthService implements IAuthService {
     if (!user) {
       throw new Error('No user signed in');
     }
-    return user.updateProfile({ displayName, photoURL });
+
+    await user.updateProfile({
+      displayName,
+      photoURL,
+    });
   }
 
   async updateUserColor(color: string): Promise<void> {
@@ -106,7 +101,11 @@ export class FirebaseAuthService implements IAuthService {
     if (!user) {
       throw new Error('No user signed in');
     }
-    return firestore().collection('users').doc(user.uid).set({ color }, { merge: true });
+
+    await firestore().collection('users').doc(user.uid).set({
+      color,
+      updatedAt: firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
   }
 
   async getUserData(uid: string): Promise<any> {
@@ -119,7 +118,8 @@ export class FirebaseAuthService implements IAuthService {
     if (!user) {
       throw new Error('No user signed in');
     }
-    return user.updateEmail(email);
+
+    await user.updateEmail(email);
   }
 
   async updatePassword(password: string): Promise<void> {
@@ -127,7 +127,8 @@ export class FirebaseAuthService implements IAuthService {
     if (!user) {
       throw new Error('No user signed in');
     }
-    return user.updatePassword(password);
+
+    await user.updatePassword(password);
   }
 
   async deleteAccount(): Promise<void> {
@@ -135,7 +136,8 @@ export class FirebaseAuthService implements IAuthService {
     if (!user) {
       throw new Error('No user signed in');
     }
-    return user.delete();
+
+    await user.delete();
   }
 }
 
@@ -232,7 +234,6 @@ export class FirebaseAnalyticsService implements IAnalyticsService {
   }
 }
 
-// Export service instances
 export const authService = new FirebaseAuthService();
 export const firestoreService = new FirebaseFirestoreService();
 export const storageService = new FirebaseStorageService();

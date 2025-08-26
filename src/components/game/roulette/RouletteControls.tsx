@@ -64,7 +64,7 @@ export const RouletteControls: React.FC<RouletteControlsProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Stats Row */}
+      {}
       <View style={styles.statsRow}>
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>Total Spins</Text>
@@ -87,7 +87,7 @@ export const RouletteControls: React.FC<RouletteControlsProps> = ({
         </View>
       </View>
 
-      {/* Spin Button */}
+      {}
       <AnimatedTouchableOpacity
         style={[styles.spinButton, animatedStyle]}
         onPress={canSpin && !isSpinning ? onSpin : undefined}
@@ -109,7 +109,7 @@ export const RouletteControls: React.FC<RouletteControlsProps> = ({
         </LinearGradient>
       </AnimatedTouchableOpacity>
 
-      {/* Info Text */}
+      {}
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>
           {spinCost === 0

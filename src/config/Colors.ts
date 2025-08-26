@@ -1,100 +1,77 @@
-/**
- * Retro-Cartoon Design System
- * Paper-like vintage aesthetic with soft pastel colors and sticker-like elements
- * Inspired by retro handheld games and vintage illustrations on paper
- */
-
-// Light theme colors (retro paper-cartoon inspired)
 const lightColors = {
-  // Primary backgrounds - paper-like with texture
-  background: '#FEF9EF',    // Very light paper background
-  surface: '#F6E7CB',       // Warm beige surface
-  card: '#FEF9EF',          // Paper-like card background (same as main bg for cohesion)
+  background: '#FEF9EF',
+  surface: '#F6E7CB',
+  card: '#FEF9EF',
   
-  // Text colors - warm and readable
-  text: '#2D2D2D',          // Soft black for primary text
-  textSecondary: '#5C3D2E', // Warm brown for secondary text
-  textMuted: '#8B7355',     // Muted brown for less important text
+  text: '#2D2D2D',
+  textSecondary: '#5C3D2E',
+  textMuted: '#8B7355',
   
-  // Borders - bold sticker-like outlines
-  border: '#2D2D2D',        // Strong outline for sticker effect
-  borderSecondary: '#5C3D2E', // Warm brown borders
-  borderMuted: '#A68B5B',   // Subtle borders for light elements
+  border: '#2D2D2D',
+  borderSecondary: '#5C3D2E',
+  borderMuted: '#A68B5B',
   
-  // Retro pastel accents - playful and soft
-  primary: '#BFA2DB',       // Soft purple - main brand color
-  secondary: '#A8DADC',     // Mint green - secondary actions
-  accent: '#F4A261',        // Orange accent - highlights and CTAs
+  primary: '#BFA2DB',
+  secondary: '#A8DADC',
+  accent: '#F4A261',
   
-  // Interactive elements - sticker-like buttons
-  button: '#BFA2DB',        // Soft purple primary button
-  buttonText: '#FFFFFF',    // White text on colored buttons
-  buttonSecondary: '#A8DADC', // Mint green secondary button
-  buttonSecondaryText: '#2D2D2D', // Dark text on light buttons
+  button: '#BFA2DB',
+  buttonText: '#FFFFFF',
+  buttonSecondary: '#A8DADC',
+  buttonSecondaryText: '#2D2D2D',
   
-  // Status colors - soft but recognizable
-  success: '#A8DADC',       // Mint green for success
-  warning: '#F6BD60',       // Yellow accent for warnings
-  error: '#E76F51',         // Soft coral for errors
-  info: '#BFA2DB',          // Purple for info states
+  success: '#A8DADC',
+  warning: '#F6BD60',
+  error: '#E76F51',
+  info: '#BFA2DB',
   
-  // Navigation elements
-  tabIconDefault: '#8B7355', // Muted brown for inactive tabs
-  tabIconSelected: '#BFA2DB', // Purple for active tab
+  tabIconDefault: '#8B7355',
+  tabIconSelected: '#BFA2DB',
   
-  // Icon colors
-  icon: '#2D2D2D',          // Primary icon color
-  iconMuted: '#8B7355',     // Muted icons
+  icon: '#2D2D2D',
+  iconMuted: '#8B7355',
 };
 
-// Export both for compatibility, but both point to light theme
 export const Colors = {
   light: lightColors,
-  dark: lightColors, // Dark theme is same as light - always paper aesthetic
+  dark: lightColors,
 };
 
-// Retro-cartoon specific colors and extended palette
 export const RetroColors = {
-  // Core retro-cartoon palette - paper-like aesthetic
-  paperBackground: '#FEF9EF',  // Very light paper background
-  warmBeige: '#F6E7CB',        // Warm beige surface
-  softPurple: '#BFA2DB',       // Soft purple primary
-  mintGreen: '#A8DADC',        // Mint green secondary
-  orangeAccent: '#F4A261',     // Orange accent for CTAs
-  yellowAccent: '#F6BD60',     // Yellow for highlights
-  warmBrown: '#5C3D2E',        // Warm brown text
-  softBlack: '#2D2D2D',        // Soft black primary text
+  paperBackground: '#FEF9EF',
+  warmBeige: '#F6E7CB',
+  softPurple: '#BFA2DB',
+  mintGreen: '#A8DADC',
+  orangeAccent: '#F4A261',
+  yellowAccent: '#F6BD60',
+  warmBrown: '#5C3D2E',
+  softBlack: '#2D2D2D',
   
-  // Paper texture and sticker effects
-  paperTexture: '#FEF9EF',     // Base paper color
-  stickerShadow: 'rgba(45, 45, 45, 0.15)', // Subtle shadow for sticker effect
-  paperGrain: 'rgba(92, 61, 46, 0.03)',   // Very subtle grain overlay
+  paperTexture: '#FEF9EF',
+  stickerShadow: 'rgba(45, 45, 45, 0.15)',
+  paperGrain: 'rgba(92, 61, 46, 0.03)',
   
-  // Sticker-like border colors
-  stickerOutline: '#2D2D2D',   // Strong black outline
-  stickerOutlineWarm: '#5C3D2E', // Warm brown outline
-  stickerOutlineLight: '#A68B5B', // Light brown for subtle elements
+  stickerOutline: '#2D2D2D',
+  stickerOutlineWarm: '#5C3D2E',
+  stickerOutlineLight: '#A68B5B',
   
-  // Game-specific retro colors
-  gameBackground: '#FEF9EF',   // Paper background
-  gameSurface: '#FEF9EF',      // Cards same as background for cohesion
-  gameBorder: '#2D2D2D',       // Strong sticker borders
-  gameText: '#2D2D2D',         // Primary text
-  gameTextSecondary: '#5C3D2E', // Secondary text
-  gameAccent: '#F4A261',       // Orange actions
+  gameBackground: '#FEF9EF',
+  gameSurface: '#FEF9EF',
+  gameBorder: '#2D2D2D',
+  gameText: '#2D2D2D',
+  gameTextSecondary: '#5C3D2E',
+  gameAccent: '#F4A261',
   
-  // Extended dog-game themed colors (updated for new palette)
-  dogBrown: '#8B4513',         // Rich brown for dog elements
-  collarRed: '#E76F51',        // Soft coral for collars (matching error color)
-  boneWhite: '#FEF9EF',        // Paper white for bones
-  grassGreen: '#A8DADC',       // Mint green for parks (matching secondary)
-  hydrantRed: '#F4A261',       // Orange for fire hydrants (matching accent)
+  dogBrown: '#8B4513',
+  collarRed: '#E76F51',
+  boneWhite: '#FEF9EF',
+  grassGreen: '#A8DADC',
+  hydrantRed: '#F4A261',
   
-  // Playful accent colors for variety
-  pawPrint: '#5C3D2E',         // Warm brown paw prints
-  treatBrown: '#8B7355',       // Muted brown treats
-  toyPurple: '#BFA2DB',        // Purple toys (matching primary)
-  leashMint: '#A8DADC',        // Mint leash (matching secondary)
-  parkGreen: '#A8DADC',        // Park green (consistent)
-  sunnyYellow: '#F6BD60',      // Sunny yellow (matching warning)
+  pawPrint: '#5C3D2E',
+  treatBrown: '#8B7355',
+  toyPurple: '#BFA2DB',
+  leashMint: '#A8DADC',
+  parkGreen: '#A8DADC',
+  sunnyYellow: '#F6BD60',
 };

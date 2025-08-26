@@ -16,12 +16,10 @@ export const useFirestoreGame = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
-  
-  // Use refs to prevent infinite loops
+
   const isSyncingRef = useRef(false);
   const lastPlayerUpdateRef = useRef<number>(0);
 
-  // Initialize player in Firestore if they don't exist
   const initializePlayer = useCallback(async () => {
     if (!user?.uid) return;
 
@@ -32,10 +30,10 @@ export const useFirestoreGame = () => {
       const existingPlayer = await gameService.getPlayerStats(user.uid);
       
       if (!existingPlayer) {
-        // Initialize new player with current local stats
+        
         await gameService.initializePlayer(user.uid, player);
       } else {
-        // Sync local store with Firestore data
+        
         useGameStore.setState({ player: existingPlayer });
       }
 
@@ -47,13 +45,11 @@ export const useFirestoreGame = () => {
     }
   }, [user?.uid, player]);
 
-  // Calculate user's territory count from all territories
   const calculateUserTerritoryCount = useCallback((allTerritories: Territory[]) => {
     if (!user?.uid) return 0;
     return allTerritories.filter(territory => territory.playerId === user.uid).length;
   }, [user?.uid]);
 
-  // Load territories from Firestore
   const loadTerritories = useCallback(async () => {
     if (!user?.uid) return;
 
@@ -61,11 +57,9 @@ export const useFirestoreGame = () => {
       setIsLoading(true);
       setError(null);
 
-      // Load all territories for display (so you can see other players' territories)
       const allTerritories = await gameService.getAllTerritories();
       useGameStore.setState({ territories: allTerritories });
-      
-      // Update player's totalTerritory count based on their actual territories
+
       const userTerritoryCount = calculateUserTerritoryCount(allTerritories);
       useGameStore.setState(state => ({
         player: {
@@ -81,9 +75,6 @@ export const useFirestoreGame = () => {
     }
   }, [user?.uid, calculateUserTerritoryCount]);
 
-
-
-  // Mark territory in Firestore
   const markTerritory = useCallback(async (latitude: number, longitude: number) => {
     if (!user?.uid) return false;
 
@@ -91,13 +82,11 @@ export const useFirestoreGame = () => {
       setIsLoading(true);
       setError(null);
 
-      // Check if player can mark territory
       if (player.dailyUrinations >= player.maxDailyUrinations) {
         setError('Daily urination limit reached');
         return false;
       }
 
-      // Mark territory in Firestore with user info
       const newTerritory = await gameService.markTerritory(
         user.uid,
         latitude,
@@ -108,7 +97,6 @@ export const useFirestoreGame = () => {
         user.color || undefined
       );
 
-      // Update local store
       useGameStore.setState(state => ({
         territories: [...state.territories, newTerritory],
         player: {
@@ -119,7 +107,6 @@ export const useFirestoreGame = () => {
         },
       }));
 
-      // Check achievements
       localCheckAchievements();
 
       return true;
@@ -131,7 +118,6 @@ export const useFirestoreGame = () => {
     }
   }, [user?.uid, player.dailyUrinations, player.maxDailyUrinations, player.territoryRadius, localCheckAchievements, user?.color, user?.displayName]);
 
-  // Manual sync player stats with Firestore (only when explicitly called)
   const syncPlayerStats = useCallback(async () => {
     if (!user?.uid || isSyncingRef.current) return;
 
@@ -145,34 +131,27 @@ export const useFirestoreGame = () => {
     }
   }, [user?.uid, player]);
 
-
-
-  // Subscribe to real-time updates
   useEffect(() => {
     if (!user?.uid || !isInitialized) return;
 
-
-    // Subscribe to player stats changes
     const unsubscribePlayer = gameService.subscribeToPlayerStats(user.uid, (stats) => {
       if (stats) {
-        // Only update if the data is actually different to prevent loops
+        
         const currentTime = Date.now();
-        if (currentTime - lastPlayerUpdateRef.current > 2000) { // Increased debounce to 2 seconds
+        if (currentTime - lastPlayerUpdateRef.current > 2000) { 
           useGameStore.setState({ player: stats });
           lastPlayerUpdateRef.current = currentTime;
         }
       }
     });
 
-    // Subscribe to territories changes with debouncing
     let territoriesTimeout: ReturnType<typeof setTimeout>;
     const unsubscribeTerritories = gameService.subscribeToTerritories((territories) => {
-      // Debounce territory updates to prevent rapid re-renders
+      
       clearTimeout(territoriesTimeout);
       territoriesTimeout = setTimeout(() => {
         useGameStore.setState({ territories });
-        
-        // Update player's totalTerritory count based on their actual territories
+
         const userTerritoryCount = calculateUserTerritoryCount(territories);
         useGameStore.setState(state => ({
           player: {
@@ -181,10 +160,9 @@ export const useFirestoreGame = () => {
           },
         }));
         
-      }, 500); // 500ms debounce
+      }, 500); 
     });
 
-    // Subscribe to game state changes
     const unsubscribeGameState = gameService.subscribeToGameState(user.uid, (gameState) => {
       if (gameState) {
         useGameStore.setState(gameState);
@@ -199,7 +177,6 @@ export const useFirestoreGame = () => {
     };
   }, [user?.uid, isInitialized, calculateUserTerritoryCount]);
 
-  // Initialize on mount
   useEffect(() => {
     if (user?.uid && !isInitialized) {
       initializePlayer();
@@ -207,14 +184,6 @@ export const useFirestoreGame = () => {
     }
   }, [user?.uid, isInitialized, initializePlayer, loadTerritories]);
 
-  // Remove the automatic sync effect that was causing the loop
-  // useEffect(() => {
-  //   if (user?.uid && isInitialized) {
-  //     syncPlayerStats();
-  //   }
-  // }, [user?.uid, isInitialized, syncPlayerStats]);
-
-  // Daily reset functionality
   const resetDailyUrinations = useCallback(async () => {
     if (!user?.uid) return;
 
@@ -226,7 +195,6 @@ export const useFirestoreGame = () => {
     }
   }, [user?.uid, localResetDailyUrinations]);
 
-  // Update settings in Firestore
   const updateSettings = useCallback(async (settings: GameState['settings']) => {
     if (!user?.uid) return;
 
@@ -238,7 +206,6 @@ export const useFirestoreGame = () => {
     }
   }, [user?.uid, localUpdateSettings]);
 
-  // Get leaderboard data
   const getLeaderboard = useCallback(async (type: 'territories' | 'level' | 'coins') => {
     try {
       return await gameService.getLeaderboard(type);
@@ -248,7 +215,6 @@ export const useFirestoreGame = () => {
     }
   }, []);
 
-  // Get territories in radius (for multiplayer)
   const getTerritoriesInRadius = useCallback(async (latitude: number, longitude: number, radius: number) => {
     try {
       return await gameService.getTerritoriesInRadius(latitude, longitude, radius);
@@ -258,7 +224,6 @@ export const useFirestoreGame = () => {
     }
   }, []);
 
-  // Get user's own territories (for stats, profile, etc.)
   const getUserTerritories = useCallback(() => {
     if (!user?.uid) return [];
     const allTerritories = useGameStore.getState().territories;
@@ -266,29 +231,25 @@ export const useFirestoreGame = () => {
   }, [user?.uid]);
 
   return {
-    // State
+    
     isLoading,
     error,
     isInitialized,
-    
-    // Actions
+
     markTerritory,
     resetDailyUrinations,
     updateSettings,
     getLeaderboard,
     getTerritoriesInRadius,
-    
-    // Manual sync
+
     syncPlayerStats,
     loadTerritories,
     initializePlayer,
-    
-    // Territory helpers
+
     getUserTerritories,
   };
 };
 
-// Helper function for territory colors
 function getRandomTerritoryColor(): string {
   const colors = [
     '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',

@@ -6,7 +6,6 @@ export class AppErrorHandler implements IErrorHandler {
   handle(error: Error | ApiError): void {
     this.log(error);
     
-    // Handle different types of errors
     if (this.isApiError(error)) {
       this.handleApiError(error);
     } else {
@@ -23,13 +22,9 @@ export class AppErrorHandler implements IErrorHandler {
     
     this.errorLog.push(logEntry);
     
-    // Log to console in development
     if (__DEV__) {
       console.error('Error logged:', logEntry);
     }
-    
-    // In production, you might want to send to a logging service
-    // this.sendToLoggingService(logEntry);
   }
 
   getUserFriendlyMessage(error: Error | ApiError): string {
@@ -37,7 +32,6 @@ export class AppErrorHandler implements IErrorHandler {
       return this.getApiErrorMessage(error);
     }
     
-    // Handle common error types
     if (error.name === 'NetworkError') {
       return 'Network connection error. Please check your internet connection.';
     }
@@ -54,23 +48,19 @@ export class AppErrorHandler implements IErrorHandler {
       return 'You don\'t have permission to perform this action.';
     }
     
-    // Default message
     return 'An unexpected error occurred. Please try again.';
   }
 
   isRetryable(error: Error | ApiError): boolean {
     if (this.isApiError(error)) {
-      // Retry on server errors (5xx) and some client errors (4xx)
       const code = parseInt(error.code);
       return code >= 500 || code === 429 || code === 408;
     }
     
-    // Retry on network errors
     if (error.name === 'NetworkError') {
       return true;
     }
     
-    // Don't retry on validation or permission errors
     if (error.name === 'ValidationError' || error.name === 'PermissionError') {
       return false;
     }
@@ -91,40 +81,29 @@ export class AppErrorHandler implements IErrorHandler {
   }
 
   private handleApiError(error: ApiError): void {
-    // Handle specific API error codes
     switch (error.code) {
       case 'auth/user-not-found':
-        // Handle user not found
         break;
       case 'auth/wrong-password':
-        // Handle wrong password
         break;
       case 'auth/too-many-requests':
-        // Handle rate limiting
         break;
       case 'permission-denied':
-        // Handle permission errors
         break;
       default:
-        // Handle other API errors
         break;
     }
   }
 
   private handleGenericError(error: Error): void {
-    // Handle generic JavaScript errors
     switch (error.name) {
       case 'TypeError':
-        // Handle type errors
         break;
       case 'ReferenceError':
-        // Handle reference errors
         break;
       case 'RangeError':
-        // Handle range errors
         break;
       default:
-        // Handle other generic errors
         break;
     }
   }

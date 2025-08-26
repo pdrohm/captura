@@ -17,7 +17,7 @@ export function RetroText({
   children,
   ...rest
 }: RetroTextProps) {
-  // ALWAYS use light paper theme
+  
   const colors = Colors.light;
 
   const getTextColor = (): string => {

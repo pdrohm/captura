@@ -183,7 +183,6 @@ export class FirebaseAnalyticsService implements IAnalyticsService {
   }
 }
 
-// Export service instances
 export const firebaseAuthService = new FirebaseAuthService();
 export const firebaseFirestoreService = new FirebaseFirestoreService();
 export const firebaseStorageService = new FirebaseStorageService();

@@ -50,15 +50,13 @@ export default function RegisterForm({
 
     try {
       await signUp(auth, email.trim(), password);
-      
-      // Update profile with display name after signup
+
       await auth.updateProfile(displayName.trim());
     } catch {
-      // Error is already handled in the store
+      
     }
   };
 
-  // Show error alert when error state changes
   React.useEffect(() => {
     if (error) {
       Alert.alert('Registration Error', error);

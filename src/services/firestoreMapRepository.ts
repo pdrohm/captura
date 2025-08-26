@@ -12,8 +12,7 @@ export class FirestoreMapRepository implements MapRepository {
 
   async getMapLocations(filters: MapFilters): Promise<MapLocation[]> {
     try {
-      // Return empty array - we're focusing on territories only
-      // In the future, you can implement location loading from Firestore
+
       console.log('📍 Loading map locations: 0 (focusing on territories)');
       return [];
     } catch (error) {
@@ -95,7 +94,6 @@ export class FirestoreMapRepository implements MapRepository {
         .doc(id)
         .update(updateData);
 
-      // Get the updated document
       const doc = await this.firestore()
         .collection('locations')
         .doc(id)
@@ -156,7 +154,7 @@ export class FirestoreMapRepository implements MapRepository {
         .set(viewport);
     } catch (error) {
       console.error('Failed to save map viewport:', error);
-      // Don't throw error for viewport save failures
+      
     }
   }
 }
